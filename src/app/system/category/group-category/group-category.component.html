@@ -1,0 +1,39 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="title">Listado de Grupo de Categorías</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)='createGroup()'>
+        <i class="fas fa-plus-circle"></i> Agregar Grupo</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <section class='container'>
+    <section class='container-table'>
+      <tr class="group-section headers">
+        <td class="category name">
+          <p>Nombre</p>
+        </td>
+        <td class="category create_date">
+          <p>Fecha de creación</p>
+        </td>
+        <td class="category active">
+          <p>Visibilidad</p>
+        </td>
+        <td class="category position">
+          <p>Posición</p>
+        </td>
+        <td class="category action">
+          <p>Acciones</p>
+        </td>
+      </tr>
+
+      <app-list-group-category #listTableGroupCategory [childrenCategoryGroup]="data">
+      </app-list-group-category>
+    </section>
+  </section>
+</div>
+<app-dialog-confirm></app-dialog-confirm>

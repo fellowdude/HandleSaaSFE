@@ -1,0 +1,55 @@
+<article class="container-modal">
+    <section class="modal-body modal-big">
+        <header>
+            <p>Resumen de Excel</p>
+            <p [ngStyle]="{'margin-top':'10px !important'}"><span
+                    class="upload-summary upload-ok">{{summary.totalRowOk}}
+                    correctos</span> <span class="upload-summary upload-error">{{summary.totalRowError}} con
+                    error</span></p>
+        </header>
+        <section class="body row">
+            <section class="table">
+                <section class="row">
+                    <section [ngStyle]='{"width":"75px"}'>
+                        Fila
+                    </section>
+                    <section [ngStyle]='{"width":"100px"}'>
+                        SKU
+                    </section>
+                    <section
+                        [ngStyle]='{"min-width":"350px","width":"calc(100% - 175px - " + (summary.maxError * 200)  +"px)"}'>
+                        Nombre
+                    </section>
+                    <section [ngStyle]='{"width":"200px"}'
+                        *ngFor="let number of  [].constructor(summary.maxError); let positionInfo = index">
+                        Error {{positionInfo + 1}}
+                    </section>
+                </section>
+                <section *ngFor='let product of listProduts' class="row table-row"
+                    [ngClass]="{'error-row':product.listError.length > 0}">
+                    <section [ngStyle]='{"width":"75px"}'>
+                        {{product.row_excel}}
+                    </section>
+                    <section [ngStyle]='{"width":"100px","text-align": "left"}'>
+                        {{product.SKU}}
+                    </section>
+                    <section [ngStyle]='{"min-width":"350px", "text-align": "left","width":"calc(100% - 175px - " + (summary.maxError * 200)  +"px)"}'>
+                        {{product.name}}
+                    </section>
+                    <section [ngStyle]='{"width":"200px","text-align": "left"}' *ngFor='let error of product.listError'>
+                        {{error.error}}
+                    </section>
+                </section>
+
+            </section>
+        </section>
+        <footer>
+            <button type="button" class="primary-button" (click)="closeSummary()">
+                Cancelar
+            </button>
+            <button type="button" class="primary-button" (click)="goNext()">
+                Continuar
+            </button>
+        </footer>
+    </section>
+</article>

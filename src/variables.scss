@@ -1,0 +1,68 @@
+/*COLOR PALLETE */
+/* $color-primary: #ff4081; */
+$color-primary: white;
+$color-background: #5f2ca1;
+$color-third: #43a047;
+$border: #eaeaea;
+$color-primary-dark: #db3930;
+$delete-primary-dark: #ff4081;
+$transparent-darker: rgba(0, 0, 0, 0.14);
+$transparent-darker-half: rgba(0, 0, 0, 0.5);
+$color-dark-soft: #2d2e30;
+$color-dark: #222325;
+$color-dark-light: #383838;
+$bg-color: #f5f5f5;
+$white: white;
+$black: black;
+$dimmed-white: #e5e5e5;
+$contrast-white: #eff0f1;
+$button-secundary-hover: #445361;
+$confirm: #1e88e5;
+$gray: #8e8e8e;
+$gray-light: #f9f9f9;
+$table-hover: #f3f2f2;
+$text-gray: #5d5d5d;
+$separator-color: rgb(239, 240, 241);
+
+/*FONTS*/
+$font-normal: "Muli", sans-serif;
+$font-light: "Muli";
+$font-bold: "Muli";
+$font-black: "Muli";
+$font-book: "Muli";
+$font-heavy: "Muli";
+
+/*PARAMETERS*/
+$gutter-size: 10px;
+
+/* MIXINS*/
+@mixin hover-card-transition {
+  -webkit-box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  -webkit-transition-timing-function: ease-out;
+  -o-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+  -webkit-transition-duration: 0.15s;
+  -o-transition-duration: 0.15s;
+  transition-duration: 0.15s;
+  -webkit-transform: translateY(-3px);
+  -ms-transform: translateY(-3px);
+  transform: translateY(-3px);
+}
+
+@mixin idle-card-transition {
+  -webkit-transition-timing-function: ease-out;
+  -o-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+  -webkit-transition-duration: 0.1s;
+  -o-transition-duration: 0.1s;
+  transition-duration: 0.1s;
+  -webkit-transform: translateY(0);
+  -ms-transform: translateY(0);
+  transform: translateY(0);
+}
+
+@mixin shadow {
+  -webkit-box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}

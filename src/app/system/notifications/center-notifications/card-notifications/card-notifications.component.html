@@ -1,0 +1,36 @@
+<div class="wrapper" (click)="markAsChecked(_id)">
+    <div class="notification-item" [ngStyle]="setBackGroundColor()">
+        <div class="notification-item-label" [ngStyle]="{ backgroundColor: color }">
+        </div>
+        <div class="notification-item-content">
+            <div class="notification-item-title">{{title}}</div>
+            <div class="notification-item-description">{{message}}</div>
+            <ng-container *ngIf="redirection_url">
+                <div class="notification-item-link" (click)="redirectTo()">
+                    <span *ngIf="redirection_external">Abrir Enlace</span>
+                    <span *ngIf="!redirection_external">Ver Más</span>
+                </div>
+            </ng-container>
+        </div>
+        <div class="notification-item-date">
+            <div>
+                {{timeSince()}}
+            </div>
+            <br/>
+            <div>
+                {{formatDayMonthYear()}}
+            </div>
+        </div>
+        <ng-container *ngIf="!archive">
+            <div class="notification-item-option" (click)="archiveNotification(_id)">
+                <i class="fas fa-folder"
+                matTooltip="Archivar Notificación">
+                </i>
+            </div>
+        </ng-container>
+        <!-- <div class="notification-item-badge" *ngIf="status === 'unchecked'" 
+            matBadge="Sin Revisar" [matBadgeHidden]="hidden" 
+            [ngStyle]="{ backgroundColor: '#fa6f48' }">
+        </div> -->
+    </div>
+</div>

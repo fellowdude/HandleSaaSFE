@@ -1,0 +1,69 @@
+@import "../../../../variables.scss";
+:host {
+  background-color: $bg-color;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  //height: calc(100vh - 64px);
+  //overflow-y: auto;
+  font-size: 14px;
+  background-color: $bg-color;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-size: 14px;
+
+  .container {
+    width: calc(100% - 80px);
+    max-width: unset;
+  }
+
+  .header {
+    //position: absolute;
+    position: fixed;
+    top: 64px;
+    display: inline-block;
+    height: 120px;
+    width: 100%;
+    background: #fa6f48 !important;
+    .container {
+      background-color: transparent;
+      display: flex;
+      align-items: center;
+    }
+    .title {
+      display: inline-block;
+      color: #efefef;
+      text-align: left;
+    }
+  }
+  .fake-header {
+    width: 100%;
+    height: 64px;
+  }
+  /*.buttons-container {
+    display: inline-block;
+    text-align: right;
+    flex-grow: 2;
+    button {
+      display: inline-block;
+      margin: auto;
+      margin-right: 0;
+      width: fit-content;
+      margin-left: 10px;
+      min-width: 120px;
+    }
+  }*/
+  .content {
+    position: relative;
+    margin-top: 70px;
+    margin-left: 64px;
+    z-index: 10;
+    .container {
+      @include shadow();
+      border-radius: 6px;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+<ng-container *ngIf="dataSource">
+  <ng-container *ngFor="let row of dataSource">
+    <app-dynamic-tree-item
+    #rootNodes
+    [config]="row"
+    [disableParents]="disableParents"
+    [disableAll]="disableAll"
+    (selectedCategory)="emitCategory($event)"
+    ></app-dynamic-tree-item>
+  </ng-container>
+</ng-container>

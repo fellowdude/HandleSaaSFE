@@ -1,0 +1,19 @@
+<div class="dropdown-content">
+  <div [ngClass]="styles.selectItems">
+    <div [ngClass]="[showItems ? styles.selected + ' select-arrow-active primary-button' : 'primary-button ' + styles.selected]"
+      (click)="toggleItems()"
+    >
+      Más opciones
+    </div>
+    <div [ngStyle]="{'display': showItems ? 'block' : 'none'}" [ngClass]="styles.selectItems" class="options">
+      <ng-container *ngFor="let item of items">
+        <div class="option" *ngIf="regularDropDown" (click)="selectItem(item)">
+          &nbsp;&nbsp; {{item.value}}
+        </div>
+        <div class="option" *ngIf="!regularDropDown" (click)="item.executeFunction()">
+          &nbsp;&nbsp; {{item.value}}
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<article class="container-modal" *ngIf="showModal">
+  <section class="modal-body modal-small">
+    <header>
+      <strong>{{ tittle }}</strong>
+      <div id="close-button" (click)="close()">&times;</div>
+    </header>
+    <section class="body">
+      <p>{{ message }}</p>
+      <p class="sub-message" *ngIf="subMessage">{{ subMessage }}</p>
+    </section>
+    <footer>
+      <button
+        *ngIf="!messageModal"
+        class="primary-button button-subtitle cancel-button"
+        (click)="close()"
+      >
+        Cancelar
+      </button>
+      <button
+        *ngIf="!messageModal"
+        class="primary-button save-button button-subtitle save-button-style"
+        (click)="accept()"
+      >
+        {{ RightButtonText ? 'Eliminar' : 'Aceptar' }}
+      </button>
+      <button
+        *ngIf="messageModal"
+        class="primary-button save-button button-subtitle save-button-style"
+        (click)="agree()"
+      >
+        Entendido
+      </button>
+    </footer>
+  </section>
+</article>

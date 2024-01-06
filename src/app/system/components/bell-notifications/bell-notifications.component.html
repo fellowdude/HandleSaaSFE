@@ -1,0 +1,35 @@
+<section id="bell-container">
+    <div *ngIf="numberNotifications" [matBadge]="numberNotifications" matBadgeColor="warn"></div>
+    <div class="span-container" (mouseenter)='toogleNotificationOn()' (mouseleave)='toggleNotification()'>
+        <span class="fas fa-bell"></span>
+    </div>
+    <ul [ngClass]="{'open-notifications': showNotifications}" (mouseleave)='toggleNotification()' (blur)='toggleNotification()'>
+        <ng-container>
+            <li class="top-border" (click)="updateBell()">
+                <div class="text-center">
+                    <span class="update-bell" *ngIf="!updating"><i class="fas fa-refresh"></i> Actualizar</span>
+                    <span class="update-bell" *ngIf="updating"><i class="fas fa-refresh fa-spin"></i> Actualizando</span>
+                   
+                </div>
+            </li>
+        </ng-container>
+        <ng-container *ngFor="let not of dataSource">
+            <li class="top-border" *ngIf="dataSource.length > 0">
+                <span>{{treatString(not.title)}}</span><br/>
+                <span class="item-description">{{treatString(not.message)}}</span><br/>
+                <div class="text-center">
+                    <ng-container *ngIf="not.redirection_url">
+                        <span (click)="redirectTo(not.redirection_url, not.redirection_external, not._id)" class="item-link">
+                            <ng-container *ngIf="!not.redirection_external">Ver Más</ng-container>
+                            <ng-container *ngIf="not.redirection_external">Abrir Enlace</ng-container>
+                        </span>
+                    </ng-container>
+                </div>
+            </li>
+        </ng-container>
+        <li class="top-border" *ngIf="dataSource.length === 0">
+            <span>Sin notificaciones nuevas</span>
+        </li>
+        <li class="top-border link" (click)="toNotificationCenter()"><span>Ir a Centro de Notificaciones</span></li>
+    </ul>
+</section>

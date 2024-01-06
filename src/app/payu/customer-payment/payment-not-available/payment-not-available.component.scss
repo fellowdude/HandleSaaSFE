@@ -1,0 +1,28 @@
+@import "../../../../variables.scss";
+:host {
+  background-color: $bg-color;
+  font-family: $font-book;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+#container {
+  text-align: center;
+  margin-top: 10vh;
+}
+img{
+    width: 80%;
+    max-width: 450px;
+}
+.title-message {
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+.sub-title-message {
+  margin-top: 1em;
+  font-size: 18px;
+}

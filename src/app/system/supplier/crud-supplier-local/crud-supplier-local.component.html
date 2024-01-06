@@ -1,0 +1,131 @@
+<ng-container class="container-modal">
+    <div class="modal-title">
+        <p mat-dialog-title>
+            <ng-container *ngIf="data.type === 'edit'"><header><strong> Editar Sede</strong></header></ng-container>
+            <ng-container *ngIf="data.type === 'new'"><header><strong> Nueva Sede</strong></header></ng-container>
+        </p>
+    </div>
+    <div class="modal-body modal-small">
+        <form [formGroup]="localForm">
+        <section class="body">
+            <section>
+                <mat-form-field style="width: 100%;">
+                    <input matInput type="text" autocomplete="off" placeholder="Nombre" formControlName="name"/>
+                </mat-form-field>
+                <ng-container *ngIf="f.name.errors">
+                    <mat-error *ngIf="
+                                      f.name.errors.required &&
+                                      (f.name.touched || submitted)
+                                  ">
+                      El campo es obligatorio
+                    </mat-error>
+                </ng-container>
+                <div style="width: 100%;">
+                    <mat-form-field >
+                        <mat-select placeholder="Departamento" formControlName="department">
+                            <mat-option *ngFor="let dep of listDepartments" [value]="dep._id">
+                            {{dep.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <ng-container *ngIf="f.department.errors">
+                        <mat-error *ngIf="
+                                        f.department.errors.required &&
+                                        (f.department.touched || submitted)
+                                    ">
+                        El campo es obligatorio
+                        </mat-error>
+                    </ng-container>
+                </div>
+                <div style="width: 100%;">
+                    <mat-form-field >
+                        <mat-select placeholder="Provincia" formControlName="province">
+                            <mat-option *ngFor="let prov of listProvinces" [value]="prov._id">
+                              {{prov.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <ng-container *ngIf="f.province.errors">
+                        <mat-error *ngIf="
+                                          f.province.errors.required &&
+                                          (f.province.touched || submitted)
+                                      ">
+                          El campo es obligatorio
+                        </mat-error>
+                    </ng-container>
+                </div>
+
+                <div style="width: 100%;">
+                    <mat-form-field >
+                        <mat-select placeholder="Distrito" formControlName="district">
+                            <mat-option *ngFor="let dist of listDistricts" [value]="dist._id">
+                              {{dist.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <ng-container *ngIf="f.district.errors">
+                        <mat-error *ngIf="
+                                          f.district.errors.required &&
+                                          (f.district.touched || submitted)
+                                      ">
+                          El campo es obligatorio
+                        </mat-error>
+                    </ng-container>
+                </div>
+
+                <mat-form-field style="width: 100%;">
+                    <input matInput type="text" autocomplete="off" placeholder="Dirección" formControlName="address"/>
+                </mat-form-field>
+                <ng-container *ngIf="f.address.errors">
+                    <mat-error *ngIf="
+                                      f.address.errors.required &&
+                                      (f.address.touched || submitted)
+                                  ">
+                      El campo es obligatorio
+                    </mat-error>
+                </ng-container>
+                <div style="width: 100%;">
+                    <mat-form-field >
+                        <input matInput type="text" autocomplete="off" placeholder="Teléfono" formControlName="phone" (keypress)="validatePhoneInput($event)" />
+                    </mat-form-field>
+                    <ng-container *ngIf="f.phone.errors">
+                        <mat-error *ngIf="
+                                          f.phone.errors.required &&
+                                          (f.phone.touched || submitted)
+                                      ">
+                          El campo es obligatorio
+                        </mat-error>
+                    </ng-container>
+                </div>
+                
+                <div style="width: 100%;">
+                    <mat-form-field >
+                        <input matInput type="email" autocomplete="off" placeholder="Email" formControlName="email"/>
+                    </mat-form-field>
+                    <ng-container *ngIf="f.email.errors">
+                        <mat-error *ngIf="
+                              f.email.errors.required &&
+                              (f.email.touched || submitted)
+                            ">
+                          El campo es obligatorio
+                        </mat-error>
+                        <mat-error *ngIf="
+                                        f.email.errors.email && (f.email.touched || submitted) || f.email.hasError('pattern')">
+                          Ingrese un email válido
+                        </mat-error>
+                    </ng-container>
+                </div>
+                <section class="buttons-modal">
+                    <button type="button" class="primary-button button-subtitle cancel-button" (click)="close()">
+                        Cancelar
+                    </button>
+                    <button type="button" class="primary-button save-button button-subtitle save-button-style" (click)="save()">
+                        <ng-container *ngIf="data.type === 'edit'">Actualizar Sede</ng-container>
+                        <ng-container *ngIf="data.type === 'new'">Agregar Sede</ng-container>
+                    </button>
+                </section>
+            </section>
+        </section>
+    </form>
+    </div>
+    </ng-container>

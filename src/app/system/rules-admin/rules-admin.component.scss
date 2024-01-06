@@ -1,0 +1,27 @@
+@import "../../../variables.scss";
+:host {
+  background-color: $bg-color;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.container-table {
+  overflow-y: auto;
+  height: calc(100vh - 380px);
+}
+#table-main {
+  tr {
+    .name {
+      width: calc(100% - 300px);
+    }
+    .date {
+      width: 150px;
+      text-align: center;
+    }
+  }
+}

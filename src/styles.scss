@@ -1,0 +1,287 @@
+@import "variables.scss";
+@import "./assets/scss/fonts.scss";
+@import "./assets/scss/table.scss";
+@import "./assets/scss/page.scss";
+@import "./assets/scss/modal.scss";
+@import url("https://fonts.googleapis.com/css?family=Muli:300,400,700&display=swap");
+/* @import "./assets/scss/style.scss"; */
+
+@mixin shadow {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+body,
+html {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Muli";
+  background-color: #f5f5f5;
+}
+table {
+  width: 100%;
+}
+p,
+figure {
+  margin: 0;
+}
+li {
+  list-style: none;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+}
+.row-evenly {
+  display: inline-block;
+  padding: 0px 40px;
+  width: 100%;
+}
+.container-row {
+  @include shadow();
+  border-radius: 5px;
+}
+.primary-button {
+  box-sizing: border-box;
+  background-color: $color-primary;
+  width: 100%;
+  text-align: center;
+  /* color: $white; */
+  color: #1d72e8;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 13px;
+  font-size: 11px;
+  border: 1px solid $color-primary;
+  border-radius: 5px;
+  font-family: $font-black;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+}
+
+.primary-button:focus {
+  outline: none;
+}
+
+.secondary-button {
+  box-sizing: border-box;
+  background-color: $white;
+  width: 100%;
+  text-align: center;
+  font-family: $font-black;
+  color: $color-dark-soft;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 13px;
+  font-size: 11px;
+  border: 1px solid $color-dark-soft;
+  border-radius: 3px;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+}
+.error {
+  font-size: 12px;
+  color: red;
+  text-align: left;
+  width: 90%;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 1.5em;
+}
+mat-error {
+  font-size: 12px;
+  color: red;
+  text-align: left;
+  width: 100%;
+  margin: auto;
+  margin-top: -10px;
+  margin-bottom: 1.5em;
+}
+
+.main-subtitle {
+  color: #1d72e8;
+  font-size: 19px;
+  font-weight: 500;
+  font-family: "Muli";
+}
+
+.subtitle-buttton {
+  display: flex !important;
+  align-items: flex-end;
+}
+form {
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+hr {
+  border: 1px solid $gray-light;
+  margin-bottom: 1em;
+}
+
+.subtitle-container {
+  padding-left: 1.5em;
+  padding-right: 1.45em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #eaeaea;
+  // border-bottom: 1px solid black;
+  position: relative;
+  margin-left: -28px;
+  margin-right: -28px;
+}
+
+.subtitle-container-expansion {
+  padding-left: 1.5em;
+  padding-right: 1.45em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #eaeaea;
+  // border-bottom: 1px solid black;
+  position: absolute;
+  top: 55px;
+  left: 0;
+  width: calc(100% - 44px);
+}
+
+.mat-checkbox-label {
+  white-space: normal;
+}
+
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/theming";
+@include mat-core();
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$candy-app-primary: mat-palette($mat-blue);
+$candy-app-accent: mat-palette($mat-blue, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$candy-app-warn: mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($candy-app-theme);
+.save-button,
+.delete-button,
+.back-button {
+  display: inline-block !important;
+  border: none !important;
+  max-width: 120px !important;
+  margin-right: 5px !important;
+  margin-left: 5px !important;
+  position: relative;
+  i {
+    font-size: 14px;
+  }
+}
+.button-width {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+.back-button-light {
+  display: inline-block !important;
+  border: none !important;
+  max-width: 120px !important;
+  margin-right: 5px !important;
+  margin-left: 5px !important;
+  position: relative;
+  i {
+    font-size: 14px;
+  }
+}
+
+.save-button {
+  color: #1d72e8;
+  border: 1px solid #1d72e8 !important;
+  
+}
+.save-button-style {
+  color: #fff !important;
+  border: 1px solid #1d72e8 !important;
+  background: #1d72e8 !important;
+  font-size: 11px;
+  width: 150px !important;
+  height: 35px;
+  max-width: 150px !important;
+  padding: 0;
+  margin-right: 5px !important;
+  margin-left: 5px !important;
+  display: inline-block;
+}
+.cancel-button {
+  color: #1d72e8;
+  border: 1px solid #1d72e8 !important;
+  font-size: 11px;
+  width: 150px !important;
+  height: 35px;
+  padding: 0;
+  margin-right: 5px !important;
+  margin-left: 5px !important;
+  display: inline-block;
+}
+.outline-button {
+  color: #1d72e8;
+  border: 1px solid #1d72e8 !important;
+  font-size: 13px;
+  height: 35px;
+  padding: 0;
+  display: inline-block;
+}
+
+.login-button {
+  color: white;
+  background: #1d72e8;
+  border: 1px solid #1d72e8 !important;
+}
+.delete-button {
+  background-color: #fd3875 !important;
+  color: white;
+}
+.back-button {
+  background-color: #ff6f00 !important;
+  color: white;
+}
+.back-button-light {
+  background-color: lightslategrey !important;
+  color: white;
+}
+.header {
+  transition: all 0.5s;
+  width: calc(100% - 64px) !important;
+  margin-left: 64px;
+}
+.header.fixed-top {
+  z-index: 55;
+  height: 65px !important;
+  transition: all 0.5s;
+}
+.large-button {
+  max-width: 150px !important;
+}
+.return-button {
+  cursor: pointer;
+  color: white;
+  width: 30px;
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  padding-top: 4px;
+}
+.mat-form-field-appearance-legacy .mat-form-field-infix {
+  padding: 0.4375em 0;
+  background-color: #fbfbfb;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.mat-form-field {
+  font-family: "Muli" !important;
+}

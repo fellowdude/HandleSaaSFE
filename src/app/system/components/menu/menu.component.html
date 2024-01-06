@@ -1,0 +1,26 @@
+<div class="aside-wrapper" [@asideWrapperAnimation] *ngIf="open" (click)="closeMenu()">
+</div>
+<aside [@asideAnimation] *ngIf="open">
+	<div class="brand-sidenav">HANDEL</div>
+	<div class="brand-client"> <img *ngIf="enterpriseLogo" [src]="enterpriseLogo"> </div>
+	<ul class="options-sidenav" *ngIf="dataUser">
+		<li *ngFor="let menuItem of dataUser.listMenu; let idx = index" [ngClass]="{'expand': menuItem.open}"
+			(click)='changeNav(idx)'>
+			<!-- If options have one functionality not shows submenu -->
+			<ng-container *ngIf="menuItem.functionalities.length == 1">
+				<span class="menu-header" (click)='goWindow(menuItem.functionalities[0].url)'><span
+						[class]="menuItem.icon"> &nbsp;</span>
+					{{menuItem.functionalities[0].name}}</span>
+			</ng-container>
+			<!-- If options have more functionalities shows submenu -->
+			<ng-container *ngIf="menuItem.functionalities.length > 1">
+				<span class="menu-header"><span [class]="menuItem.icon"> &nbsp; </span>{{menuItem.module}} <i
+						class="custom-chevron fas fa-chevron-down" [ngClass]="{'fa-rotate-180': menuItem.open}"></i> </span>
+				<ul class="submenu-wrapper">
+					<li *ngFor="let subMenuItem of menuItem.functionalities" (click)='goWindow(subMenuItem.url)'>
+						&nbsp;<span class="fal fa-circle sm"> &nbsp;</span>
+						{{subMenuItem.name}}</li>
+				</ul>
+			</ng-container>
+	</ul>
+</aside>

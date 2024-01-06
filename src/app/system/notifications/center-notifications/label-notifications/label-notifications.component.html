@@ -1,0 +1,20 @@
+<div class='main-subtitle subtitle-container'>Etiquetas
+    <ng-container class="cont-right" *ngIf="labelSelected">
+        <div
+        (click)="removeLabelFilters()"
+        [ngStyle]="{ backgroundColor: labelSelected.ref2 }"
+        class="circle right">
+        </div>
+    </ng-container>
+</div>
+<ul class="options-sidenav">
+    <li *ngFor="let label of typeOfLabels" (click)="applyFilter(label)"
+    [ngStyle]="{'backgroundColor': label.check ? 'lightgrey' : 'white',
+                'borderRadius': label.check ? '0 10px 10px 0' : '0',
+                'textDecoration': label.check ? 'none' : 'none'}">
+        <div class="section-info label">
+            <div [ngStyle]="{ backgroundColor: label.ref2 }" class="circle circle-item"></div>
+            <p class="title-section label">{{label.value}}</p>
+        </div>
+    </li>
+</ul>

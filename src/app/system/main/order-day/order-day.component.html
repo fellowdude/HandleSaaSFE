@@ -1,0 +1,14 @@
+<div class="container-component">
+    <div class="card-row">
+        <div class="card-col">
+            <span class="fal fa-cart-plus background-round"></span>
+            <p>Pedidos totales</p>
+        </div>
+        <div class="card-col right-align">
+            <h5 class="mb-0">{{todayTotalOrderCount}}</h5>
+            <p class="no-margin">Pedidos del día</p>
+            <p>{{totalOrderCount | number}}</p>
+        </div>
+    </div>
+    <app-loading-local #orderDayLoading class="loading"></app-loading-local>
+</div>

@@ -1,0 +1,475 @@
+<ng-container *ngIf='config.name'>
+    <section id='dinamic-static-container' class="fixed">
+        <header *ngIf='!config.accordion' class='header-general'>
+            {{config.name}} <span>
+                <!-- ( /{{config.api_url_api}} ) --> &nbsp;
+                <!-- <i class="fas fa-trash-alt"
+            (click)='confirmDeleteAccordion()'></i> -->
+            </span>
+        </header>
+        <header *ngIf='config.accordion' class='header-accordion'>
+            <section>
+                {{config.name}}
+            </section>
+            <section>
+
+                <!-- <i class="fas fa-edit"></i> -->
+                <i class="fas fa-chevron-circle-down" (click)='changeStateAccordion(config)'
+                    [ngClass]="{'accordion-icon-active':config.accordion_show,'accordion-icon-no-active':!config.accordion_show}"></i>
+                <i class="fas fa-trash-alt" (click)='confirmDeleteAccordion()'></i>
+            </section>
+        </header>
+        <section id='static-body'
+            [ngClass]="{'accordion-show': config.accordion && config.accordion_show ,'accordion-hide': config.accordion && !config.accordion_show}">
+            <ng-container *ngIf='config.content'>
+                <section id='dinamic-static-body' *ngFor='let content of config.content; let position = index'>
+                    <section class='body-header'>
+                        <!--  <i class="fas fa-trash-alt" (click)='confirmDeleteItem(config,position,"content")'></i> -->
+                    </section>
+                    <section class='body-section'>
+                        <ng-container *ngIf='content.type == "text"'>
+                            <section class='part-section'>
+                                {{content.title}}
+                            </section>
+                            <section class='part-section'>
+                                <mat-form-field>
+                                    <input matInput [placeholder]="'Ingresar ' + content.title" type='text'
+                                        class='text-input' [(ngModel)]='content.value' />
+                                </mat-form-field>
+                            </section>
+                        </ng-container>
+                        <ng-container *ngIf='content.type == "image"'>
+                            <section class='part-section'>
+                                {{content.title}}
+                            </section>
+                            <section class='part-section'>
+
+
+                                <!--   <section *ngIf='!content.value' class='part-section-empty-image'
+                                    (click)='showWindowMultimedia(config.content,position);'>
+                                    <i class="fas fa-file-image"></i>
+                                    <p>selecciona una imagen</p>
+                                </section>
+                                <div class='part-section-image-container' *ngIf='content.value'
+                                    (click)='showWindowMultimedia(config.content,position)'>
+                                    <img src="{{content.url_attachment}}{{content.value}}" alt="">
+                                </div> -->
+
+
+                                <section *ngIf='!content.value'>
+                                    <section class='one-image column'>
+                                        <app-uploader
+                                            (selectImage)="selectImageMainWeb($event,config.content,position)">
+                                        </app-uploader>
+                                        <section>
+                                            <button type='button'
+                                                (click)="showWindowMultimedia(config.content, position,listImageField.image,listImageDimension.image)"
+                                                class="primary-button save-button button-subtitle button-width">
+                                                Selecciona desde la galeria
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <div class='part-section-image-container' *ngIf='content.value'
+                                    (click)='showWindowMultimedia(config.content,position,listImageField.image,listImageDimension.image)'>
+                                    <img src="{{content.url_attachment}}{{content.value}}" alt="">
+                                </div>
+
+
+
+                            </section>
+                        </ng-container>
+                        <ng-container *ngIf='content.type == "rich-text"'>
+                            <section class='part-section'>
+                                {{content.title}}
+                            </section>
+                            <section class='part-section'>
+                                <!-- <div id='rich-text' [froalaEditor] [(ngModel)]="content.value"></div> -->
+                                <editor [(ngModel)]="content.value"
+                                    apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                                    [initialValue]="content.value" [init]="tinyEditorConfig"></editor>
+                            </section>
+                        </ng-container>
+                        <ng-container *ngIf='content.type == "list"'>
+                            <section class='part-section'>
+                                {{content.title}}
+                            </section>
+                            <section class='part-section'>
+                                <section id='list-section'>
+                                    <ng-container *ngIf='content.value'>
+                                        <ul>
+                                            <li *ngFor='let listInfo of content.value; let position = index'>
+                                                <section class='list-data' *ngIf='!listInfo.update'>
+                                                    <div class='content-element'>
+                                                        <i class="fas fa-edit" (click)='editList(listInfo)'></i>
+                                                        <i class="fas fa-trash-alt"
+                                                            (click)='confirmDeleteItem(content,position,"value")'></i>
+
+                                                    </div>
+                                                    <div [innerHTML]='listInfo.value' class='list-value'></div>
+                                                </section>
+                                                <section class='list-edit' *ngIf='listInfo.update'>
+                                                    <header>
+                                                        <i class="fas fa-save" (click)='editList(listInfo)'
+                                                            *ngIf='listInfo.update'></i>
+                                                    </header>
+                                                    <!--   <div id='rich-text' [froalaEditor] [(ngModel)]="listInfo.value">
+                                                    </div> -->
+                                                    <editor [(ngModel)]="listInfo.value"
+                                                        apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                                                        [initialValue]="listInfo.value" [init]="tinyEditorConfig">
+                                                    </editor>
+                                                </section>
+                                            </li>
+                                        </ul>
+                                    </ng-container>
+                                    <ng-container>
+                                        <section class='add-new'
+                                            [ngClass]="{'add-new-active': addNewItenmList && position == listIndex}">
+                                            <section *ngIf='addNewItenmList && position == listIndex'>
+                                                <!--  <div id='rich-text' [froalaEditor] [(ngModel)]="dataStatic.newList">
+                                                </div> -->
+                                                <editor [(ngModel)]="dataStatic.newList"
+                                                    apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                                                    [initialValue]="dataStatic.newList" [init]="tinyEditorConfig">
+                                                </editor>
+                                            </section>
+
+                                            <div id='add-button-general' style='border:none'
+                                                *ngIf='!addNewItenmList || position != listIndex'>
+                                                <button type="button" class="primary-button save-button button-subtitle"
+                                                    (click)='addItemList(position)'>
+                                                    <i class="fas fa-plus"></i> &nbsp; agregar item
+                                                </button>
+                                            </div>
+                                            <!-- <i class="fas fa-plus-square" (click)='showModelSection()'></i> -->
+                                            <!-- <button class='button-option button-add' *ngIf='!addNewItenmList || position != listIndex'
+                                (click)='addItemList(position)'>Nuevo
+                                Item</button> -->
+                                            <br>
+                                            <button class='primary-button delete-button button-subtitle'
+                                                *ngIf='addNewItenmList && position == listIndex'
+                                                (click)='finsiItemList()'> <i class="fas fa-times"></i> &nbsp;
+                                                Cancelar</button>
+                                            <button class='primary-button save-button button-subtitle'
+                                                *ngIf='addNewItenmList && position == listIndex'
+                                                (click)='saveItemList(content)'><i class="fas fa-plus"></i>&nbsp;
+                                                Agregar</button>
+
+                                        </section>
+                                    </ng-container>
+                                </section>
+                            </section>
+                        </ng-container>
+                        <ng-container *ngIf='content.type == "array"'>
+                            <section class='part-section'>
+                                {{content.title}}
+                            </section>
+                            <section class='part-section'>
+                                <ng-container>
+                                    <section *ngFor='let array of content.value; let position = index'
+                                        id='dinamic-array'>
+                                        <!-- <i class="fas fa-trash-alt delete-trash-main"
+                                            (click)='confirmDeleteArray(content.value,position)'></i> -->
+                                        <section *ngFor='let obj of array; let positionSection = index'
+                                            id='attribute-section'>
+                                            <i *ngIf="positionSection > 0 || array.length > 1"
+                                                class="fas fa-trash-alt delete-trash"
+                                                (click)='confirmDeleteArray(array,positionSection)'></i>
+                                            <table>
+                                                <tr>
+                                                    <td>
+                                                        <ng-container *ngIf='obj.type == "text"'>
+                                                            <mat-form-field>
+                                                                <input matInput type='text' class='text-input'
+                                                                    [(ngModel)]='obj.value' />
+                                                            </mat-form-field>
+                                                        </ng-container>
+                                                        <ng-container *ngIf='obj.type == "image"'>
+                                                            <section id='container-image'>
+
+
+                                                                <!-- 
+
+                                                                <section *ngIf='!obj.value'
+                                                                    class='part-section-empty-image'
+                                                                    (click)='showWindowMultimedia(array,positionSection);'>
+                                                                    <i class="fas fa-file-image"></i>
+                                                                    <p>selecciona una imagen</p>
+                                                                </section>
+                                                                <div class='part-section-image-container'
+                                                                    *ngIf='obj.value'
+                                                                    (click)='showWindowMultimedia(array,positionSection)'>
+                                                                    <img src="{{obj.url_attachment}}{{obj.value}}"
+                                                                        alt="">
+                                                                </div>
+ -->
+
+                                                                <section *ngIf='!obj.value'>
+                                                                    <section class='one-image column'>
+                                                                        <app-uploader
+                                                                            (selectImage)="selectImageMainWeb($event,array,positionSection)">
+                                                                        </app-uploader>
+                                                                        <section>
+                                                                            <button type='button'
+                                                                                (click)="showWindowMultimedia(array, positionSection)"
+                                                                                class="primary-button save-button button-subtitle button-width">
+                                                                                Selecciona desde la galeria
+                                                                            </button>
+                                                                        </section>
+                                                                    </section>
+                                                                </section>
+                                                                <div class='part-section-image-container'
+                                                                    *ngIf='obj.value'
+                                                                    (click)='showWindowMultimedia(array,positionSection)'>
+                                                                    <img src="{{obj.url_attachment}}{{obj.value}}"
+                                                                        alt="">
+                                                                </div>
+
+
+                                                            </section>
+                                                        </ng-container>
+                                                    </td>
+                                                    <td>
+                                                        <p>Atributos</p>
+                                                        <section
+                                                            *ngFor='let attribute of obj.attribute; let positionAtt = index'>
+                                                            <div>
+                                                                <mat-form-field>
+                                                                    <input matInput type='text' class='text-input'
+                                                                        readonly placeholder="Campo"
+                                                                        [(ngModel)]='attribute.field' />
+                                                                </mat-form-field>
+                                                                <mat-form-field>
+                                                                    <input matInput type='text' class='text-input'
+                                                                        placeholder="Valor"
+                                                                        [(ngModel)]='attribute.value' />
+                                                                </mat-form-field>
+                                                                <!--  <i class="fas fa-trash-alt"
+                                                                    (click)='confirmDeleteArray(obj.attribute,positionAtt)'></i> -->
+                                                            </div>
+                                                        </section>
+                                                        <!-- <div id='add-button-general' style='border:none;justify-content: center;'>
+                                <button type="button" (click)='addArrayAttibute(obj.attribute)'
+                                  class="primary-button save-button button-subtitle">
+                                  <i class="fas fa-plus"></i> &nbsp;Agregar campo/valor
+                                </button>
+  
+                              </div> -->
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </section>
+                                        <section>
+                                            <div id='add-button-general' style='border:none'>
+                                                <button type="button" (click)='addArraySection(array,false)'
+                                                    class="primary-button save-button button-subtitle">
+                                                    <i class="fas fa-plus"></i> &nbsp; Agregar
+                                                    <!-- antes subpropiedad-->
+                                                </button>
+                                            </div>
+                                        </section>
+                                    </section>
+                                </ng-container>
+                                <section>
+                                    <!--  <div id='add-button-general' style='border:none'>
+                                        <button type="button" (click)='addArraySection(content,true)'
+                                            class="primary-button save-button button-subtitle">
+                                            <i class="fas fa-plus"></i> &nbsp; Agregar propiedad UWU
+                                        </button>
+                                    </div> -->
+                                </section>
+                            </section>
+                        </ng-container>
+                        <ng-container *ngIf='content.type == "accordion"'>
+                            <section class='part-section'>
+                                {{content.title}}
+                            </section>
+                            <section class='part-section'>
+                                <ng-container *ngFor='let info of content.value; let positionAccordion = index'>
+                                    <app-dynamic-content-page (showContent)="showWindowMultimedia($event)"
+                                        [config]='info' [objParent]='content.value'
+                                        [positionParent]='positionAccordion'></app-dynamic-content-page>
+                                </ng-container>
+                                <section>
+                                    <div id='add-button-general' style='border:none'>
+                                        <button type="button" class="primary-button save-button button-subtitle"
+                                            (click)='openAddSection(content)'> <i class="fas fa-plus"></i> &nbsp;
+                                            Agregar acordeon
+                                        </button>
+
+                                    </div>
+                                </section>
+                            </section>
+                        </ng-container>
+                        <ng-container *ngIf='content.type == "drop-down"'>
+                            <section class='part-section'>
+                                {{content.title}}
+                            </section>
+                            <section class='part-section'>
+                                <section id='list-section'>
+                                    <ng-container *ngIf='content.value'>
+                                        <ul>
+                                            <li *ngFor='let listInfo of content.value; let position = index'>
+                                                <section class='list-data' *ngIf='!listInfo.update'>
+                                                    <div class='content-element'>
+                                                        <i class="fas fa-edit" (click)='editList(listInfo)'></i>
+                                                        <i class="fas fa-trash-alt"
+                                                            (click)='confirmDeleteItem(content,position,"value")'></i>
+
+                                                    </div>
+                                                    <div class='list-value'> {{listInfo.value}} </div>
+                                                </section>
+                                                <section class='list-edit' *ngIf='listInfo.update'>
+                                                    <header>
+                                                        <i class="fas fa-save" (click)='editList(listInfo)'
+                                                            *ngIf='listInfo.update'></i>
+                                                    </header>
+                                                    <mat-form-field>
+                                                        <input matInput type='text' class='text-input'
+                                                            [(ngModel)]='listInfo.value' />
+                                                    </mat-form-field>
+                                                </section>
+                                            </li>
+                                        </ul>
+                                    </ng-container>
+                                    <ng-container>
+                                        <section class='add-new'
+                                            [ngClass]="{'add-new-active': addNewItenmList && position == listIndex}">
+                                            <section *ngIf='addNewItenmList && position == listIndex'>
+                                                <div id='add-input'>
+                                                    <mat-form-field>
+                                                        <input [placeholder]="'Insertar nuevo item de ' + content.title"
+                                                            matInput type='text' class='text-input'
+                                                            [(ngModel)]='dataStatic.newList' />
+                                                    </mat-form-field>
+                                                </div>
+                                            </section>
+
+                                            <div id='add-button-general'
+                                                *ngIf='!addNewItenmList || position != listIndex'>
+                                                <button type="button" class="primary-button save-button button-subtitle"
+                                                    (click)='addItemList(position)'> <i class="fas fa-plus"></i> &nbsp;
+                                                    Agregar item </button>
+                                            </div>
+                                            <button class='primary-button delete-button button-subtitle'
+                                                *ngIf='addNewItenmList && position == listIndex'
+                                                (click)='finsiItemList()'><i
+                                                    class="fas fa-times"></i>&nbsp;Cancelar</button>
+                                            <button class='primary-button save-button button-subtitle'
+                                                *ngIf='addNewItenmList && position == listIndex'
+                                                (click)='saveItemList(content)'><i
+                                                    class="fas fa-save"></i>&nbsp;Grabar</button>
+
+                                        </section>
+                                    </ng-container>
+                                </section>
+                            </section>
+                        </ng-container>
+                        <ng-container *ngIf='content.type == "email"'>
+                            <div class="part-section">Formulario de email</div>
+                            <div class="part-section">
+                                <section class='component-add' (click)='goComponent(content.value)'>
+                                    <i class="fas fa-newspaper"></i> {{content.title}}
+                                </section>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf='content.type == "property"'>
+                            <section class='part-section'>
+                                {{content.title}}
+                            </section>
+                            <section class='part-section'>
+                                <app-list-property [listEnterpriseInfo]='content'></app-list-property>
+                            </section>
+                        </ng-container>
+                    </section>
+                </section>
+            </ng-container>
+            <div id='add-button-general'
+                [ngClass]="{'show-button-general': config.accordion && config.accordion_show ,'hide-button-general': config.accordion && !config.accordion_show}">
+                <!--  <button type="button" class="primary-button save-button button-subtitle center-button"
+                    (click)='showModelSection()'><i class="fas fa-plus"></i> &nbsp; Agregar
+                    propiedad</button> -->
+                <!-- <i class="fas fa-plus-square" (click)='showModelSection()'></i> -->
+            </div>
+        </section>
+
+    </section>
+</ng-container>
+
+<!-- modales -->
+<article class='container-modal' *ngIf='showModalNewSection'>
+    <section class='modal-body modal-small'>
+        <header>
+            <strong>Nueva Propiedad</strong>
+            <div id="close-button" (click)="close()">&times;</div>
+        </header>
+        <section class='body'>
+            <div>
+                <mat-form-field>
+                    <mat-select placeholder="Tipo" name="type" [(ngModel)]='listTypeField.type'
+                        (ngModelChange)='optionTypeChange()'>
+                        <mat-option *ngFor="let addElement of listOptionAddElement" [value]="addElement.field">
+                            {{addElement.value}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngIf='!listTypeField.addOption && selectModalSectionOption'>
+                <mat-form-field>
+                    <input matInput type="text" placeholder="Nombre de la propiedad" [(ngModel)]='listTypeField.value'
+                        autocomplete="off">
+                </mat-form-field>
+            </div>
+            <div *ngIf='listTypeField.addOption && selectModalSectionOption'>
+                <div>
+                    <mat-form-field>
+                        <input matInput type="text" placeholder="Nombre de la propiedad"
+                            [(ngModel)]='listTypeField.name_field' (ngModelChange)='changeFielNameList()'
+                            autocomplete="off">
+                    </mat-form-field>
+                </div>
+                <mat-form-field>
+                    <mat-select placeholder="{{optionAddComponent.placeholder}}" name="type"
+                        [(ngModel)]='listTypeField.componentOption' (ngModelChange)='selectComponentOption()'>
+                        <mat-option *ngFor="let addElement of optionAddComponent.options" [value]="addElement._id">
+                            {{addElement.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </section>
+        <footer>
+            <button class='primary-button button-subtitle cancel-button' (click)='closeModal()'>Cancelar</button>
+            <button class='primary-button save-button button-subtitle save-button-style'
+                (click)='createNewSection()'>Aceptar</button>
+        </footer>
+    </section>
+</article>
+<!-- modales -->
+<article class='container-modal' *ngIf='showModalArrayNewSection'>
+    <section class='modal-body modal-small'>
+        <header>
+            <strong>Nueva Propiedad</strong>
+        </header>
+        <section class='body'>
+            <div>
+                <mat-form-field>
+                    <mat-select placeholder="Tipo" name="type" [(ngModel)]='listTypeField.type'
+                        (ngModelChange)='optionTypeChange()'>
+                        <mat-option *ngFor="let addElement of listOptionAddElementArray" [value]="addElement.field">
+                            {{addElement.value}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </section>
+        <footer>
+            <button class='primary-button button-subtitle cancel-button' (click)='closeModalArray()'>Cancelar</button>
+            <button class='primary-button save-button button-subtitle save-button-style'
+                (click)='createNewArray(listTypeField.type)'>Aceptar</button>
+        </footer>
+    </section>
+</article>
+<app-dialog-add-section #addNewSection (getInfo)=createNewAccordion($event)></app-dialog-add-section>
+<app-dialog-confirm (answerModal)="acceptModal($event)"></app-dialog-confirm>

@@ -1,0 +1,490 @@
+<!-- <h1 class="title" *ngIf="!idDiscountRule && !embeddedUpdate">
+  NUEVA REGLA DE DESCUENTO
+</h1>
+<h1 class="title" *ngIf="idDiscountRule || embeddedUpdate">
+  EDITAR REGLA DE DESCUENTO
+</h1> -->
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<section class="container  window-buttton container-empty">
+  <section *ngIf="!isEmbedded" class="return" (click)="returnDiscountRule()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="header">
+    <section class="buttons-container">
+      <button class="button-option button-danger" (click)="confirmDeleteItem()"
+        *ngIf="!headerFixed && idDiscountRule && !isEmbedded">
+        <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+      </button>
+      <button *ngIf="isEmbedded" class="primary-button save-button" (click)="saveDiscountRule(true)">
+        <i class="fas fa-save"></i>
+        <span>Guardar y cerrar</span>
+      </button>
+      <button class="primary-button save-button" (click)="saveDiscountRule(false)">
+        <i class="fas fa-save"></i>
+        <span>{{
+          isEmbedded
+          ? embeddedUpdate
+          ? "Actualizar"
+          : "Agregar"
+          : "Guardar y nuevo"
+          }}</span>
+      </button>
+    </section>
+  </section>
+</section>
+
+<section class="container  window-buttton header-fixed" *ngIf="headerFixed && !isEmbedded">
+  <section class="return" (click)="returnDiscountRule()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button class="button-option button-confirm" (click)="saveDiscountRule()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section>
+<div class="content">
+  <form [formGroup]="discountRuleForm">
+    <section class="container-partition">
+      <!--start left panel section-->
+      <section class="p-row p-ten cont-left">
+        <section class="container-row">
+          <p class="sub-tittle">Nombre</p>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" maxlength="50" placeholder="Nombre de la regla de descuento"
+                class="form-control" formControlName="name" autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="f.name.errors">
+              <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="f.name.errors.maxlength && (f.name.touched || submitted)">
+                La cantidad máxima de caracteres es de 50
+              </mat-error>
+            </ng-container>
+            <ng-container>
+              <mat-error *ngIf="this.nameExists !== undefined">
+                El nombre de la regla de descuento ya existe
+              </mat-error>
+            </ng-container>
+          </div>
+
+          <div>
+            <label id="sonr-radio-group-label">Selecciona una regla</label>
+            <mat-radio-group aria-label="sonr-radio-group-label" class="sonr-radio-group" formControlName="options">
+              <mat-radio-button class="sonr-radio-button" *ngFor="let rule of rules" [value]="rule._id"
+                [disabled]="isDisabled" (click)="!isDisabled && sendValue(rule.value)">{{ rule.value }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </section>
+      </section>
+      <!--end left panel section-->
+
+      <!--Attribute start section-->
+      <section class="p-row p-ten cont-right" *ngIf="selectedRuleType === 'Atributo'">
+        <section class="container-row">
+          <p class="sub-tittle">Atributo</p>
+          <section>
+            <div>
+              <mat-form-field>
+                <mat-select placeholder="atributo" (selectionChange)="selectedAttr($event)" formControlName="attribute"
+                  name="attribute">
+                  <mat-option *ngFor="let attr of listTypeAttr" [value]="attr._id">
+                    {{ attr.value }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field *ngIf="
+              selectedAttrbiute !== 'campaña' &&
+              selectedAttrbiute !== 'categoria' &&
+              selectedAttrbiute !== 'seller' &&
+              selectedAttrbiute !== 'filtros'
+              ">
+                <mat-select placeholder="campo de atributo" (selectionChange)="selectedFieldAttr($event)" formControlName="attributeField" name="attributeField">
+                  <mat-option *ngFor="let attrField of listTypeAttrField" [value]="attrField._id">
+                    {{ attrField.value }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <ng-container *ngIf="
+                  selectedAttrbiuteField !== 'marca' &&
+                  selectedAttrbiuteField !== 'sku' &&
+                  selectedAttrbiute !== 'campaña' &&
+                  selectedAttrbiute !== 'categoria' &&
+                  selectedAttrbiute !== 'filtros' &&
+                  selectedAttrbiute !== 'seller'
+                ">
+                <section class="p-five p-row">
+                  <mat-form-field>
+                    <mat-select placeholder="operador" formControlName="operator" name="operator">
+                      <mat-option *ngFor="let operator of listOperators" [value]="operator._id">
+                        {{ operator.value }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </section>
+                <section class="p-five p-row">
+                  <mat-form-field>
+                    <input matInput type="number" placeholder="ingrese valor" class="form-control"
+                      formControlName="attrValue" autocomplete="off" />
+                  </mat-form-field>
+                  <ng-container *ngIf="f.attrValue.errors">
+                    <mat-error *ngIf="
+                        f.attrValue.errors.required &&
+                        (f.attrValue.touched || submitted)
+                      ">
+                      El campo es obligatorio
+                    </mat-error>
+                  </ng-container>
+                </section>
+              </ng-container>
+
+              <ng-container *ngIf="selectedAttrbiute === 'filtros'">
+                <mat-form-field>
+                  <mat-select placeholder="tipo de filtro" formControlName="ruleTypeFilter" 
+                    name="ruleTypeFilter">
+                    <mat-option *ngFor="let type of listRuleTypeFilter" [value]="type._id">
+                      {{type.value}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <ng-container *ngIf="f.ruleTypeFilter.value">
+                  <mat-form-field *ngIf="formatFilterTypeId(f.ruleTypeFilter.value) === 'campaña'">
+                    <mat-select placeholder="nombre de la campaña" formControlName="entityFilterId"
+                      name="entityFilterId" (selectionChange)="getCampaignFilters($event.value)">
+                      <mat-option *ngFor="let campaign of campaignList" [value]="campaign._id">
+                        {{ campaign.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field *ngIf="formatFilterTypeId(f.ruleTypeFilter.value) === 'categoria'">
+                    <mat-select placeholder="nombre de la categoria" formControlName="entityFilterId"
+                      name="entityFilterId" (selectionChange)="getCategoryFilters($event.value)">
+                      <mat-option *ngFor="let category of categoryList" [value]="category._id">
+                        {{ category.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </ng-container>
+                <ng-container *ngIf="listFilters">
+                  <mat-form-field *ngIf="listFilters.length > 0">
+                    <mat-select placeholder="filtro" formControlName="filterId"
+                      name="filterId" (selectionChange)="setArrayFilters($event.value)">
+                      <mat-option *ngFor="let filter of listFilters" [value]="filter._id">
+                        {{ filter.filter.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <ng-container *ngIf="filterValues && filterValues.type !== 'range'">
+                    <mat-form-field>
+                      <mat-select placeholder="valor" formControlName="filterValue"
+                        name="filterValue" (selectionChange)="selectFilterValue($event)">
+                        <ng-container *ngIf="filterValues.type === 'checkbox' ">
+                          <mat-option *ngFor="let value of filterValues.values" [value]="value">
+                            {{ value }}
+                          </mat-option>
+                        </ng-container>
+                        <ng-container *ngIf="filterValues.type === 'boolean' ">
+                          <mat-option [value]="true">Sí</mat-option>
+                          <mat-option [value]="false">No</mat-option>
+                        </ng-container>
+                      </mat-select>
+                    </mat-form-field>
+                  </ng-container>
+                  <ng-container *ngIf="filterValues && filterValues.type === 'range'">
+                    <mat-form-field>
+                      <input matInput #numberValue type="number" [placeholder]="filterValues.minValue && filterValues.maxValue ? getMinMaxRange() : 'valor'"
+                        min="filterValues.minValue" max="filterValues.maxValue" (keydown.space)="$event.stopPropagation()" (change)="selectFilterValue($event, numberValue.value)"
+                        formControlName="filterValue" name="filterValue" autocomplete="off">
+                      <!-- oninput="value == '' ? value = null : value < campaignFilterValues.minValue ? value = null : value > campaignFilterValues.maxValue ? value = null : false"
+                      formControlName="campaignFilterValue" name="campaignFilterValue" -->
+                    </mat-form-field>
+                  </ng-container>
+                </ng-container>
+
+                
+              </ng-container>
+              <mat-form-field *ngIf="
+                  selectedAttrbiuteField === 'marca' &&
+                  selectedAttrbiute === 'producto'
+                ">
+                <mat-select placeholder="nombre de la marca" formControlName="productBrandField"
+                  name="productBrandField">
+                  <mat-option *ngFor="let brand of brandList" [value]="brand._id">
+                    {{ brand.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="example-full-width" *ngIf="
+                  selectedAttrbiuteField === 'sku' &&
+                  selectedAttrbiute === 'producto'
+                ">
+                <input type="text" placeholder="Buscar SKU" matInput formControlName="search_sku"
+                  [matAutocomplete]="auto" />
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of listSKUProduct" [value]="option.SKU">
+                    <div (click)="addSKU(option, 'listAddSku', 'SKU')">
+                      {{ option.SKU }} - {{ option.name }}
+                    </div>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+              <section style="margin-bottom: 1.5em;" *ngIf="
+                  listAddSku.length > 0 &&
+                  selectedAttrbiuteField === 'sku' &&
+                  selectedAttrbiute === 'producto'
+                ">
+                <div class="example-list">
+                  <div class="example-box" *ngFor="let product of listAddSku; let position = index">
+                    <span>{{ product.SKU }} - {{ product.name }}</span>
+                    <div (click)="deleteSkuList(position, 'listAddSku')" class="delete-drop-item">
+                      <i class="fas fa-trash-alt"></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="error" *ngIf="duplicateSKU">
+                  El SKU ya ha sido agregado
+                </p>
+              </section>
+
+              <mat-form-field *ngIf="selectedAttrbiute === 'campaña'">
+                <mat-select placeholder="nombre de la campaña" formControlName="campaignNameField"
+                  name="campaignNameField">
+                  <mat-option *ngFor="let campaign of campaignList" [value]="campaign._id">
+                    {{ campaign.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field *ngIf="selectedAttrbiute === 'categoria'">
+                <mat-select placeholder="nombre de la categoria" formControlName="categoryNameField"
+                  name="categoryNameField">
+                  <mat-option *ngFor="let category of categoryList" [value]="category._id">
+                    {{ category.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field *ngIf="selectedAttrbiute === 'seller'">
+                <mat-select placeholder="nombre del seller" formControlName="sellerNameField"
+                  name="sellerNameField">
+                  <mat-option *ngFor="let seller of sellerList" [value]="seller._id">
+                    {{ seller.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </section>
+        </section>
+      </section>
+      <!--Attribute end section-->
+
+      <!--Date start section-->
+      <section class="p-row p-ten cont-right" *ngIf="selectedRuleType === 'Fecha'">
+        <section class="container-row">
+          <p class="sub-tittle">Fecha</p>
+
+          <form [formGroup]="dateForm">
+            <section class="p-row p-five cont-left">
+              <mat-form-field>
+                <input matInput [matDatepicker]="dp3" [max]="dateForm.controls.end_date_offer.value" placeholder="Desde"
+                  class="form-control" formControlName="initial_date_offer" [attr.disabled]="true" />
+                  <!-- <input matInput type="datetime-local" [max]="dateForm.controls.end_date_offer.value" placeholder="Desde" class="form-control" formControlName="initial_date_offer" [attr.disabled]="true" /> -->
+                <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                <!-- <ng-container *ngIf="infoCompare.request_change">
+                  <mat-error
+                    *ngIf="
+                      infoCompare.initial_date_offer !=
+                      infoCompare.request_change.initial_date_offer
+                    "
+                  >
+                    Cambio:
+                    {{
+                      infoCompare.request_change.initial_date_offer
+                        | date: "dd/MM/yyyy"
+                    }}
+                  </mat-error>
+                </ng-container> -->
+              </mat-form-field>
+            </section>
+
+            <section class="p-row p-five cont-left">
+              <mat-form-field>
+                <input matInput [matDatepicker]="dp4" [min]="dateForm.controls.initial_date_offer.value" placeholder="Hasta" class="form-control" formControlName="end_date_offer" [attr.disabled]="true" />
+                <!-- <input matInput type="datetime-local" [min]="dateForm.controls.initial_date_offer.value" placeholder="Hasta" class="form-control" formControlName="end_date_offer" [attr.disabled]="true" /> -->
+                <mat-datepicker-toggle matSuffix [for]="dp4"></mat-datepicker-toggle>
+                <mat-datepicker #dp4 disabled="false"></mat-datepicker>
+              </mat-form-field>
+              <!-- <ng-container *ngIf="infoCompare.request_change">
+                <mat-error
+                  *ngIf="
+                    infoCompare.end_date_offer !=
+                    infoCompare.request_change.end_date_offer
+                  "
+                >
+                  Cambio:
+                  {{
+                    infoCompare.request_change.end_date_offer | date: "dd/MM/yyyy"
+                  }}
+                </mat-error>
+              </ng-container> -->
+            </section>
+            <ng-container *ngIf="
+                dateForm.errors &&
+                ((dateForm.controls.initial_date_offer.touched &&
+                  dateForm.controls.end_date_offer.touched) ||
+                  submitted)
+              ">
+              <mat-error>
+                {{ dateForm.errors?.notValid }}
+              </mat-error>
+            </ng-container>
+          </form>
+        </section>
+      </section>
+      <!--Date end section-->
+
+      <!--Bines start section-->
+      <section class="p-row p-ten cont-right" *ngIf="selectedRuleType === 'Bines'">
+        <section class="container-row">
+          <p class="sub-tittle">Bines</p>
+
+          <mat-form-field>
+            <input matInput type="text" placeholder="ingrese bines separados por comas" class="form-control"
+              formControlName="bines" />
+          </mat-form-field>
+          <ng-container *ngIf="f.bines.errors">
+            <mat-error *ngIf="f.bines.errors.required && (f.bines.touched || submitted)">
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </section>
+      </section>
+      <!--Bines end section-->
+
+      <!--Text start section-->
+      <section class="p-row p-ten cont-right" *ngIf="selectedRuleType === 'Texto'">
+        <section class="container-row">
+          <p class="sub-tittle">Texto</p>
+
+          <mat-form-field>
+            <input matInput type="text" placeholder="ingrese un texto" class="form-control"
+              formControlName="texto" />
+          </mat-form-field>
+          <ng-container *ngIf="f.texto.errors">
+            <mat-error *ngIf="f.texto.errors.required && (f.texto.touched || submitted)">
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </section>
+      </section>
+      <!--Text end section-->
+
+      <!--Ubigeo start section-->
+      <section class="p-row p-ten cont-right" *ngIf="selectedRuleType === 'Ubigeo'">
+        <section class="container-row">
+          <p class="sub-tittle">Ubigeo</p>
+          <section class="container">
+            <mat-form-field>
+              <mat-select placeholder="Departamento" formControlName="departamento" name="departamento">
+                <mat-option *ngFor="let departamento of listDepartamentos" [value]="departamento._id">
+                  {{ departamento.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-select placeholder="Provincia" formControlName="provincia" name="provincia">
+                <mat-option *ngFor="let provincia of listProvincias" [value]="provincia._id">
+                  {{ provincia.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-select placeholder="Distrito" formControlName="distrito" name="distrito">
+                <mat-option *ngFor="let distrito of listDistritos" [value]="distrito._id">
+                  {{ distrito.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button (click)="addDistrict()" class="button-option button-confirm">
+              Agregar
+            </button>
+            <hr />
+
+            <section class="container-table header-table">
+              <section class="left">
+                <p>Cantidad {{ ubigeoDataSource?.length }} Items</p>
+              </section>
+            </section>
+
+            <section>
+              <section>
+                <table>
+                  <thead>
+                    <tr>
+                      <td class="header-grid">
+                        <p>Nombre</p>
+                      </td>
+                      <td class="header-grid">
+                        <p>Ubigeo</p>
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngFor="let data of ubigeoDataSource; let i = index">
+                      <tr>
+                        <td>
+                          <span> {{ data.name }}</span>
+                        </td>
+                        <td>
+                          <span> {{ data.ubigeo }}</span>
+                        </td>
+
+                        <td class="delete-table">
+                          <i class="fas fa-trash-alt delete" (click)="deleteDistrict(i)">
+                          </i>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </section>
+            </section>
+          </section>
+          <hr />
+        </section>
+      </section>
+      <!--Ubigeo end section-->
+
+      <!--Campaña start section-->
+      <section class="p-row p-ten cont-right" *ngIf="selectedRuleType === 'Primera compra en Campaña'">
+        <section class="container-row">
+          <p class="sub-tittle">Campaña</p>
+          <section class="container">
+            <mat-form-field>
+              <mat-select placeholder="Campaña" formControlName="campaignNameField" name="campaignNameField">
+                <mat-option *ngFor="let campaign of campaignList" [value]="campaign._id">
+                  {{ campaign.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <hr />
+          </section>
+          <hr />
+        </section>
+      </section>
+      <!--Campaña end section-->
+    </section>
+  </form>
+</div>

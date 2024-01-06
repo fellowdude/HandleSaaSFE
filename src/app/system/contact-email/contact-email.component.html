@@ -1,0 +1,71 @@
+<div class="fake-header">
+</div>
+<div class="header">
+  <div class="container">
+    <div class="title">Listado de Contactos</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)='createContact()'><i class="fas fa-plus-circle"></i> Agregar
+        Contacto</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <section class="container">
+    <app-grid #gridList (actionAnswer)="actionAnswer($event)" > </app-grid>
+  </section>
+</div>
+<!-- modales -->
+<article class="container-modal" *ngIf="showPopupContact">
+  <section class="modal-body modal-small">
+    <header>
+      Contacto de email
+      <div id="close-button" (click)="close()">&times;</div>
+    </header>
+    <section class="body">
+      <form [formGroup]="contactEmailForm">
+        <div>
+          <mat-form-field>
+            <input matInput type="text" maxlength="50" placeholder="Usuario" class="form-control" formControlName="name"
+              autocomplete="off" />
+          </mat-form-field>
+          <ng-container *ngIf="f.name.errors">
+            <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+              El campo es obligatorio
+            </mat-error>
+            <mat-error *ngIf="f.name.errors.maxlength && (f.name.touched || submitted)">
+              La cantidad máxima de caracteres es de 50
+            </mat-error>
+          </ng-container>
+        </div>
+
+        <div>
+          <mat-form-field>
+            <input matInput type="email" maxlength="80" placeholder="Correo" class="form-control"
+              formControlName="email" autocomplete="off" />
+          </mat-form-field>
+          <ng-container *ngIf="f.email.errors">
+            <mat-error *ngIf="f.email.errors.required && (f.email.touched || submitted)">
+              El campo es obligatorio
+            </mat-error>
+            <mat-error *ngIf="f.email.errors.email && (f.email.touched || submitted)">
+              Debe ingresar un correo válido (correo@dominio.com)
+            </mat-error>
+            <mat-error *ngIf="f.email.errors.maxlength && (f.email.touched || submitted)">
+              La cantidad máxima de caracteres es de 80
+            </mat-error>
+          </ng-container>
+        </div>
+      </form>
+    </section>
+    <footer>
+      <button class="primary-button button-subtitle cancel-button" (click)="close()">
+        Cancelar
+      </button>
+      <button class="primary-button save-button button-subtitle save-button-style" (click)="saveContact()">
+        Grabar
+      </button>
+    </footer>
+  </section>
+</article>
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>

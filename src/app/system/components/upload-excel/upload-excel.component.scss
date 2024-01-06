@@ -1,0 +1,44 @@
+@import "../../../../variables.scss";
+:host {
+  a {
+    text-decoration: none;
+    color: $color-dark;
+    p {
+      color: $color-dark;
+    }
+  }
+  header {
+    position: relative;
+    #close-button {
+      position: absolute;
+      right: 4%;
+      font-size: 25px;
+      color: gray;
+      cursor: pointer;
+      top: 10%;
+    }
+  }
+  #section-error {
+    margin: 1em;
+    color: #ff4081;
+    font-size: 12px;
+  }
+  .body {
+    .section-file {
+      cursor: pointer;
+      i {
+        font-size: 35px;
+        color: $color-background;
+        margin-bottom: 10px;
+      }
+    }
+  }
+  .col-50{
+    width: 47% !important;
+    max-width: initial !important;
+  }
+  .col-100{
+    width: 100% !important;
+    max-width: initial !important;
+  }
+}

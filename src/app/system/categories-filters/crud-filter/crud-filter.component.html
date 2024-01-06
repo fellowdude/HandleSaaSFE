@@ -1,0 +1,116 @@
+<div class="fake-header">
+</div>
+<div class="header">
+  <div class="container">
+    <div class="return-button"><i (click)='historyBack()' class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idProduct">Nuevo Filtro</div>
+    <div class="title" *ngIf="idProduct">Edición de Filtro</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button " *ngIf='idProduct' (click)='confirmDeleteItem()'><i
+          class="fas fa-trash-alt"></i> &nbsp;
+        Eliminar</button>
+      <button type="button" class="primary-button " (click)='saveFilter()'><i class="fas fa-save"></i> &nbsp;
+        Guardar</button>
+    </div>
+  </div>
+</div>
+
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<div class="content">
+  <!--  <section class="container  window-buttton">
+    <section class="return" (click)="historyBack()">
+      <i class="fas fa-chevron-left"></i>
+    </section>
+    <section class="buttons-list">
+      <button class="button-option button-danger" (click)="confirmDeleteItem()" *ngIf="!headerFixed && idProduct">
+        <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+      </button>
+
+      <button class="button-option button-confirm" (click)="saveFilter()">
+        <i class="fas fa-save"></i> <span>Guardar</span>
+      </button>
+    </section>
+  </section> -->
+
+  <!-- <section class="container  window-buttton header-fixed" *ngIf="headerFixed">
+    <section class="return" (click)="historyBack()">
+      <i class="fas fa-chevron-left"></i>
+    </section>
+    <section class="buttons-list">
+      <button class="button-option button-confirm" (click)="saveFilter()">
+        <i class="fas fa-save"></i> <span>Guardar</span>
+      </button>
+    </section>
+  </section> -->
+
+
+  <form [formGroup]="filterForm">
+    <section class="container-partition">
+      <section class="p-row p-four cont-left">
+        <section class="container-row">
+          <p class="subtitle main-subtitle subtitle-container"> Detalle del Filtro</p>
+          <br>
+          <mat-form-field>
+            <input matInput type="text" placeholder="Nombre del Filtro" class="form-control" formControlName="name"
+              autocomplete="off" />
+
+          </mat-form-field>
+          <ng-container *ngIf="f.name.errors">
+            <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+          <mat-form-field>
+            <textarea matInput placeholder="Descripción" formControlName="description"></textarea>
+
+          </mat-form-field>
+          <ng-container *ngIf="f.description.errors">
+            <mat-error *ngIf="f.description.errors.required && (f.description.touched || submitted)">
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+
+          <mat-form-field>
+            <mat-label>Tipo</mat-label>
+            <mat-select name="type" formControlName="type" placeholder="Tipo">
+              <mat-option value="checkbox"> Checkbox </mat-option>
+              <mat-option value="radio"> Radio </mat-option>
+              <mat-option value="range"> Rango </mat-option>
+              <mat-option value="boolean"> Switch (Si/No)</mat-option>
+            </mat-select>
+
+          </mat-form-field>
+          <ng-container *ngIf="f.type.errors">
+            <mat-error *ngIf="f.type.errors.required && (f.type.touched || submitted)">El campo es obligatorio
+            </mat-error>
+          </ng-container>
+          <mat-checkbox formControlName="binded">Usar campo existente</mat-checkbox>
+          <ng-container *ngIf="f.binded.errors">
+            <mat-error *ngIf="f.binded.errors.required && (f.binded.touched || submitted)">El campo es obligatorio
+            </mat-error>
+          </ng-container>
+          <mat-form-field *ngIf="f.binded.value">
+            <mat-label>Campo Existente</mat-label>
+            <mat-select name="type" formControlName="bindedTo" placeholder="Campo Existente">
+              <mat-option value="marca"> Marca</mat-option>
+              <mat-option value="precio"> Precio </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <ng-container *ngIf="f.bindedTo.errors">
+            <mat-error *ngIf="f.bindedTo.errors.required && (f.bindedTo.touched || submitted)">El campo es obligatorio
+            </mat-error>
+          </ng-container>
+          <mat-form-field>
+            <input matInput type="text" placeholder="Unidad (Opcional)" class="form-control" formControlName="unit"
+              autocomplete="off" />
+          </mat-form-field>
+        </section>
+      </section>
+      <!-- <section class="p-row p-six cont-right">
+      <section class="container-row">
+
+      </section>
+    </section> -->
+    </section>
+  </form>
+</div>

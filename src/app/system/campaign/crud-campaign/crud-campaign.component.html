@@ -1,0 +1,1090 @@
+<app-upload-excel #uploadExcelFilter (resultInfo)="resultInfoFilter($event)" [processType]="'massive-product-filter'">
+</app-upload-excel>
+<app-upload-excel #uploadExcelVisibility (resultInfo)="resultInfoExcel($event)"
+  [processType]="'massive-product-active'">
+</app-upload-excel>
+<article class="container-modal" *ngIf="showSummary">
+  <section class="modal-body modal-big">
+    <header class='card-title' [ngSwitch]="listProcessFilter.processType">
+      <label *ngSwitchCase="'massive-product-filter'">Actualización de filtros</label>
+      <label *ngSwitchCase="'massive-product-active'">Activación de productos</label>
+    </header>
+    <section class="body column container-table-summary">
+      <section class="row" *ngIf="listProcessFilter.summary">
+        <div class="col-40">
+          <div class="container-summary color-save">
+            <div class="number-summary">{{listProcessFilter.summary.total}}</div>
+            <div class="text-summary">Total</div>
+          </div>
+        </div>
+        <div class="col-30">
+          <div class="container-summary color-update">
+            <div class="number-summary">{{listProcessFilter.summary.save}}</div>
+            <div class="text-summary">Grabado</div>
+          </div>
+        </div>
+        <div class="col-30">
+          <div class="container-summary color-error">
+            <div class="number-summary">{{listProcessFilter.summary.error}}</div>
+            <div class="text-summary">Error</div>
+          </div>
+        </div>
+      </section>
+      <table>
+        <thead>
+          <tr>
+            <th [ngStyle]='{width: "125px"}'>SKU</th>
+            <th>Producto</th>
+            <th>Estado</th>
+            <th>Mensaje de error</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let filter of listProcessFilter.info.listProcess">
+            <td [ngStyle]='{width: "125px"}'>{{ filter.SKU }}</td>
+            <td>{{ filter.product }}</td>
+            <td>
+              <label *ngIf="filter.save" [ngClass]="{ 'valid-true': filter.save }">
+                <ng-container [ngSwitch]="listProcessFilter.processType">
+                  <label *ngSwitchCase="'massive-product-filter'">Ha sido agregado</label>
+                  <!-- <label *ngSwitchCase="'massive-product-active'">Ha sido actualizado</label> -->
+                </ng-container>
+              </label>
+              <label *ngIf="filter.update" [ngClass]="{ 'valid-update': filter.update }">
+                <ng-container [ngSwitch]="listProcessFilter.processType">
+                  <label *ngSwitchCase="'massive-product-filter'">Ha sido actualizado </label>
+                </ng-container>
+              </label>
+              <label *ngIf="!filter.save && !filter.update"
+                [ngClass]="{ 'valid-false': !filter.save && !filter.update}">
+                <ng-container [ngSwitch]="listProcessFilter.processType">
+                  <label *ngSwitchCase="'massive-product-filter'">No pudo ser agregado</label>
+                  <label *ngSwitchCase="'massive-product-active'">No pudo ser actualizado</label>
+                </ng-container>
+              </label>
+              <!-- <label *ngIf="filter.save" [ngClass]="{ 'valid-true': filter.save }">Ha sido agregado</label>
+              <label *ngIf="filter.update" [ngClass]="{ 'valid-update': filter.update }">Ha sido actualizado </label>
+              <label *ngIf="!filter.save && !filter.update"
+                [ngClass]="{ 'valid-false': !filter.save  && !filter.update}">No
+                pudo ser agregado</label> -->
+            </td>
+            <td>{{ filter.error }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <footer>
+      <button type="button" class="primary-button" (click)="closeSummary()">
+        Cerrar
+      </button>
+    </footer>
+  </section>
+</article>
+<div class="fake-header"></div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed && !headerRuleFixed }">
+  <div class="container">
+    <div class="return-button">
+      <i (click)="returnCampaign()" class="fas fa-chevron-left"></i>
+    </div>
+    &nbsp;
+    <div class="title" *ngIf="!idCampaign">Nueva Campaña</div>
+    <div class="title" *ngIf="idCampaign">Edición de Campaña</div>
+    <div class="buttons-container">
+      <ng-container>
+        <button type="button" class="primary-button" *ngIf='idCampaign' (click)="uploadVisibility()">
+          <i class="fas fa-upload"></i> Activación Masiva
+        </button>
+        <button type="button" class="primary-button" *ngIf='idCampaign' (click)="uploadCampaignFilter()">
+          <i class="fas fa-upload"></i> Carga de filtros
+        </button>
+        <button type="button" class="primary-button" (click)="confirmDeleteItem()" *ngIf="idCampaign">
+          <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+        </button>
+        <button type="button" class="primary-button" (click)="validateProductSave()">
+          <i class="fas fa-save"></i> &nbsp; Guardar
+        </button>
+      </ng-container>
+      <app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+      <app-dialog-reason #dialogReason (answerModal)="getReason($event)"></app-dialog-reason>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <form [formGroup]="campaignForm">
+    <section class="container-partition">
+      <section class="p-row p-three cont-left">
+        <section class="row divisor">
+          <section class="container-row">
+            <p class="main-subtitle subtitle-container">
+              Características de la campaña
+            </p>
+            <br />
+            <section class="visibilityCampaign">
+              <section>Campaña activa</section>
+              <section id="slide">
+                <span *ngIf="f.active.value">Si</span> &nbsp;
+                <span *ngIf="!f.active.value">No</span> &nbsp;
+                <mat-slide-toggle formControlName="active"></mat-slide-toggle>
+              </section>
+            </section>
+            <br />
+            <!-- <section class="visibilityCampaign">
+              <section>Delivery gratis</section>
+              <section id="slide">
+                <span *ngIf="f.delivery.value">Si</span> &nbsp;
+                <span *ngIf="!f.delivery.value">No</span> &nbsp;
+                <mat-slide-toggle formControlName="delivery"></mat-slide-toggle>
+              </section>
+            </section> -->
+            <br />
+            <div>
+              <mat-form-field>
+                <mat-select placeholder="Grupo" name="type" class="form-control" formControlName="group">
+                  <mat-option *ngFor="let addElement of groupList" [value]="addElement._id">
+                    {{ addElement.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <ng-container *ngIf="f.group.errors">
+                <mat-error *ngIf="
+                    f.group.errors.required && (f.group.touched || submitted)
+                  ">
+                  El campo es obligatorio
+                </mat-error>
+              </ng-container>
+            </div>
+
+            <section *ngIf="f.group.value">
+              <form [formGroup]="filterForm">
+                <section>
+                  <p>Flujo de visualización</p>
+                  <div></div>
+                  <div>
+                    <div class="add-type">
+                      <mat-form-field>
+                        <mat-select name="type" class="form-control" formControlName="filterFlow">
+                          <ng-container *ngFor="let addElement of listFlowArray">
+                            <mat-option [value]="addElement.nameList">
+                              {{ addElement.nameList }}
+                            </mat-option>
+                          </ng-container>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </section>
+              </form>
+              <ng-container *ngIf="selectFlow && selectFlow.length == 0">
+                <mat-error *ngIf="f.flow.touched || submitted">
+                  Necesita definir un flujo
+                </mat-error>
+              </ng-container>
+            </section>
+
+            <mat-form-field>
+              <input matInput type="text" maxlength="50" placeholder="Nombre de la campaña" class="form-control"
+                formControlName="name" autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="f.name.errors">
+              <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="f.name.errors.maxlength && (f.name.touched || submitted)">
+                La cantidad máxima de caracteres es de 50
+              </mat-error>
+            </ng-container>
+
+            <br />
+            <mat-form-field>
+              <input matInput type="text" maxlength="50" placeholder="Nombre de precio de descuento"
+                class="form-control" formControlName="discount_name" autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="f.discount_name.errors">
+              <mat-error *ngIf="
+                  f.discount_name.errors.maxlength &&
+                  (f.discount_name.touched || submitted)
+                ">
+                La cantidad máxima de caracteres es de 50
+              </mat-error>
+            </ng-container>
+
+            <p class="label-title">URL</p>
+            <p class="label-info">
+              {{ f.friendly_url.value }}
+            </p>
+            <!-- 
+            <mat-form-field>
+              <input matInput type="text" placeholder="URL" class="form-control" formControlName="friendly_url"
+                autocomplete="off" [readonly]="true" />
+            </mat-form-field> -->
+
+            <!--   <ng-container *ngIf="f.friendly_url.errors">
+              <mat-error *ngIf="
+                  f.friendly_url.errors.required &&
+                  (f.friendly_url.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container> -->
+          </section>
+        </section>
+
+        <section class="container-general row">
+          <section class="p-row p-ten cont-left">
+            <section class="container-row">
+              <p class="main-subtitle subtitle-container">Sello de Categoría</p>
+              <br />
+
+              <section class="visibility">
+                <section>Activar sello de Categoría</section>
+                <section id="slide">
+                  <span *ngIf="f.active_stamp.value">Si</span> &nbsp;
+                  <span *ngIf="!f.active_stamp.value">No</span> &nbsp;
+                  <mat-slide-toggle formControlName="active_stamp"></mat-slide-toggle>
+                </section>
+              </section>
+
+              <section>
+                <section class="img-container-one" *ngIf="listStampPicture.length > 0">
+                  <section class="images" *ngFor="let stampPicture of listStampPicture; let i = index">
+                    <section class="icon-open-image">
+                      <app-option-image-menu [imageSearch]="picture"></app-option-image-menu>
+                    </section>
+                    <img src="{{ url_attachment }}{{
+                        listStampPicture[listStampPicture.length - i - 1]
+                      }}" (click)="
+                        showWindowMultimedia('listStampPicture', false, 0,null,listImageField.image_stamp,listImageDimension.image_stamp)
+                      " width="10px" alt="" />
+                    <section class="icon-delete">
+                      <button type="button" class="primary-button delete-button"
+                        (click)="deleteImage(i + 1, 'listStampPicture')">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                    </section>
+                  </section>
+                </section>
+
+                <section class="one-image column" [hidden]="listStampPicture.length > 0"
+                  *ngIf="listStampPicture.length == 0">
+                  <app-uploader (selectImage)="
+                      selectImageMainWeb($event, 'listStampPicture')
+                    " [maxSize]='listImageField.image_stamp' [maxDimension]='listImageDimension.image_stamp'>
+                  </app-uploader>
+                  <section>
+                    <button type="button"
+                      (click)="showWindowMultimedia('listStampPicture', false,null,null,listImageField.image_stamp,listImageDimension.image_stamp)"
+                      class="primary-button save-button button-subtitle button-width">
+                      selecciona una imagen
+                    </button>
+                  </section>
+                </section>
+              </section>
+            </section>
+          </section>
+        </section>
+      </section>
+
+      <section class="p-row p-seven cont-right">
+        <section class="container-row" [hidden]='!listAdminRules'>
+          <div style="margin-bottom: 14px">
+            <p class="sub-tittle main-subtitle subtitle-buttton subtitle-container">
+              Administrador de reglas
+              <ng-container *ngIf="showOptions">
+                <div class="buttons-container">
+                  <button type="button" class="primary-button save-button button-rules"
+                    (click)="toggleShowRulesAdminForm()">
+                    <i class="fas fa-plus"></i> &nbsp; Nuevo</button>&nbsp;
+                  <button type="button" class="primary-button save-button button-rules large-button"
+                    (click)="toggleShowRulesAdminGrid()">
+                    <i class="fas fa-hand-pointer"></i> &nbsp; Seleccionar
+                  </button>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="!showOptions">
+                <div class="buttons-container">
+                  <button type="button" class="primary-button delete-button" (click)="deleteAdminRule()">
+                    <i class="fas fa-trash"></i> &nbsp; Eliminar
+                  </button>
+                </div>
+              </ng-container>
+            </p>
+          </div>
+
+          <app-crud-rules-admin #cra (embeddedSaved)="configureMessage($event)"
+            (deletedRulesAdmin)="unmountRulesAdminAndShowOptions($event)" (switchModal)="switchModal($event)"
+            [isEmbedded]="true" [isEmbeddedUpdate]="editRulesAdmin" *ngIf="showRulesAdminForm"></app-crud-rules-admin>
+          <app-grid #gridListRulesAdmin (actionAnswer)="getRulesAdminId($event)" [hidden]="!showRulesAdminGrid">
+          </app-grid>
+        </section>
+
+        <section class="container-general row">
+          <ng-container class="row">
+            <section class="p-row p-five cont-left">
+              <section class="container-row">
+                <p class="main-subtitle subtitle-container">Imágenes Web</p>
+                <br />
+                <section>
+                  <p class="sub-tittle">Principal</p>
+                  <section class="img-container-one" *ngIf="listThumbnailImage.length > 0">
+                    <section class="images" *ngFor="let picture of listThumbnailImage; let i = index">
+                      <section class="icon-open-image">
+                        <app-option-image-menu [imageSearch]="picture"></app-option-image-menu>
+                      </section>
+                      <img src="{{ url_attachment }}{{
+                          listThumbnailImage[listThumbnailImage.length - i - 1]
+                        }}" (click)="
+                          showWindowMultimedia('listThumbnailImage', false, i,null,listImageField.image_web,listImageDimension.image_web)
+                        " width="250" alt="" />
+
+
+                      <section class="icon-delete">
+                        <button type="button" class="primary-button delete-button"
+                          (click)="deleteImage(i + 1, 'listThumbnailImage')">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </section>
+                    </section>
+                  </section>
+
+                  <section class="one-image column" [hidden]="listThumbnailImage.length > 0"
+                    *ngIf="listThumbnailImage.length == 0">
+                    <app-uploader (selectImage)="
+                        selectImageMainWeb($event, 'listThumbnailImage')
+                      " [maxSize]='listImageField.image_web' [maxDimension]='listImageDimension.image_web'>
+                    </app-uploader>
+
+                    <section>
+                      <button type="button" (click)="
+                          showWindowMultimedia('listThumbnailImage', false,null,null,listImageField.image_web,listImageDimension.image_web)
+                        " class="primary-button save-button button-subtitle button-width">
+                        Selecciona desde la galeria
+                      </button>
+                    </section>
+                  </section>
+                  <div>
+                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                      [(ngModel)]="searchName.listThumbnailImage" [ngStyle]="{ width: '100%' }"
+                      [ngModelOptions]="{ standalone: true }" (keypress)="
+                        addByName(
+                          $event,
+                          searchName.listThumbnailImage,
+                          'listThumbnailImage',
+                          'listThumbnailImage'
+                        );
+                        $event.stopPropagation()
+                      " />
+                  </div>
+                </section>
+                <br />
+                <br />
+                <section>
+                  <p class="sub-tittle">Banner</p>
+                  <!-- <section class="img-container-one" *ngIf="
+                                    listBannerImage.length > 0
+                                      ">
+                                        <section class="images" *ngFor="let picture of listBannerImage; let i = index">
+                                            <section class="icon-open-image">
+                                                <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                            </section>
+                                            <img src="{{ url_attachment }}{{
+                                          listBannerImage[listBannerImage.length - i - 1]
+                                        }}" (click)="showWindowMultimedia('listBannerImage', false,i)" width="250" alt="" />
+                                            <section class="icon-delete">
+                                                <button type="button" class="primary-button delete-button" (click)="deleteImage(i + 1, 'listBannerImage')">
+                                            <i class="fas fa-trash-alt"></i>
+                                          </button>
+                                            </section>
+                                        </section>
+                                    </section>
+
+                                    <section class="one-image column" [hidden]="listBannerImage.length > 0" *ngIf="listBannerImage.length == 0">
+                                        <section  class="part-section-empty-image"
+                                        (click)="showWindowMultimedia('lisMainAddPicture', false)">
+                                        <i class="fal fa-file-image"></i>
+                                        <p>selecciona una imagen</p>
+                                      </section>
+                                        <app-uploader (selectImage)="selectImageMainWeb($event,'listBannerImage')"></app-uploader>
+
+                                        <section>
+                                            <button type='button' (click)="showWindowMultimedia('listBannerImage', false)" class="primary-button save-button button-subtitle button-width">
+                                          Selecciona desde la galeria
+                                        </button>
+                                        </section>
+                                    </section> -->
+                  <br />
+                  <section>
+                    <section class="img-container-only-one">
+                      <section class="images images-link" *ngFor="let picture of listAddPicture; let i = index">
+                        <section class="icon-change-level">
+                          <i class="fas fa-arrow-left" (click)="upLabel(i, 'listAddPicture')"></i>
+                          <i class="fas fa-arrow-right" (click)="downLabel(i, 'listAddPicture')"></i>
+                        </section>
+                        <section class="icon-open-image">
+                          <app-option-image-menu [imageSearch]="picture.link"></app-option-image-menu>
+                        </section>
+
+                        <img src="{{ url_attachment }}{{ picture.link }}" width="250" alt="" (click)="
+                            showWindowMultimedia('listAddPicture', true, i,null,listImageField.multimedia_gallery,listImageDimension.multimedia_gallery)
+                          " />
+
+                        <section class="icon-change-number">
+                          <input type="number" (blur)="
+                              changePositionBlur(
+                                i,
+                                infoChangePosition[i],
+                                picture,
+                                'listAddPicture',
+                                'infoChangePosition',
+                                $event
+                              )
+                            " (keypress)="
+                              changePosition(
+                                i,
+                                infoChangePosition[i],
+                                picture,
+                                $event,
+                                'listAddPicture',
+                                'infoChangePosition'
+                              );
+                            " [(ngModel)]="infoChangePosition[i]" [ngModelOptions]="{ standalone: true }" />
+                        </section>
+                        <section class="icon-delete">
+                          <button type="button" class="primary-button delete-button"
+                            (click)="deleteImageBase(i, 'listAddPicture')">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </section>
+                        <div class="url-redirect">
+                          <mat-form-field>
+                            <input matInput placeholder="URL" [(ngModel)]="picture.urlredirect"
+                              [ngModelOptions]="{ standalone: true }" />
+                          </mat-form-field>
+                        </div>
+                        <div class="url-redirect">
+                          <mat-form-field>
+                            <input matInput placeholder="Título" [(ngModel)]="picture.title"
+                              [ngModelOptions]="{ standalone: true }" />
+                          </mat-form-field>
+                        </div>
+                        <div class="url-redirect">
+                          <mat-form-field>
+                            <input matInput placeholder="Subtítulo" [(ngModel)]="picture.subtitle"
+                              [ngModelOptions]="{ standalone: true }" />
+                          </mat-form-field>
+                        </div>
+                      </section>
+
+                      <section *ngIf="listAddPicture && listAddPicture.length < 4" class="images images-link center">
+                        <button type="button" class="primary-button save-button button-subtitle" (click)="
+                            showWindowMultimedia(
+                              'listAddPicture',
+                              true,
+                              null,
+                              4 - listAddPicture.length,
+                              listImageField.multimedia_gallery,listImageDimension.multimedia_gallery
+                            )
+                          ">
+                          Añadir otra Imagen
+                        </button>
+                      </section>
+                      <!-- <section class="images" *ngIf="lisAddPicture.length % 2" style="width: 250px;"></section> -->
+                    </section>
+
+                    <section class="img-container-mobile">
+                      <div class="arrow" (click)="previousImage('listAddPicture')">
+                        <i class="fas fa-chevron-left"></i>
+                      </div>
+
+                      <div class="image">
+                        <p class="delete-item" (click)="
+                            deleteImage(imagePositionMobile, 'listAddPicture')
+                          ">
+                          Eliminar imagen
+                        </p>
+                        <img src="{{ imageShowSlider }}" alt="" width="250" />
+                      </div>
+                      <div class="arrow" (click)="nextImage('listAddPicture')">
+                        <i class="fas fa-chevron-right"></i>
+                      </div>
+                    </section>
+                  </section>
+                </section>
+              </section>
+            </section>
+
+            <section class="p-row p-five cont-right">
+              <section class="container-row">
+                <p class="main-subtitle subtitle-container">Imágenes App</p>
+                <br />
+                <section>
+                  <p class="sub-tittle">Principal</p>
+                  <section class="img-container-one" *ngIf="listThumbnailImageMobile.length > 0">
+                    <section class="images" *ngFor="
+                        let picture of listThumbnailImageMobile;
+                        let i = index
+                      ">
+                      <section class="icon-open-image">
+                        <app-option-image-menu [imageSearch]="picture"></app-option-image-menu>
+                      </section>
+                      <img src="{{ url_attachment }}{{
+                          listThumbnailImageMobile[
+                            listThumbnailImageMobile.length - i - 1
+                          ]
+                        }}" (click)="
+                          showWindowMultimedia(
+                            'listThumbnailImageMobile',
+                            false,
+                            i,
+                            null,
+                            listImageField.image_app,listImageDimension.image_app
+                          )
+                        " width="250" alt="" />
+                      <section class="icon-delete">
+                        <button type="button" class="primary-button delete-button" (click)="
+                            deleteImage(i + 1, 'listThumbnailImageMobile')
+                          ">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </section>
+                    </section>
+                  </section>
+
+                  <section class="one-image column" [hidden]="listThumbnailImageMobile.length > 0"
+                    *ngIf="listThumbnailImageMobile.length == 0">
+                    <app-uploader (selectImage)="
+                        selectImageMainWeb($event, 'listThumbnailImageMobile')" [maxSize]='listImageField.image_app'
+                      [maxDimension]='listImageDimension.image_app'></app-uploader>
+
+                    <section>
+                      <button type=" button" (click)="
+                          showWindowMultimedia(
+                            'listThumbnailImageMobile',
+                            false,
+                            null,
+                            null,
+                            listImageField.image_app,listImageDimension.image_app
+                          )
+                        " class="primary-button save-button button-subtitle button-width">
+                        Selecciona desde la galeria
+                      </button>
+                    </section>
+                  </section>
+                  <div>
+                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                      [(ngModel)]="searchName.listThumbnailImageMobile" [ngStyle]="{ width: '100%' }"
+                      [ngModelOptions]="{ standalone: true }" (keypress)="
+                        addByName(
+                          $event,
+                          searchName.listThumbnailImageMobile,
+                          'listThumbnailImageMobile',
+                          'listThumbnailImageMobile'
+                        );
+                        $event.stopPropagation()
+                      " />
+                  </div>
+                </section>
+                <br /><br />
+                <section>
+                  <p class="sub-tittle">Banner</p>
+                  <!-- <section class="img-container-one" *ngIf="
+                                    listBannerImageMobile.length > 0
+                                      ">
+                                        <section class="images" *ngFor="let picture of listBannerImageMobile; let i = index">
+                                            <section class="icon-open-image">
+                                                <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                            </section>
+                                            <img src="{{ url_attachment }}{{
+                                          listBannerImageMobile[listBannerImageMobile.length - i - 1]
+                                        }}" (click)="showWindowMultimedia('listBannerImageMobile', false,i)" width="250" alt="" />
+                                            <section class="icon-delete">
+                                                <button type="button" class="primary-button delete-button" (click)="deleteImage(i + 1, 'listBannerImageMobile')">
+                                            <i class="fas fa-trash-alt"></i>
+                                          </button>
+                                            </section>
+                                        </section>
+                                    </section>
+
+                                    <section class="one-image column" [hidden]="listBannerImageMobile.length > 0" *ngIf="listBannerImageMobile.length == 0">
+                                        <section  class="part-section-empty-image"
+                                        (click)="showWindowMultimedia('lisMainAddPicture', false)">
+                                        <i class="fal fa-file-image"></i>
+                                        <p>selecciona una imagen</p>
+                                      </section>
+                                        <app-uploader (selectImage)="selectImageMainWeb($event,'listBannerImageMobile')"></app-uploader>
+
+                                        <section>
+                                            <button type='button' (click)="showWindowMultimedia('listBannerImageMobile', false)" class="primary-button save-button button-subtitle button-width">
+                                          Selecciona desde la galeria
+                                        </button>
+                                        </section>
+                                    </section> -->
+                  <br />
+                  <section>
+                    <section class="img-container-only-one">
+                      <section class="images images-link" *ngFor="
+                          let picture of listAddPictureMobile;
+                          let i = index
+                        ">
+                        <section class="icon-change-level">
+                          <i class="fas fa-arrow-left" (click)="upLabel(i, 'listAddPictureMobile')"></i>
+                          <i class="fas fa-arrow-right" (click)="downLabel(i, 'listAddPictureMobile')"></i>
+                        </section>
+                        <section class="icon-open-image">
+                          <app-option-image-menu [imageSearch]="picture.link"></app-option-image-menu>
+                        </section>
+
+                        <img src="{{ url_attachment }}{{ picture.link }}" width="250" alt="" (click)="
+                            showWindowMultimedia(
+                              'listAddPictureMobile',
+                              true,
+                              i,
+                              null,
+                              listImageField.multimedia_gallery,listImageDimension.multimedia_gallery
+                            )
+                          " />
+
+                        <section class="icon-change-number">
+                          <input type="number" (blur)="
+                              changePositionBlur(
+                                i,
+                                infoChangePositionMobile[i],
+                                picture,
+                                'listAddPictureMobile',
+                                'infoChangePositionMobile',
+                                $event
+                              )
+                            " (keypress)="
+                              changePosition(
+                                i,
+                                infoChangePositionMobile[i],
+                                picture,
+                                $event,
+                                'listAddPictureMobile',
+                                'infoChangePositionMobile'
+                              )
+                            " [(ngModel)]="infoChangePositionMobile[i]" [ngModelOptions]="{ standalone: true }" />
+                        </section>
+                        <section class="icon-delete">
+                          <button type="button" class="primary-button delete-button"
+                            (click)="deleteImageBase(i, 'listAddPictureMobile')">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </section>
+                        <div class="url-redirect">
+                          <mat-form-field>
+                            <input matInput placeholder="URL" [(ngModel)]="picture.urlredirect"
+                              [ngModelOptions]="{ standalone: true }" />
+                          </mat-form-field>
+                        </div>
+                        <div class="url-redirect">
+                          <mat-form-field>
+                            <input matInput placeholder="Título" [(ngModel)]="picture.title"
+                              [ngModelOptions]="{ standalone: true }" />
+                          </mat-form-field>
+                        </div>
+                        <div class="url-redirect">
+                          <mat-form-field>
+                            <input matInput placeholder="Subtítulo" [(ngModel)]="picture.subtitle"
+                              [ngModelOptions]="{ standalone: true }" />
+                          </mat-form-field>
+                        </div>
+                      </section>
+
+                      <section *ngIf="
+                          listAddPictureMobile &&
+                          listAddPictureMobile.length < 4
+                        " class="images images-link center">
+                        <button type="button" class="primary-button save-button button-subtitle" (click)="
+                            showWindowMultimedia(
+                              'listAddPictureMobile',
+                              true,
+                              null,
+                              4 - listAddPictureMobile.length,
+                              listImageField.multimedia_gallery,listImageDimension.multimedia_gallery
+                            )
+                          ">
+                          Añadir otra Imagen
+                        </button>
+                      </section>
+                      <!-- <section class="images" *ngIf="lisAddPicture.length % 2" style="width: 250px;"></section> -->
+                    </section>
+
+                    <section class="img-container-mobile">
+                      <div class="arrow" (click)="previousImage('listAddPictureMobile')">
+                        <i class="fas fa-chevron-left"></i>
+                      </div>
+
+                      <div class="image">
+                        <p class="delete-item" (click)="
+                            deleteImage(
+                              imagePositionMobile,
+                              'listAddPictureMobile'
+                            )
+                          ">
+                          Eliminar imagen
+                        </p>
+                        <img src="{{ imageShowSlider }}" alt="" width="250" />
+                      </div>
+                      <div class="arrow" (click)="nextImage('listAddPictureMobile')">
+                        <i class="fas fa-chevron-right"></i>
+                      </div>
+                    </section>
+                  </section>
+                </section>
+              </section>
+            </section>
+          </ng-container>
+
+        </section>
+        <section class="container-row" *ngIf="availablefilters">
+          <p class="main-subtitle subtitle-container">Filtros de Categorías</p>
+          <br />
+          <div class="container filter">
+            <div class="p-row p-eight">
+              <mat-form-field>
+                <mat-select [formControl]="selectedFilterControl" placeholder="Filtro">
+                  <mat-option *ngFor="let item of availablefilters" [value]="item">{{ item.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="p-row p-two">
+              <button type="button" class="primary-button save-button add-button" (click)="addCampaignFilter()">
+                <i class="fas fa-plus"></i> &nbsp; Agregar
+              </button>
+            </div>
+
+            <section class="container-table-filter" *ngIf="selectedFilters.length > 0">
+              <table id="table-main">
+                <thead>
+                  <tr>
+                    <td><b>Filtro</b></td>
+                    <td><b>Campo existente</b></td>
+                    <td><b>Acciones</b></td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of selectedFilters">
+                    <td>{{ item.name }}</td>
+                    <td> <span *ngIf="item.binded" class="active"> Campo existente</span>
+                      <span *ngIf="!item.binded" class="not-active"> Campo no existente</span>
+                    </td>
+                    <td>
+                      <i (click)="removeFilter($event, item._id)" class="fas fa-trash-alt delete"></i>&nbsp;
+                      <i (click)="showValuesFilter(item)" class="fa fa-cog" style="cursor:pointer"
+                        aria-hidden="true"></i>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+
+          <ng-container *ngIf="selectedFilters.length > 0 && filteredSelected && !filteredSelected.binded">
+            <p class="sub-tittle main-subtitle"> Opciones de Filtro: {{ filteredSelected.name }} </p>
+            <hr />
+            <!--  {{filteredSelected | json}} -->
+            <ng-container
+              *ngIf="(filteredSelected.type == 'checkbox' || filteredSelected.type == 'radio') && !filteredSelected.binded">
+              <div class="p-row p-eight">
+                <mat-form-field>
+                  <input matInput placeholder="Valores de Filtro" [(ngModel)]="campaignFilterValueToAdd"
+                    [ngModelOptions]="{ standalone: true }" />
+                </mat-form-field>
+              </div>
+              <div class="p-row p-two">
+                <button type="button" class="primary-button save-button add-button" (click)="addValuetoCampaignArray()">
+                  <i class="fas fa-plus"></i> &nbsp; Agregar
+                </button>
+              </div>
+              <div class="container filter">
+                <div class="p-row p-ten stripped" *ngFor="let item of filteredSelected.values">
+                  {{ item }}
+                  <span class="delete absolute" (click)="removeOptionFilter(item)"><i
+                      class="fas fa-trash-alt"></i></span>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="filteredSelected.type == 'range' && !filteredSelected.binded">
+              <div class="p-row p-five">
+                <mat-form-field>
+                  <input matInput placeholder="Valor mínimo" [(ngModel)]="filteredSelected.minValue"
+                    [ngModelOptions]="{ standalone: true }" />
+                </mat-form-field>
+              </div>
+              <div class="p-row p-five">
+                <mat-form-field>
+                  <input matInput placeholder="Valor máximo" [(ngModel)]="filteredSelected.maxValue"
+                    [ngModelOptions]="{ standalone: true }" />
+                </mat-form-field>
+              </div>
+            </ng-container>
+          </ng-container>
+        </section>
+      </section>
+    </section>
+
+    <section class="container-partition">
+      <section class="p-row p-10 cont-bottom">
+        <section class="container-row">
+          <p class="main-subtitle subtitle-container">Productos de descuento</p>
+          <br />
+          <div class="center">
+            <section class="p-four card-product">
+              <app-grid #gridListProducts (itemSelecReturn)="updateProducts($event)"></app-grid>
+            </section>
+            <section class="container-table p-six card-product">
+              <section id="search">
+                <section class="container-search">
+                  <input type="text" id="searchInput" placeholder="Buscar" autocomplete="off"
+                    (keypress)="validateInput($event)" formControlName="query" />
+                  <i class="far fa-search" (click)="searchData()"></i>
+                </section>
+              </section>
+              <section class="container-table-body">
+                <div formArrayName="products" *ngIf="campaignForm" style="overflow-x: auto;">
+                  <table style="width: 108.5%;">
+                    <thead>
+                      <tr class="row right-table">
+                        <th [style.top]="inverseOfTranslation" class="active table-title t-name-column">
+                          Nombre
+                        </th>
+                        <th [style.top]="inverseOfTranslation" class="active table-title t-sku-column">
+                          SKU
+                        </th>
+                        <th [style.top]="inverseOfTranslation" class="active table-title t-price-column">
+                          Precio
+                        </th>
+                        <th [style.top]="inverseOfTranslation" class="active table-title t-visibility-column">
+                          Visibilidad
+                        </th>
+                        <th [style.top]="inverseOfTranslation" class="active table-title t-exclusive-column">
+                          Exclusivo
+                        </th>
+                        <th [style.top]="inverseOfTranslation" class="active table-title t-selled-column">
+                          Vendidos
+                        </th>
+                        <th [style.top]="inverseOfTranslation" class="active table-title t-stock-column">
+                          Stock
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <cdk-virtual-scroll-viewport itemSize="autosize">
+                        <ng-container *cdkVirtualFor="let product of filteredProducts">
+                          <section class="row column-table">
+                            <div class="t-name" (click)="
+                                openItem(productList[product.index]._id);
+                                $event.stopPropagation()
+                              ">
+                              <label class="label-replace">{{
+                                productList[product.index].name
+                                }}</label>
+                              <br />
+                              <div [ngClass]="[
+                                  productList[product.index].campaignName !==
+                                  campaignName
+                                    ? productList[product.index]
+                                        .campaignActive === true
+                                      ? 'custom-chip-red'
+                                      : 'custom-chip-yellow'
+                                    : 'custom-chip'
+                                ]" *ngIf="productList[product.index].campaignName">
+                                {{ productList[product.index].campaignName }}
+                              </div>
+                            </div>
+                            <div class="t-sku">
+                              <label class="label-replace">{{
+                                productList[product.index].SKU
+                                }}</label>
+                            </div>
+                            <div class="t-price">
+                              <mat-form-field style="width: 48%">
+                                <input matInput type="number" class="form-control" [formControl]="
+                                    getProductFormGroup(product.index).get(
+                                      'price'
+                                    )
+                                  " autocomplete="off" [readonly]="productList[product.index].supplier.report_erp" />
+                              </mat-form-field>S/.
+                              <!-- <ng-container *ngIf="getProductFormGroup(product.index).get('price').errors">
+                                  <ng-container *ngIf="getProductFormGroup(product.index).get('price').errors.min">
+                                    <mat-error> Precio de campaña no puede ser menor a 0</mat-error>
+                                  </ng-container>
+                                  <ng-container *ngIf="getProductFormGroup(product.index).get('price').errors.max">
+                                    <mat-error> Precio de campaña debe ser menor al precio especial </mat-error>
+                                  </ng-container>
+                                </ng-container> -->
+                            </div>
+                            <div class="t-visibility">
+                              <mat-checkbox class="form-control" [formControl]="
+                                  getProductFormGroup(product.index).get(
+                                    'active'
+                                  )
+                                " (change)="
+                                  updateDataField(
+                                    productList[product.index]._id,
+                                    'active',
+                                    !productList[product.index].active,
+                                    '/product/change-active',
+                                    productList[product.index]
+                                  )
+                                ">
+                              </mat-checkbox>
+                            </div>
+                            <div class="t-exclusive">
+                              <mat-checkbox class="form-control" [formControl]="
+                                  getProductFormGroup(product.index).get(
+                                    'exclusive'
+                                  )
+                                ">
+                              </mat-checkbox>
+                            </div>
+                            <div class="t-selled">
+                              <label class="label-replace">{{
+                                getProductFormGroup(product.index).get("sold")
+                                .value
+                                }}</label>
+                            </div>
+                            <div class="t-stock">
+                              <mat-form-field style="width: 40%">
+                                <input matInput type="number" class="form-control" [formControl]="
+                                    getProductFormGroup(product.index).get(
+                                      'stock'
+                                    )
+                                  " autocomplete="off" min="0"
+                                  oninput="value == '' ? value = null : value < 0 ? value = value * -1 : false" />
+                              </mat-form-field>
+                              <ng-container *ngIf="
+                                  getProductFormGroup(product.index).get(
+                                    'stock'
+                                  ).errors
+                                ">
+                                <mat-error> Fuera de stock </mat-error>
+                              </ng-container>
+                            </div>
+                          </section>
+                        </ng-container>
+                      </cdk-virtual-scroll-viewport>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+              <section id="pagination" class="container-table table-footer" *ngIf="filteredProducts">
+                <section class="left">
+                  <p style="text-align: left">
+                    {{ "Productos agregados: " + filteredProducts.length }}
+                  </p>
+                </section>
+              </section>
+            </section>
+            <!-- <section class="p-six card-product">
+              <table style="margin-top: 52px">
+                <thead>
+                  <tr>
+                    <th class="t-name">Nombre</th>
+                    <th class="t-sku">SKU</th>
+                    <th class="t-price">Precio</th>
+                    <th class="t-exclusive">Exclusivo</th>
+                    <th class="t-selled">Vendidos</th>
+                    <th class="t-stock">Stock</th>
+                  </tr>
+                </thead>
+                <tbody #scrollMe>
+                  <div formArrayName="products" *ngIf="campaignForm">
+                    <ng-container
+                      *ngFor="
+                        let product of campaignForm['controls'].products
+                          .controls;
+                        let i = index
+                      "
+                      [formGroupName]="i"
+                    >
+                      <tr>
+                        <td class="t-name">
+                          <label class="label-replace">{{
+                            productList[i].name
+                          }}</label>
+                          <br />
+                          <div
+                            [ngClass]="[
+                              productList[i].campaignName !== campaignName
+                                ? productList[i].campaignActive === true
+                                  ? 'custom-chip-red'
+                                  : 'custom-chip-yellow'
+                                : 'custom-chip'
+                            ]"
+                            *ngIf="productList[i].campaignName"
+                          >
+                            {{ productList[i].campaignName }}
+                          </div>
+                        </td>
+                        <td class="t-sku">
+                          <label class="label-replace">{{
+                            productList[i].SKU
+                          }}</label>
+                        </td>
+                        <td class="t-price">
+                          <mat-form-field style="width: 60%">
+                            <input
+                              matInput
+                              type="number"
+                              class="form-control"
+                              formControlName="price"
+                              autocomplete="off"
+                            />
+                          </mat-form-field>
+                          S/.
+                        </td>
+                        <td class="t-exclusive">
+                          <mat-checkbox
+                            class="form-control"
+                            formControlName="exclusive"
+                          >
+                          </mat-checkbox>
+                        </td>
+                        <td class="t-selled">
+                          <label class="label-replace">{{
+                            f.products.controls[i].controls.sold.value
+                          }}</label>
+                        </td>
+
+                        <td class="t-stock">
+                          <mat-form-field style="width: 60%">
+                            <input
+                              matInput
+                              type="number"
+                              class="form-control"
+                              formControlName="stock"
+                              autocomplete="off"
+                              min="0"
+                              oninput="value == '' ? value = null : value < 0 ? value = value * -1 : false"
+                            />
+                          </mat-form-field>
+                          <ng-container
+                            *ngIf="f.products.controls[i].controls.stock.errors"
+                          >
+                            <mat-error> Fuera de stock </mat-error>
+                          </ng-container>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </div>
+                </tbody>
+              </table>
+              <section id="pagination" class="container-table table-footer">
+                <section class="left">
+                    <p style="text-align: left;">
+                     {{ 'Productos agregados: ' + productsList.length }}
+                    </p>
+                </section>
+              </section>
+            </section> -->
+          </div>
+        </section>
+      </section>
+    </section>
+  </form>
+</div>
+<app-multimedia-gallery #multimediaList (imageChoose)="dataPictureSave($event)"></app-multimedia-gallery>

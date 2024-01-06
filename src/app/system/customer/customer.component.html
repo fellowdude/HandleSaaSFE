@@ -1,0 +1,24 @@
+<app-upload-excel #exportExcel></app-upload-excel>
+<div class="fake-header">
+</div>
+<div class="header">
+  <div class="container">
+    <div class="title">Listado de Clientes</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)="exportClients()">
+        <i class="fas fa-upload"></i> Exportar clientes
+      </button>
+      <button type="button" class="primary-button" (click)="newClient()">
+        <i class="fas fa-plus-circle"></i> Agregar Cliente
+      </button>
+
+    </div>
+  </div>
+</div>
+<div class="content">
+  <section class="container">
+    <app-grid #gridList (actionAnswer)=actionAnswer($event)> </app-grid>
+  </section>
+</div>
+
+<app-crud-client #crudClient (sendAnswer)='sendAnswer($event)'></app-crud-client>

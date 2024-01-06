@@ -1,0 +1,2170 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed, 'delete-header': headerRuleFixed }">
+    <div class="container">
+        <div class="return-button"><i (click)="returnProducts()" class="fas fa-chevron-left"></i></div> &nbsp;
+        <div class="title" *ngIf="!idProduct && !penddingRequest">
+            Nuevo producto
+        </div>
+        <div class="title" *ngIf="idProduct && !penddingRequest">
+            Edición de producto
+        </div>
+        <div class="title" *ngIf="penddingRequest">
+            Producto con solicitud de
+            <span *ngIf="typeRequest == 'C'">creación</span>
+            <span *ngIf="typeRequest == 'U'">edición</span>
+        </div>
+        <div class="buttons-container">
+            <ng-container *ngIf="!penddingRequest">
+                <button
+                    *ngIf='f.father_base_variation.value !== null && f.type_variation.value === "V" && haveVariations'
+                    type="button" class="primary-button " (click)='viewFather()'>
+                    <i class="fas fa-info"></i> &nbsp; Producto Base
+                </button>
+                <button type="button" class="primary-button " (click)="confirmDeleteItem()"
+                    *ngIf="idProduct && !isSupplier">
+                    <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+                </button>
+                <button type="button" class="primary-button " (click)="createProduct()">
+                    <i class="fas fa-save"></i> &nbsp; Guardar
+                </button>
+            </ng-container>
+            <ng-container *ngIf="penddingRequest && approve_user && typeRequest === 'U'">
+                <button type="button" class="primary-button " (click)="openMessageDeny()">
+                    <i class="fas fa-times-circle"></i> &nbsp; Rechazar
+                </button>
+                <button type="button" class="primary-button " (click)="acceptRequest()">
+                    <i class="fas fa-check-circle"></i> &nbsp; Aprobar
+                </button>
+            </ng-container>
+            <ng-container *ngIf="penddingRequest && approve_user && typeRequest === 'C'">
+                <button type="button" class="primary-button " (click)="openMessageDeny()">
+                    <i class="fas fa-times-circle"></i> &nbsp; Rechazar
+                </button>
+                <button type="button" class="primary-button " (click)="createProduct()">
+                    <i class="fas fa-check-circle"></i> &nbsp; Aprobar
+                </button>
+            </ng-container>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <form [formGroup]="productForm">
+        <section class="container-partition">
+            <section class="p-row p-three cont-left">
+                <section class="container-row visibility">
+                    <p class="main-subtitle subtitle-container">Características del producto</p>
+                    <br />
+                    <ng-container *ngIf='!f.is_variation.value || infoCompare.request_change'>
+                        <ng-container *ngIf="is_variation_product_luxury && f.type_variation.value === 'V'">
+                            <ng-container *ngIf="idProduct">
+                                <section>Producto Base Activo</section>
+                                <section id="slide">
+                                    <mat-slide-toggle (change)="changeMyFatherActiveStatus($event)"
+                                        [checked]="is_my_father_active">
+                                        <span *ngIf="is_my_father_active">Si</span>
+                                        <span *ngIf="!is_my_father_active">No</span>
+                                    </mat-slide-toggle>
+                                </section>
+                                <br /><br />
+                            </ng-container>
+                        </ng-container>
+
+                        <!-- <ng-container *ngIf="idProduct || f.type_variation.value !== 'B'"> -->
+                        <section>Visibilidad</section>
+                        <section id="slide">
+                            <mat-slide-toggle class="form-control" formControlName="active"
+                                (change)="checkValidFatherVariationActive($event)"><span
+                                    *ngIf="f.active.value">Si</span>
+                                <span *ngIf="!f.active.value">No</span>
+                            </mat-slide-toggle>
+                        </section>
+                        <div *ngIf="infoCompare.request_change">
+                            <span class='error-info' *ngIf="infoCompare.active != infoCompare.request_change.active">
+                                Cambio: {{ infoCompare.request_change.active ? 'SI' : 'NO' }}
+                            </span>
+                        </div>
+                        <br /><br />
+                        <!-- </ng-container> -->
+
+                        <section>Destacado</section>
+                        <section id="slide">
+                            <mat-slide-toggle class="form-control" formControlName="featured"><span
+                                    *ngIf="f.featured.value">Si</span>
+                                <span *ngIf="!f.featured.value">No</span>
+                            </mat-slide-toggle>
+                        </section>
+                        <div *ngIf="infoCompare.request_change">
+                            <span class='error-info'
+                                *ngIf="infoCompare.featured != infoCompare.request_change.featured">
+                                Cambio: {{ infoCompare.request_change.featured ? 'SI' : 'NO' }}
+                            </span>
+                        </div>
+                        <br /><br />
+                        <section>Descuento forzado</section>
+                        <section id="slide">
+                            <mat-slide-toggle class="form-control" formControlName="show_discount"><span
+                                    *ngIf="f.show_discount.value">Si</span>
+                                <span *ngIf="!f.show_discount.value">No</span>
+                            </mat-slide-toggle>
+                        </section>
+                        <div *ngIf="infoCompare.request_change">
+                            <span class='error-info'
+                                *ngIf="infoCompare.show_discount != infoCompare.request_change.show_discount">
+                                Cambio: {{ infoCompare.request_change.show_discount ? 'SI' : 'NO' }}
+                            </span>
+                        </div>
+                    </ng-container>
+
+                    <br /><br />
+
+                    <ng-container *ngIf='is_variation_product_luxury '>
+                        <section>Tiene variaciones</section>
+                        <section id="slide">
+                            <mat-slide-toggle class="form-control" formControlName="is_product_variation_select"
+                                (change)="manageVariations($event)" [disabled]="haveVariations || existingFather">
+                                <span *ngIf="f.is_product_variation_select.value">Si</span>
+                                <span *ngIf="!f.is_product_variation_select.value">No</span>
+                            </mat-slide-toggle>
+                        </section>
+                        <div *ngIf="infoCompare.request_change">
+                            <span class='error-info'
+                                *ngIf="infoCompare.is_product_variation_select != infoCompare.request_change.is_product_variation_select">
+                                Cambio: {{ infoCompare.request_change.is_product_variation_select ? 'SI' : 'NO' }}
+                            </span>
+                        </div>
+                    </ng-container>
+
+                    <br /><br />
+                    <ng-container *ngIf='f.is_product_variation_select.value'>
+                        <mat-form-field>
+                            <mat-select placeholder="Tipo de Producto" formControlName="type_variation"
+                                name="type_variation" (selectionChange)="manageVariations($event)"
+                                [disabled]="haveVariations || existingFather">
+                                <mat-option value="B">
+                                    Producto base
+                                </mat-option>
+                                <mat-option value="V">
+                                    Producto variación hijo
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <ng-container *ngIf="f.type_variation.errors">
+                            <mat-error
+                                *ngIf="f.type_variation.errors.required && (f.type_variation.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </ng-container>
+
+                    <ng-container
+                        *ngIf='f.is_product_variation_select.value && f.type_variation.value === "V" && !productForm.get("father_base_variation").value'>
+                        <div style="width: 100%; display: block; text-align: center;">
+                            <button type="button" class="primary-button save-button button-subtitle"
+                                (click)="openFatherVariationModal()">
+                                <i class="fas fa-plus"></i> <span> &nbsp; Seleccionar Producto Base</span>
+                            </button>
+                        </div>
+                    </ng-container>
+                    <mat-form-field
+                        *ngIf="f.is_product_variation_select.value && f.type_variation.value === 'V' && fatherCharged && !this.existingFather">
+                        <input matInput type="text" placeholder="Nombre del Producto Base" class="form-control"
+                            autocomplete="off" disabled value={{nameFather}} />
+                    </mat-form-field>
+                    <div style="float: right; text-align: center;"
+                        *ngIf="f.is_product_variation_select.value && f.type_variation.value === 'V' && haveFather && !this.existingFather && fatherCharged">
+                        <button type="button" class="primary-button save-button button-subtitle"
+                            (click)="openFatherVariationModal()">
+                            <i class="fas fa-redo-alt"></i> <span> &nbsp; Cambiar Producto Base</span>
+                        </button>
+                        <br /><br />
+                    </div>
+
+                    <!-- <pre> {{productForm.controls['variation_father'].value | json}} </pre> -->
+                    <ng-container *ngIf='validProductField.variation_product'>
+                        <section>
+                            <section>Producto Variación</section>
+                            <section id="slide">
+                                <mat-slide-toggle class="form-control" formControlName="is_variation"><span
+                                        *ngIf="f.is_variation.value">Si</span>
+                                    <span *ngIf="!f.is_variation.value">No</span>
+                                </mat-slide-toggle>
+                            </section>
+                            <div *ngIf="infoCompare.request_change">
+                                <span class='error-info'
+                                    *ngIf="infoCompare.is_variation != infoCompare.request_change.is_variation">
+                                    Cambio: {{ infoCompare.request_change.is_variation ? 'SI' : 'NO' }}
+                                </span>
+                            </div>
+                            <br /><br />
+                        </section>
+                        <br />
+                    </ng-container>
+                    <ng-container *ngIf='validProductField.has_dedication'>
+                        <section>
+                            <section>Tiene dedicatoria</section>
+                            <section id="slide">
+                                <mat-slide-toggle class="form-control" formControlName="has_dedication"><span
+                                        *ngIf="f.has_dedication.value">Si</span>
+                                    <span *ngIf="!f.has_dedication.value">No</span>
+                                </mat-slide-toggle>
+                            </section>
+                            <div *ngIf="infoCompare.request_change">
+                                <span class='error-info'
+                                    *ngIf="infoCompare.has_dedication != infoCompare.request_change.has_dedication">
+                                    Cambio: {{ infoCompare.request_change.has_dedication ? 'SI' : 'NO' }}
+                                </span>
+                            </div>
+                            <br /><br />
+                        </section>
+                    </ng-container>
+                    <section class='full-width' *ngIf='f.is_variation.value'>
+                        <div *ngIf='!fatherproductDetail.name'>
+                            <mat-form-field class="example-full-width">
+                                <input type="text" placeholder="Buscar producto base" matInput
+                                    formControlName="search_father" [matAutocomplete]="auto" />
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    <mat-option *ngFor="let option of listProductFather" [value]="option.SKU">
+                                        <div (click)="addFatherProduct(option)">
+                                            {{ option.SKU }} - {{ option.name }}
+                                        </div>
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </div>
+                        <ng-container *ngIf='fatherproductDetail.name'>
+                            <p>Producto base</p>
+                            <hr>
+                            <div class="images">
+                                <img src="{{ url_attachment }}{{fatherproductDetail.image_cover}}" alt="">
+                                <section class="text-name">
+                                    {{fatherproductDetail.name}}
+                                </section>
+                                <section class='icon-delete'>
+                                    <button _ngcontent-igr-c7="" class="primary-button delete-button"
+                                        (click)='deleteFather()' type="button">
+                                        <i class="fas fa-repeat-alt"></i>
+                                    </button>
+                                </section>
+                            </div>
+                        </ng-container>
+                    </section>
+                    <br /><br />
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Nombre del Producto" class="form-control"
+                                formControlName="name" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.name.errors">
+                            <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="infoCompare.request_change && f.name.value != infoCompare.request_change.name">
+                            <!-- <mat-error *ngIf="infoCompare.name != infoCompare.request_change.name">
+                                Cambio: {{ infoCompare.request_change.name }}
+                            </mat-error> -->
+                            <mat-form-field>
+                                <input #requestChangeName matInput type="text" placeholder="Nombre del Producto Cambio"
+                                    [value]="infoCompare.request_change.name"
+                                    (keyup)="handleChangeRequest(requestChangeName.value, 'name')"
+                                    (keydown.space)="$event.stopPropagation()" autocomplete="off"
+                                    [disabled]="isSupplier" class="input-cambio" />
+                            </mat-form-field>
+                        </ng-container>
+                    </div>
+                    <div *ngIf='f.is_variation.value'>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Nombre Corto" class="form-control"
+                                formControlName="small_name" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container>
+                            <mat-error
+                                *ngIf="!f.small_name.value && f.is_variation.value && (f.name.touched || submitted) ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                        <ng-container *ngIf="infoCompare.request_change">
+                            <mat-error *ngIf="infoCompare.small_name != infoCompare.request_change.small_name">
+                                Cambio: {{ infoCompare.request_change.name }}
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                    <div *ngIf='haveERP'>
+                        <ng-container *ngIf="f.type_variation.value !== 'B'">
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Modelo del Producto" class="form-control"
+                                    formControlName="model_product" autocomplete="off" />
+                            </mat-form-field>
+                            <ng-container *ngIf="f.model_product.errors">
+                                <mat-error *ngIf="
+                  f.model_product.errors.required &&
+                  (f.model_product.touched || submitted)
+                ">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <ng-container
+                                *ngIf="infoCompare.request_change && f.model_product.value != infoCompare.request_change.model_product">
+                                <!-- <mat-error *ngIf="
+                  infoCompare.model_product !=
+                  infoCompare.request_change.model_product
+                ">
+                                    Cambio: {{ infoCompare.request_change.model_product }}
+                                </mat-error> -->
+                                <mat-form-field>
+                                    <input #requestChangeModelProduct matInput type="text"
+                                        placeholder="Modelo del Producto Cambio"
+                                        [value]="infoCompare.request_change.model_product"
+                                        (keyup)="handleChangeRequest(requestChangeModelProduct.value, 'model_product')"
+                                        (keydown.space)="$event.stopPropagation()" autocomplete="off"
+                                        [disabled]="isSupplier" class="input-cambio" />
+                                </mat-form-field>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <ng-container *ngIf='(f.type_variation.value === "B" && f.is_product_variation_select.value)'>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Código de Padre" class="form-control"
+                                formControlName="father_variation_code" autocomplete="off" 
+                                [readonly]="idProduct"/>
+<!--                             <span *ngIf="!idProduct" matPrefix>{{codeSupplier}}</span> -->
+                        </mat-form-field>
+                    </ng-container>
+                    <ng-container *ngIf='f.SKU'>
+                        <ng-container *ngIf='(f.type_variation.value === "V" || !f.is_product_variation_select.value)'>
+                            <div *ngIf="idProduct || validProductField.sku">
+
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="SKU" class="form-control"
+                                        formControlName="SKU" autocomplete="off"
+                                        [readonly]="haveERP" />
+                                    <span matPrefix>{{codeSupplier}}</span>
+                                </mat-form-field>
+
+                                <ng-container *ngIf=" f.SKU.errors">
+                                    <mat-error *ngIf="f.SKU.errors.required && (f.SKU.touched || submitted)">
+                                        El campo es obligatorio
+                                    </mat-error>
+                                </ng-container>
+
+                                <ng-container *ngIf="infoCompare.request_change">
+                                    <mat-error *ngIf="infoCompare.SKU != infoCompare.request_change.SKU">
+                                        Cambio: {{ infoCompare.request_change.SKU }}
+                                    </mat-error>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+
+                    <div *ngIf="!f.is_pack.value">
+                        <ng-container *ngIf='(f.type_variation.value === "V" || !f.is_product_variation_select.value)'>
+                            <mat-form-field>
+                                <input matInput type="number" placeholder="Stock" class="form-control"
+                                    formControlName="stock" autocomplete="off" [readonly]="haveERP" min="0"
+                                    oninput="value == '' ? value = null : value < 0 ? value = value * -1 : false" />
+                            </mat-form-field>
+                            <ng-container *ngIf="f.stock.errors">
+                                <mat-error *ngIf="f.stock.errors.required && (f.stock.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                                <mat-error *ngIf="f.stock.errors.min && (f.stock.touched || submitted)">
+                                    EL valor debe ser mayor o igual a 0
+                                </mat-error>
+                            </ng-container>
+                            <ng-container
+                                *ngIf="infoCompare.request_change && f.stock.value != infoCompare.request_change.stock">
+                                <!-- <mat-error *ngIf="infoCompare.stock != infoCompare.request_change.stock">
+                                    Cambio: {{ infoCompare.request_change.stock }}
+                                </mat-error> -->
+                                <mat-form-field>
+                                    <input #requestChangeStock matInput type="number" placeholder="Stock Cambio"
+                                        [value]="infoCompare.request_change.stock"
+                                        (keyup)="handleChangeRequest(requestChangeStock.value, 'stock')"
+                                        (keydown.space)="$event.stopPropagation()" autocomplete="off"
+                                        [disabled]="isSupplier" class="input-cambio" min="0"
+                                        oninput="value == '' ? value = null : value < 0 ? value = value * -1 : false" />
+                                </mat-form-field>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <section class='full-width' *ngIf='!f.is_variation.value'>
+                        <div *ngIf='f.taxBuy && haveERP'>
+                            <mat-form-field>
+                                <mat-select placeholder="Impuesto de Compra" formControlName="taxBuy" name="type">
+                                    <mat-option value="N">
+                                        No
+                                    </mat-option>
+                                    <mat-option value="S">
+                                        Si
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="f.taxBuy.errors">
+                                <mat-error *ngIf="
+                  f.taxBuy.errors.required && (f.taxBuy.touched || submitted)
+                ">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <ng-container *ngIf="infoCompare.request_change">
+                                <mat-error *ngIf="f.taxBuy.value != infoCompare.request_change.taxBuy">
+                                    Cambio: {{ infoCompare.request_change.taxBuy }}
+                                </mat-error>
+                            </ng-container>
+                        </div>
+                        <div *ngIf='f.taxSent && haveERP'>
+                            <mat-form-field>
+                                <mat-select placeholder="Impuesto de Venta" formControlName="taxSent" name="type">
+                                    <mat-option value="N">
+                                        No
+                                    </mat-option>
+                                    <mat-option value="S">
+                                        Si
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="f.taxSent.errors">
+                                <mat-error *ngIf="
+                  f.taxSent.errors.required && (f.taxSent.touched || submitted)
+                ">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <ng-container *ngIf="infoCompare.request_change">
+                                <mat-error *ngIf="f.taxSent.value != infoCompare.request_change.taxSent">
+                                    Cambio: {{ infoCompare.request_change.taxSent }}
+                                </mat-error>
+                            </ng-container>
+                        </div>
+                        <div *ngIf="!isSupplier && this.productForm.get('type_variation').value !== 'V' && haveERP">
+                            <mat-form-field>
+                                <mat-select placeholder="Clasificación" formControlName="clasification"
+                                    name="clasification">
+                                    <mat-option value="FO">
+                                        Food
+                                    </mat-option>
+                                    <mat-option value="NF">
+                                        No food
+                                    </mat-option>
+                                    <mat-option value="SS">
+                                        Cupones
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="f.clasification.errors">
+                                <mat-error *ngIf="
+                  f.clasification.errors.required && (f.clasification.touched || submitted)
+                ">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <ng-container *ngIf="infoCompare.request_change">
+                                <mat-error *ngIf="f.clasification.value != infoCompare.request_change.clasification">
+                                    Cambio: {{ infoCompare.request_change.clasification }}
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                        <div>
+                            <mat-form-field>
+                                <mat-select placeholder="Tipo" formControlName="type" name="type"
+                                    [disabled]="haveVariations || haveFather">
+                                    <mat-option *ngFor="let type of listTypeProduct" [value]="type._id">
+                                        {{ type.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="f.type.errors">
+                                <mat-error *ngIf="f.type.errors.required && (f.type.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <ng-container *ngIf="infoCompare.request_change">
+                                <mat-error *ngIf="f.type.value != infoCompare.request_change.type">
+                                    Cambio: {{ infoCompare.request_change.type | searchInArray:
+                                    listTypeProduct:"_id":"value" }}
+                                </mat-error>
+                            </ng-container>
+                        </div>
+                        <div *ngIf="!isSupplier">
+                            <mat-form-field>
+                                <mat-select placeholder="Seller" formControlName="supplier" name="supplier"
+                                    [disabled]="idProduct || haveFather">
+                                    <mat-option *ngFor=" let supplier of listSupplier" [value]="supplier._id">
+                                        {{ supplier.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="f.supplier.errors">
+                                <mat-error *ngIf="
+                  f.supplier.errors.required &&
+                  (f.supplier.touched || submitted)
+                ">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <ng-container *ngIf="infoCompare.request_change && listSupplier">
+                                <mat-error *ngIf="f.supplier.value != infoCompare.request_change.supplier">
+                                    Cambio: {{ infoCompare.request_change.supplier | searchInArray:
+                                    listSupplier:"_id":"name" }}
+                                </mat-error>
+                            </ng-container>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-select placeholder="Seller Delivery" formControlName="supplier_delivery"
+                                    name="supplier_delivery" [disabled]="idProduct || haveFather">
+                                    <mat-option *ngFor="let supplier of listSupplierDelivery" [value]="supplier._id">
+                                        {{ supplier.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="f.supplier_delivery.errors">
+                                <mat-error *ngIf="
+                  f.supplier_delivery.errors.required &&
+                  (f.supplier_delivery.touched || submitted)
+                ">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <ng-container *ngIf="infoCompare.request_change">
+                                <mat-error *ngIf="
+                  f.supplier_delivery.value !=
+                  infoCompare.request_change.supplier_delivery
+                ">
+                                    Cambio: {{ infoCompare.request_change.supplier_delivery | searchInArray:
+                                    listSupplier:"_id":"name" }}
+                                </mat-error>
+                            </ng-container>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-select placeholder="Marca" formControlName="brand" name="brand"
+                                    [disabled]="haveVariations || haveFather">
+                                    <mat-option *ngFor="let brand of listBrand" [value]="brand._id">
+                                        {{ brand.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="f.brand.errors">
+                                <mat-error *ngIf="
+                  f.brand.errors.required && (f.brand.touched || submitted)
+                ">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <ng-container *ngIf="infoCompare.request_change && listBrand">
+                                <mat-error *ngIf="f.brand.value != infoCompare.request_change.brand">
+                                    Cambio: {{ infoCompare.request_change.brand | searchInArray: listBrand:"_id":"name"
+                                    }}
+                                </mat-error>
+                            </ng-container>
+                        </div>
+                        <div class="column">
+                            <ng-container *ngIf='!f.is_product_variation_select.value '>
+                                <br /><br />
+                                <p class="main-subtitle subtitle-container">Pack de Productos</p>
+                                <hr />
+                                <section>
+                                    <mat-checkbox formControlName="is_pack"> Es un pack </mat-checkbox>
+                                </section>
+                                <section>
+                                    <ng-container *ngIf="infoCompare.request_change">
+                                        <br>
+                                        <mat-error *ngIf="infoCompare.is_pack != infoCompare.request_change.is_pack">
+                                            Cambio:
+                                            <span *ngIf="infoCompare.request_change.is_pack">Activo</span>
+                                            <span *ngIf="!infoCompare.request_change.is_pack">Desactivo</span>
+                                        </mat-error>
+                                    </ng-container>
+                                    <section *ngIf="f.is_pack.value || infoCompare.request_change"
+                                        [ngStyle]='{"width": "100%"}'>
+                                        <div class="ticket-actually ticket" *ngIf="existChange.pack_products">
+                                            Actual
+                                        </div>
+                                        <ng-container *ngIf="listAddPack">
+                                            <section style="margin-bottom: 1.5em;" *ngIf="listAddPack.length > 0">
+                                                <div cdkDropList class="example-list"
+                                                    (cdkDropListDropped)="dropPack($event)">
+                                                    <div class="example-box"
+                                                        *ngFor="let product of listAddPack; let position = index"
+                                                        cdkDrag>
+                                                        <section class="container-drop" *ngIf='product.product'>
+                                                            <section class="col-50">
+                                                                <p>{{ product.product.SKU }}</p>
+                                                                <p>
+                                                                    <strong> {{ product.product.name }} </strong>
+                                                                </p>
+                                                            </section>
+                                                            <section class="col-40">
+                                                                <div>
+                                                                    <mat-form-field>
+                                                                        <input matInput type="number"
+                                                                            placeholder="Cantidad"
+                                                                            [(ngModel)]="product.quantity"
+                                                                            [ngModelOptions]="{ standalone: true }"
+                                                                            min="0"
+                                                                            (keypress)="validateInput($event);$event.stopPropagation()" />
+                                                                    </mat-form-field>
+                                                                </div>
+                                                            </section>
+                                                            <section class="col-5"
+                                                                style="margin: auto;padding-left: 5%;font-size: 17px;">
+                                                                <p (click)="deleteSkuList(position, 'listAddPack')"
+                                                                    class="delete-drop-item">
+                                                                    <i class="fa-trash fas fa-trash-alt"></i>
+                                                                </p>
+                                                            </section>
+                                                        </section>
+                                                    </div>
+                                                </div>
+                                                <p class="error" *ngIf="duplicatePACK">
+                                                    El SKU ya ha sido agregado
+                                                </p>
+                                            </section>
+                                        </ng-container>
+                                        <div class="ticket-reeplace ticket" *ngIf="existChange.pack_products">
+                                            Reemplazo
+                                        </div>
+                                        <ng-container *ngIf="listAddPackChange && existChange.pack_products">
+                                            <section style="margin-bottom: 1.5em;" *ngIf="listAddPackChange.length > 0">
+                                                <div cdkDropList class="example-list"
+                                                    (cdkDropListDropped)="dropPack($event)">
+                                                    <div class="example-box" *ngFor="
+                          let product of listAddPackChange;
+                          let position = index
+                        " cdkDrag>
+                                                        <section class="container-drop">
+                                                            <section class="col-70">
+                                                                <p>{{ product.product.SKU }}</p>
+                                                                <p>
+                                                                    <strong> {{ product.product.name }} </strong>
+                                                                </p>
+                                                            </section>
+                                                            <section class="col-30">
+                                                                <div>
+                                                                    <mat-form-field>
+                                                                        <input matInput type="number"
+                                                                            placeholder="Cantidad"
+                                                                            [(ngModel)]="product.quantity"
+                                                                            [ngModelOptions]="{ standalone: true }" />
+                                                                    </mat-form-field>
+                                                                </div>
+                                                            </section>
+                                                        </section>
+                                                    </div>
+                                                </div>
+                                                <p class="error" *ngIf="duplicatePACK">
+                                                    El SKU ya ha sido agregado
+                                                </p>
+                                            </section>
+                                        </ng-container>
+
+                                        <div>
+                                            <mat-form-field class="example-full-width">
+                                                <input type="text" placeholder="Buscar SKU" matInput
+                                                    formControlName="search_pack" [matAutocomplete]="auto" />
+                                                <mat-autocomplete #auto="matAutocomplete">
+                                                    <mat-option *ngFor="let option of listProductPack"
+                                                        [value]="option.SKU">
+                                                        <div (click)="addPack(option, 'listAddPack', 'PACK')">
+                                                            {{ option.SKU }}
+                                                        </div>
+                                                    </mat-option>
+                                                </mat-autocomplete>
+                                            </mat-form-field>
+                                        </div>
+                                    </section>
+                                </section>
+                                <br /><br />
+                            </ng-container>
+                        </div>
+
+                    </section>
+
+                    <ng-container
+                        *ngIf='(f.is_product_variation_select.value && f.type_variation.value === "V") || haveVariations'>
+                        <br /><br />
+                        <ng-container *ngIf="fatherCharged || haveVariations">
+                            <p class="main-subtitle">Variaciones</p>
+                        </ng-container>
+
+                        <ng-container *ngFor="let fv of myVariations; let i=index;">
+
+                            <mat-form-field>
+                                <input matInput disabled placeholder={{fv.variation_name}} autocomplete="off" />
+                            </mat-form-field>
+
+
+                            <mat-radio-group class="example-radio-group" formControlName="variations">
+                                <!-- <ng-container *ngIf="!haveVariations && !checkVariations && fatherCharged">
+                                        <mat-radio-button *ngFor="let v of fv.value; let k=index;"
+                                            class="example-radio-button" [value]="v" (change)=radioChange($event,fv)
+                                            style="width: 30%;  margin-right: 10px; margin-bottom: 10px;">
+                                            <ng-container *ngIf='v[0]==="#"'>
+                                                <div
+                                                    [ngStyle]='{backgroundColor: v, color: transparent, borderRadius: "100%", height: "40px", width: "40px", border: "1px solid black"}'>
+                                                    <p style="visibility: hidden;">{{v}}</p>
+                                                    <p></p>
+                                                </div>
+                                            </ng-container>
+                                            <ng-container *ngIf='v[0]==="/"'>
+                                                <div>
+                                                    <img src="{{url_attachment}}{{v}}" alt={{v}}
+                                                        style="width: 100%; height: 150px" />
+                                                </div>
+                                            </ng-container>
+                                            <ng-container *ngIf='v[0]!=="#" && v[0]!=="/"'>
+                                                <div>
+                                                    <p>{{v}}</p>
+                                                </div>
+                                            </ng-container>
+                                        </mat-radio-button>
+                                    </ng-container> -->
+                                <ng-container *ngIf="!haveVariations && !checkVariations && fatherCharged">
+                                    <mat-radio-button *ngFor="let v of fv.value; let k=index;"
+                                        class="example-radio-button" [value]="v" (change)=radioChange($event,fv)
+                                        style="width: 30%;  margin-right: 10px; margin-bottom: 25px;">
+                                        <ng-container *ngIf='v.value[0]==="#"'>
+                                            <div
+                                                [ngStyle]='{backgroundColor: v.value, color: transparent, borderRadius: "100%", height: "40px", width: "40px", border: "1px solid black"}'>
+                                                <p style="visibility: hidden;">{{v.value}}</p>
+                                                <br /><br />
+                                                <p *ngIf="v.description" style="font-size: 12px; margin-left: -10px;">{{v.description}}</p>
+                                                <br /><br /><br /><br />
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngIf='v.value[0]==="/"'>
+                                            <div>
+                                                <img src="{{url_attachment}}{{v.value}}" alt={{v.value}}
+                                                    style="width: 100%; height: 150px" />
+                                                <br /><br />
+                                                <p *ngIf="v.description">{{v.description}}</p>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngIf='v.value[0]!=="#" && v.value[0]!=="/"'>
+                                            <div>
+                                                <p>{{v.value}}</p>
+                                                <br /><br />
+                                                <p *ngIf="v.description">{{v.description}}</p>
+                                            </div>
+                                        </ng-container>
+                                        <!-- <pre>{{fv.value[k].value[0]|json}}</pre> -->
+                                    </mat-radio-button>
+                                </ng-container>
+
+                                <ng-container *ngIf="haveVariations || checkVariations && fatherCharged">
+                                    <mat-radio-button *ngFor="let v of fv.value; let k=index;"
+                                        class="example-radio-button" [value]="v" (change)=radioChange($event,fv,i)
+                                        style="width: 30%;  margin-right: 10px; margin-bottom: 10px;"
+                                        [checked]="v.checked">
+                                        <ng-container *ngIf='v.value[0]==="#"'>
+                                            <div
+                                                [ngStyle]='{backgroundColor: v.value, color: transparent, borderRadius: "100%", height: "40px", width: "40px", border: "1px solid black"}'>
+                                                <p style="visibility: hidden;">{{v.value}}</p>
+                                                <br /><br />
+                                                <p *ngIf="v.description">{{v.description}}</p>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngIf='v.value[0]==="/"'>
+                                            <div>
+                                                <img src="{{url_attachment}}{{v.value}}" alt={{v.value}}
+                                                    style="width: 100%; height: 150px" />
+                                                <br /><br />
+                                                <p *ngIf="v.description">{{v.description}}</p>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngIf='v.value[0]!=="#" && v.value[0]!=="/"'>
+                                            <div>
+                                                <p>{{v.value}}</p>
+                                                <br /><br />
+                                                <p *ngIf="v.description">{{v.description}}</p>
+                                            </div>
+                                        </ng-container>
+                                    </mat-radio-button>
+                                </ng-container>
+                            </mat-radio-group>
+                            <br /><br />
+                            <!--  <ng-container *ngIf="f.variations.errors">
+                                    <mat-error
+                                        *ngIf="(f.variations.touched || submitted) && myVariations.length !== mySelectedVariations.length">
+                                        Falta por seleccionar una variación
+                                    </mat-error>
+                                </ng-container> -->
+                            <ng-container>
+                                <mat-error *ngIf="submitted && allSelectedVariations(i)">
+                                    Falta por seleccionar una variación
+                                </mat-error>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+
+                    <ng-container *ngIf='f.variation_father.value && infoCompare.request_change && variation_changed'>
+                        <ng-container *ngIf='f.variation_father.value !== infoCompare.request_change.variation_father'>
+                            <br /><br />
+                            <p class="main-subtitle input-cambio">Variaciones Cambio</p>
+                            <br />
+                            <p class="main-subtitle subtitle-container"></p>
+                            <br /><br />
+                            <div *ngFor="let fv of infoCompare.request_change.variation_father; let i = index;">
+                                <mat-label class="input-cambio">
+                                    Variación {{fv.variation_name}} Cambio
+                                </mat-label>
+                                <br />
+                                <ng-container *ngIf="fv.type === 'TEXT' ">
+                                    <mat-form-field style="width: 100%; margin-right: 10px;">
+                                        <mat-chip-list #chipList>
+                                            <mat-chip *ngFor="let fvvk of fv.value; let k=index" [removable]="removable"
+                                                (removed)="removeChipFatherVariationChange(i, k)">
+                                                {{fvvk.value}}
+                                                <ng-container *ngIf="valid_father_children">
+                                                    <mat-icon matChipRemove>cancel
+                                                    </mat-icon>
+                                                </ng-container>
+                                            </mat-chip>
+
+                                        </mat-chip-list>
+                                        <ng-container *ngIf="valid_father_children">
+                                            <input [matChipInputFor]="chipList" autocomplete="off"
+                                                (matChipInputTokenEnd)="addChipFatherVariationChange($event, i)"
+                                                placeholder="Presiona enter para agregar"
+                                                [readonly]="!valid_father_children">
+                                        </ng-container>
+                                    </mat-form-field>
+                                </ng-container>
+                                fv: {{valid_father_children}}
+
+                                <ng-container *ngIf="fv.type === 'COLOR' ">
+                                    <mat-selection-list #fvvkColor style="outline:none !important;">
+                                        <mat-list-item style="outline:none !important;"
+                                            *ngFor="let fvvk of fv.value; let k=index" class="full-container">
+                                            <input matInput #fvvkColor type="color"
+                                                (change)="addColorColorChange($event, i, k, fvvkColor.value)"
+                                                [ngStyle]='{backgroundColor: fvvk.value, color: transparent, height: "40px", width: "40px", border: "1px solid black"}'
+                                                value={{fvvk.value}} [disabled]="!valid_father_children" />
+                                            <mat-form-field
+                                                style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px;">
+                                                <input matInput #fvvkDescription type="text" autocomplete="off"
+                                                    (change)="addColorDescriptionChange($event,i,k,fvvkDescription.value)"
+                                                    (keydown.space)="$event.stopPropagation()"
+                                                    value={{fvvk.description}} placeholder="Agregue un nombre"
+                                                    [readonly]="!valid_father_children" />
+                                            </mat-form-field>
+                                            <button type="button" class="primary-button delete-button"
+                                                style="width: 20%;" (click)="removeChipFatherVariationChange(i,k)"
+                                                *ngIf="valid_father_children">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </mat-list-item>
+                                    </mat-selection-list>
+        
+                                    <br />
+                                    <ng-container style="width: 100%; margin-right: 10px;"
+                                        *ngIf="valid_father_children">
+                                        <div style="width: 100%; display: block; text-align: center;" *ngIf="valid_father_children">
+                                            <button type="button" class="primary-button save-button button-subtitle"
+                                                (click)="addColorVariationEmptyChange(i)" *ngIf="valid_father_children">
+                                                <i class="fas fa-plus"></i> <span> &nbsp;Nuevo Color</span>
+                                            </button>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+
+                    <ng-container *ngIf='f.is_product_variation_select.value && f.type_variation.value === "B"'>
+                        <div formArrayName="variation_father">
+                            <br /><br />
+                            <p class="main-subtitle">Variaciones</p>
+                            <br />
+                            <p class="main-subtitle subtitle-container"></p>
+                            <br /><br />
+                            <div *ngFor="let fv of getFatherVariation(productForm); let i = index;">
+                                <div [formGroupName]="i">
+                                    <mat-label *ngIf="f.variation_father.controls[i].get('variation_name').value">
+                                        Variación {{f.variation_father.controls[i].get('variation_name').value}}
+                                    </mat-label>
+                                    <br />
+                                    <!-- <div style="width: 15%; float: right; margin-right: 10px "
+                                        *ngIf="f.variation_father.controls[i].get('variation_name').value">
+                                        <button type="button" mat-button color="warn"
+                                            class="primary-button delete-button" (click)="removeFatherVariation(i)"
+                                            *ngIf="valid_father_children">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div> -->
+
+                                    <!-- <mat-form-field style="margin-right: 10px; " [ngStyle]="{'width': '100%'}">
+                                        <input matInput type="text" placeholder="Nombre de variación" autocomplete="off"
+                                            formControlName="variation_name" readonly="true" />
+                                    </mat-form-field>
+                                    <ng-container *ngIf="f.variation_father.controls[i].get('variation_name').errors">
+                                        <mat-error
+                                            *ngIf="f.variation_father.controls[i].get('variation_name').errors.required && (f.variation_father.controls[i].get('variation_name').touched || submitted)">
+                                            El campo es obligatorio
+                                        </mat-error>
+                                    </ng-container> -->
+
+                                    <!-- <mat-form-field style="margin-right: 10px;" [ngStyle]="{'width': '100%'}">
+                                        <mat-select placeholder="Tipo de variación" formControlName="type"
+                                            [disabled]="!valid_father_children">
+                                            <mat-option value="TEXT">
+                                                Texto
+                                            </mat-option>
+                                            <mat-option value="IMAGE">
+                                                Imagen
+                                            </mat-option>
+                                            <mat-option value="COLOR">
+                                                Color
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field> -->
+
+                                    <ng-container *ngIf="f.variation_father.controls[i].get('type').errors">
+                                        <mat-error
+                                            *ngIf="f.variation_father.controls[i].get('type').errors.required && (f.variation_father.controls[i].get('type').touched || submitted)">
+                                            El campo es obligatorio
+                                        </mat-error>
+                                    </ng-container>
+
+                                    <br />
+                                    <ng-container
+                                        *ngIf="productForm.controls['variation_father'].controls[i].controls['type'].value === 'TEXT' ">
+                                        <mat-form-field style="width: 100%; margin-right: 10px;">
+                                            <mat-chip-list #chipList>
+                                                <mat-chip
+                                                    *ngFor="let fvvk of productForm.controls.variation_father.controls[i].controls['value'].value; let k=index"
+                                                    [removable]="removable" (removed)="removeChipFatherVariation(i, k)">
+                                                    {{fvvk.value}}
+                                                    <ng-container *ngIf="(valid_father_children &&!variation_changed)">
+                                                        <mat-icon matChipRemove>cancel
+                                                        </mat-icon>
+                                                    </ng-container>
+                                                </mat-chip>
+
+                                            </mat-chip-list>
+                                            <ng-container *ngIf="valid_father_children">
+                                                <input [matChipInputFor]="chipList" autocomplete="off"
+                                                    (matChipInputTokenEnd)="addChipFatherVariation($event, i,k)"
+                                                    placeholder="Presiona enter para agregar"
+                                                    [readonly]="(!valid_father_children || variation_changed)">
+                                            </ng-container>
+                                        </mat-form-field>
+                                        <ng-container *ngIf="f.variation_father.controls[i].get('value').errors">
+                                            <mat-error
+                                                *ngIf="f.variation_father.controls[i].get('value').errors.required && (f.variation_father.controls[i].get('value').touched || submitted)">
+                                                El campo es obligatorio
+                                            </mat-error>
+                                        </ng-container>
+                                    </ng-container>
+
+                                    <ng-container
+                                        *ngIf="productForm.controls['variation_father'].controls[i].controls['type'].value === 'COLOR' ">
+                                        <mat-selection-list #fvvkColor style="outline:none !important;">
+                                            <mat-list-item style="outline:none !important;"
+                                                *ngFor="let fvvk of productForm.controls.variation_father.controls[i].controls['value'].value; let k=index"
+                                                class="full-container">
+                                                <input matInput #fvvkColor type="color"
+                                                    (change)="addColorColor($event, i, k, fvvkColor.value)"
+                                                    [ngStyle]='{backgroundColor: fvvk.value, color: transparent, height: "40px", width: "40px", border: "1px solid black"}'
+                                                    value={{fvvk.value}}
+                                                    [disabled]="(!valid_father_children || variation_changed)" />
+                                                <mat-form-field
+                                                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px;">
+                                                    <input matInput #fvvkDescription type="text" autocomplete="off"
+                                                        (change)="addColorDescription($event,i,k,fvvkDescription.value)"
+                                                        (keydown.space)="$event.stopPropagation()"
+                                                        value={{fvvk.description}} placeholder="Agregue un nombre"
+                                                        [readonly]="(!valid_father_children || variation_changed)" />
+                                                </mat-form-field>
+                                                <button type="button" class="primary-button delete-button"
+                                                    style="width: 20%;" (click)="removeChipFatherVariation(i,k)"
+                                                    *ngIf="(valid_father_children  &&!variation_changed)">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </mat-list-item>
+                                        </mat-selection-list>
+                                        <br />
+                                        <ng-container style="width: 100%; margin-right: 10px;"
+                                            *ngIf="(valid_father_children && !variation_changed)">
+                                            <div style="width: 100%; display: block; text-align: center;"
+                                                *ngIf="valid_father_children">
+                                                <button type="button" class="primary-button save-button button-subtitle"
+                                                    (click)="addColorVariationEmpty(i)"
+                                                    *ngIf="(valid_father_children  && !variation_changed)">
+                                                    <i class="fas fa-plus"></i> <span> &nbsp;Nuevo Color</span>
+                                                </button>
+                                            </div>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="f.variation_father.controls[i].get('value').errors">
+                                            <mat-error
+                                                *ngIf="f.variation_father.controls[i].get('value').errors.required && (f.variation_father.controls[i].get('value').touched || submitted)">
+                                                El campo es obligatorio
+                                            </mat-error>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container
+                                        *ngIf="productForm.controls['variation_father'].controls[i].controls['type'].value === 'IMAGE' ">
+                                        <section class="container-row" style="position: relative; width: 100%;">
+
+                                            <section *ngIf="!existChange.listImagesFatherVariatons">
+                                                <section class="img-container-only-one">
+                                                    <section
+                                                        *ngFor="let pic of productForm.controls.variation_father.controls[i].controls['value'].value; let s=index">
+                                                        <section class="images">
+                                                            <img src="{{url_attachment}}{{pic.value}}" width="250"
+                                                                alt={{pic.value}} />
+                                                            <section class="icon-delete">
+                                                                <button type="button"
+                                                                    class="primary-button delete-button"
+                                                                    (click)="removeChipFatherVariation(i, s)"
+                                                                    *ngIf="valid_father_children">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </section>
+
+                                                        </section>
+                                                        <mat-form-field
+                                                            style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px;">
+                                                            <textarea matInput #picDescription autocomplete="off"
+                                                                rows="1"
+                                                                (change)="addColorDescription($event,i,s,picDescription.value)"
+                                                                (keydown.space)="$event.stopPropagation()"
+                                                                placeholder="Escriba una descripción"
+                                                                value={{pic.description}}></textarea>
+                                                        </mat-form-field>
+
+                                                        <br />
+                                                        <p class="main-subtitle subtitle-container"></p>
+                                                        <br />
+                                                    </section>
+
+                                                    <section class="images center"
+                                                        *ngIf="!limitGalleryOut || valid_father_children">
+                                                        <button type="button"
+                                                            class="primary-button save-button button-subtitle"
+                                                            (click)="checkSupplier(listImagesFatherVariatons,true, i)">
+                                                            Añadir otra Imagen
+                                                        </button>
+
+                                                    </section>
+                                                </section>
+                                            </section>
+                                        </section>
+                                        <ng-container *ngIf="f.variation_father.controls[i].get('value').errors">
+                                            <mat-error
+                                                *ngIf="f.variation_father.controls[i].get('value').errors.required && (f.variation_father.controls[i].get('value').touched || submitted)">
+                                                El campo es obligatorio
+                                            </mat-error>
+                                        </ng-container>
+                                    </ng-container>
+                                </div>
+                                <br />
+                                <p class="main-subtitle subtitle-container"></p>
+                                <br />
+                            </div>
+                        </div>
+                        <!-- <div style="width: 100%; display: block; text-align: center;" *ngIf="!imFather">
+                            <button type="button" class="primary-button save-button button-subtitle"
+                                (click)="addVariationSection(i)">
+                                <i class="fas fa-plus"></i> <span> &nbsp; Agregar Variación</span>
+                            </button>
+                        </div> -->
+                        <br /><br />
+                    </ng-container>
+
+
+                    <!-- <ng-container *ngIf='f.type_variation.value === "V" || !f.is_product_variation_select.value'> -->
+                    <p class="main-subtitle">Precio</p>
+                    <hr />
+                    <section [ngStyle]='{"width": "100%"}'>
+                        <div>
+                            <mat-form-field>
+                                <mat-select placeholder="Moneda" formControlName="currency" name="currency"
+                                    [disabled]="haveVariations || haveFather">
+                                    <mat-option *ngFor="let currency of listTypeCurrency" [value]="currency._id">
+                                        {{ currency.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="f.currency.errors">
+                                <mat-error *ngIf="
+                    f.currency.errors.required &&
+                    (f.currency.touched || submitted)
+                  ">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <ng-container *ngIf="infoCompare.request_change && listTypeCurrency">
+                                <mat-error *ngIf="
+                    f.currency.value != infoCompare.request_change.currency
+                  ">
+                                    Cambio: {{ infoCompare.request_change.currency | searchInArray:
+                                    listTypeCurrency:"_id":"name" }}
+                                </mat-error>
+                            </ng-container>
+                        </div>
+                    </section>
+
+                    <ng-container>
+                        <ng-container *ngIf='validProductField.regular_price'>
+                            <mat-form-field>
+                                <input matInput type="number" placeholder="Precio Regular" class="form-control"
+                                    formControlName="price" autocomplete="off" />
+                            </mat-form-field>
+
+                            <ng-container *ngIf="f.price.errors">
+                                <mat-error *ngIf="
+                  f.price.errors.required && (f.price.touched || submitted)
+                ">
+                                    El campo es obligatorio
+                                </mat-error>
+                                <mat-error *ngIf="f.price.errors.min && (f.price.touched || submitted)">
+                                    El valor debe ser mayor al precio especial
+                                </mat-error>
+                            </ng-container>
+
+                            <ng-container
+                                *ngIf="infoCompare.request_change && f.price.value != infoCompare.request_change.price">
+                                <!-- <mat-error *ngIf="infoCompare.price != infoCompare.request_change.price">
+                                    Cambio: {{ infoCompare.request_change.price }}
+                                </mat-error> -->
+                                <mat-form-field>
+                                    <input #requestChangeRegularPrice matInput type="number"
+                                        placeholder="Precio Regular Cambio" [value]="infoCompare.request_change.price"
+                                        (keyup)="handleChangeRequest(requestChangeRegularPrice.value, 'price')"
+                                        (keydown.space)="$event.stopPropagation()" autocomplete="off"
+                                        [disabled]="isSupplier" class="input-cambio" />
+                                </mat-form-field>
+                            </ng-container>
+                        </ng-container>
+
+
+                        <mat-form-field>
+                            <input matInput type="number" placeholder="Precio Especial" class="form-control"
+                                formControlName="special_price" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.special_price.errors">
+                            <mat-error *ngIf="
+                f.special_price.errors.required &&
+                (f.special_price.touched || submitted)
+              ">
+                                El campo es obligatorio
+                            </mat-error>
+                            <mat-error *ngIf="f.special_price.errors.max">
+                                El valor debe ser menor al precio regular
+                            </mat-error>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="infoCompare.request_change && f.special_price.value != infoCompare.request_change.special_price">
+                            <!-- <mat-error *ngIf="
+                infoCompare.special_price !=
+                infoCompare.request_change.special_price
+              ">
+                                Cambio: {{ infoCompare.request_change.special_price }}
+                            </mat-error> -->
+                            <mat-form-field>
+                                <input #requestChangeSpecialPrice matInput type="number"
+                                    placeholder="Precio Especial Cambio"
+                                    [value]="infoCompare.request_change.special_price"
+                                    (keyup)="handleChangeRequest(requestChangeSpecialPrice.value, 'special_price')"
+                                    (keydown.space)="$event.stopPropagation()" autocomplete="off"
+                                    [disabled]="isSupplier" class="input-cambio" />
+                            </mat-form-field>
+                        </ng-container>
+                        <!-- </ng-container> -->
+                    </ng-container>
+                    <br /><br />
+                    <!-- <ng-container *ngIf='f.type_variation.value === "V" || !f.is_product_variation_select.value'> -->
+                    <p class="main-subtitle">SEO</p>
+                    <hr />
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Tìtulo" class="form-control"
+                                formControlName="title" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.title.errors">
+                            <mat-error *ngIf="
+                  f.title.errors.required && (f.title.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="infoCompare.request_change && f.title.value != infoCompare.request_change.title">
+                            <!-- <mat-error *ngIf="infoCompare.title != infoCompare.request_change.title">
+                                Cambio: {{ infoCompare.request_change.title }}
+                            </mat-error> -->
+                            <mat-form-field>
+                                <input #requestChangeTitle matInput type="text" placeholder="Título Cambio"
+                                    [value]="infoCompare.request_change.title"
+                                    (keyup)="handleChangeRequest(requestChangeTitle.value, 'title')"
+                                    (keydown.space)="$event.stopPropagation()" autocomplete="off"
+                                    [disabled]="isSupplier" class="input-cambio" />
+                            </mat-form-field>
+                        </ng-container>
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Meta Description" class="form-control"
+                                formControlName="meta_description" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.meta_description.errors">
+                            <mat-error *ngIf="
+                  f.meta_description.errors.required &&
+                  (f.meta_description.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                        <ng-container
+                            *ngIf="infoCompare.request_change && f.meta_description.value != infoCompare.request_change.meta_description">
+                            <!-- <mat-error *ngIf="
+                  infoCompare.meta_description !=
+                  infoCompare.request_change.meta_description
+                ">
+                                Cambio: {{ infoCompare.request_change.meta_description }}
+                            </mat-error> -->
+                            <mat-form-field>
+                                <input #requestChangeMetaDescription matInput type="text"
+                                    placeholder="Meta Description Cambio"
+                                    [value]="infoCompare.request_change.meta_description"
+                                    (keyup)="handleChangeRequest(requestChangeMetaDescription.value, 'meta_description')"
+                                    (keydown.space)="$event.stopPropagation()" autocomplete="off"
+                                    [disabled]="isSupplier" class="input-cambio" />
+                            </mat-form-field>
+                        </ng-container>
+                    </div>
+                    <div>
+                        <p class="label-title">URL</p>
+                        <p class="label-info">
+                            {{f.friendly_url.value}}
+                        </p>
+                        <ng-container
+                            *ngIf="infoCompare.request_change && f.friendly_url.value != infoCompare.request_change.friendly_url">
+                            <p class="label-title">URL</p>
+                            <p class="label-info input-cambio">
+                                {{infoCompare.request_change.friendly_url}}
+                            </p>
+                        </ng-container>
+                        <!--  <mat-form-field>
+              <input matInput type="text" placeholder="URL" class="form-control" formControlName="friendly_url"
+                autocomplete="off" [readonly]="true" />
+            </mat-form-field>
+            <ng-container *ngIf="f.friendly_url.errors">
+              <mat-error *ngIf="
+                  f.friendly_url.errors.required &&
+                  (f.friendly_url.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+            <ng-container *ngIf="infoCompare.request_change">
+              <mat-error *ngIf="
+                  infoCompare.friendly_url !=
+                  infoCompare.request_change.friendly_url
+                ">
+                Cambio: {{ infoCompare.request_change.friendly_url }}
+              </mat-error>
+            </ng-container> -->
+                    </div>
+                    <!-- </ng-container> -->
+
+                    <br /><br />
+
+                    <ng-container
+                        *ngIf="(f.supplier_delivery.value && !f.is_variation.value) || f.type_variation.value === 'B' ">
+                        <p class="sub-tittle main-subtitle subtitle-buttton">
+                            Métodos de envío
+                            <ng-container
+                                *ngIf="!validProductField.group_supplier_methods && (f.type_variation.value === 'B' || !haveFather)">
+                                <button type="button" class="primary-button save-button button-subtitle"
+                                    (click)="selectMehod()">
+                                    <i class="fas fa-plus"></i> &nbsp; Agregar Método
+                                </button>
+                            </ng-container>
+                        </p>
+                        <hr />
+                        <div class="ticket-actually ticket"
+                            *ngIf="listChangetMethodDetail && infoCompare.request_change">
+                            Actual
+                        </div>
+                        <section>
+                            <ul class="chip">
+                                <li *ngFor="let method of selectMethodDetail">
+                                    <span>{{ method.name }}</span>
+                                    <ng-container *ngIf="!validProductField.group_supplier_methods">
+                                        <i class="fas fa-times-circle" (click)="removeMethod(method._id)"
+                                            *ngIf="!listChangetMethodDetail && !haveVariations && !haveFather"></i>
+                                    </ng-container>
+                                </li>
+                            </ul>
+                        </section>
+                        <div class="ticket-reeplace ticket"
+                            *ngIf="listChangetMethodDetail && infoCompare.request_change">
+                            Reemplazo
+                        </div>
+                        <section *ngIf="listChangetMethodDetail">
+                            <ul class="chip">
+                                <li *ngFor="let method of listChangetMethodDetail">
+                                    <span>{{ method.name }}</span>
+                                </li>
+                            </ul>
+                        </section>
+                    </ng-container>
+                </section>
+                <section class="container-row" *ngIf='!f.is_variation.value' style="position: relative;">
+                    <mat-accordion>
+                        <mat-expansion-panel [expanded]="toogleCategories" disabled="true">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    <p class="main-subtitle">Categoría</p>
+                                    <div (click)='toogleCategoriesPanel()'>
+                                        <i class="far fa-angle-up"
+                                            [ngClass]="{ 'up-expansion': toogleCategories, 'down-expansion': !toogleCategories }"></i>
+                                    </div>
+                                </mat-panel-title>
+                                <div class="subtitle-container-expansion">
+                                </div>
+                            </mat-expansion-panel-header>
+                            <br />
+                            <br />
+                            <section>
+                                <div>
+                                    <mat-form-field>
+                                        <mat-select placeholder="Grupo" name="type" class="form-control"
+                                            formControlName="group" [disabled]="haveVariations || haveFather">
+                                            <mat-option *ngFor="let addElement of groupList" [value]="addElement._id">
+                                                {{ addElement.name }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <ng-container *ngIf="f.group.errors">
+                                        <mat-error *ngIf="
+                        f.group.errors.required && (f.group.touched || submitted)
+                      ">
+                                            El campo es obligatorio
+                                        </mat-error>
+                                    </ng-container>
+                                </div>
+                                <section>
+                                    <section class="row">
+                                        <section class="col-100">
+                                            <ng-container>
+                                                <mat-error
+                                                    *ngIf="submitted && selectCategories.length == 0 && f.group.value"
+                                                    style='margin:0'>
+                                                    Selecciona una categoria
+                                                </mat-error>
+                                            </ng-container>
+                                            <div class="ticket-actually ticket"
+                                                *ngIf="selectChangeCategory && infoCompare.request_change">
+                                                Actual
+                                            </div>
+                                            <app-dynamic-tree-view (categorySelected)="displayFilters($event)"
+                                                [disableParents]="false" [disableAll]="haveVariations || haveFather"
+                                                #categoryTree>
+                                            </app-dynamic-tree-view>
+                                        </section>
+                                        <section class="col-100" [hidden]="
+                        !selectChangeCategory || !infoCompare.request_change
+                      ">
+                                            <div class="ticket-reeplace ticket">
+                                                Reemplazo
+                                            </div>
+                                            <app-dynamic-tree-view (categorySelected)="displayFilters($event)"
+                                                [disableParents]="false" #categoryChangeTree>
+                                            </app-dynamic-tree-view>
+                                        </section>
+                                    </section>
+                                </section>
+                            </section>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                    <!--  <p class="sub-tittle main-subtitle">Categoría</p>
+          <hr /> -->
+                    <br /><br />
+                    <p class="main-subtitle subtitle-container">Filtros de Categorías</p>
+                    <ng-container *ngFor="let filter of listCategoriesFilter; let idx = index">
+                        <ng-container *ngIf="filter.index === 0">
+                            <br>
+                            <p><strong>{{ filter.categoryName }}</strong></p>
+                            <br>
+                        </ng-container>
+                        <div *ngIf="
+                            filter &&
+                            filter.filter &&
+                            !filter.filter.binded &&
+                            (filter.filter.type == 'radio' ||
+                            filter.filter.type == 'checkbox')
+                        ">
+                            <mat-form-field>
+                                <mat-label>{{ filter.filter.name }}</mat-label>
+                                <mat-select [(ngModel)]="filter.stringValue" [ngModelOptions]="{ standalone: true }">
+                                    <mat-option *ngFor="let item of filter.values" [value]="item">{{ item }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div *ngIf="
+                            filter &&
+                            filter.filter &&
+                            !filter.filter.binded &&
+                            filter.filter.type == 'boolean'
+                        ">
+                            <mat-checkbox [(ngModel)]="filter.booleanValue" [ngModelOptions]="{ standalone: true }">
+                                {{ filter.filter.name }}
+                            </mat-checkbox>
+                        </div>
+                        <div *ngIf="
+                            filter &&
+                            filter.filter &&
+                            !filter.filter.binded &&
+                            filter.filter.type == 'range'
+                        ">
+                            <mat-label>{{ filter.filter.name }}</mat-label> &nbsp; &nbsp;
+                            <mat-slider thumbLabel [min]="filter.minValue" [max]="filter.maxValue" step="1"
+                                [(ngModel)]="filter.numberValue" [ngModelOptions]="{ standalone: true }"></mat-slider>
+                        </div>
+                    </ng-container>
+                </section>
+                <ng-container *ngIf='validProductField.rules_admin'>
+                    <!-- START RULES ADMIN SECTION -->
+                    <section class="container-row">
+                        <mat-checkbox formControlName="active_discount" [disabled]="haveVariations || haveFather">
+                            Activar descuento
+                        </mat-checkbox>
+                        <br />
+                        <div style="padding-top: 15px;">
+                            <span>Descuento:</span>
+                            <mat-form-field style="margin-left: 15px; width: 30%;">
+                                <input matInput type="number" class="form-control" formControlName="discount_amount"
+                                    autocomplete="off" min="0" [readonly]="haveVariations || haveFather"
+                                    oninput="value == '' ? value = null : value < 0 ? value = value * -1 : false" />
+                            </mat-form-field>
+                            <mat-form-field style="float: right; width: 30%;">
+                                <mat-select placeholder="atributo" (selectionChange)="selectDiscountType($event)"
+                                    formControlName="type_discount" name="type_discount"
+                                    [disabled]="haveVariations || haveFather">
+                                    <mat-option *ngFor="let discountType of discountTypes" [value]="discountType._id">
+                                        {{ discountType.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <ng-container *ngIf="f.discount_amount.errors">
+                            <mat-error *ngIf="
+                  f.discount_amount.errors.required &&
+                  (f.discount_amount.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                        <div [hidden]="!showRulesAdminSection" style="margin-top: 20px;">
+                            <p class="main-subtitle subtitle-container">
+                                Imagen de Fondo (Autoliquidable)
+                            </p>
+                            <section>
+                                <section class="img-container-one"
+                                    *ngIf="lisImageBackgroundDiscount.length > 0 && !existChange.lisImageBackgroundDiscount">
+                                    <section class="images"
+                                        *ngFor="let picture of lisImageBackgroundDiscount; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{lisImageBackgroundDiscount[lisImageBackgroundDiscount.length - i - 1]}}"
+                                            width="250"
+                                            (click)="showWindowMultimedia('lisImageBackgroundDiscount', false,0,listImageField.image_background_discount,listImageDimension.image_background_discount)"
+                                            alt=" " />
+                                        <section class="icon-delete ">
+                                            <button type="button" class="primary-button delete-button "
+                                                (click)="deleteImage(i + 1, 'lisImageBackgroundDiscount',$event)">
+                                                <i class="fas fa-trash-alt "></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <section class="one-image column " [hidden]="lisImageBackgroundDiscount.length> 0"
+                                    *ngIf="lisImageBackgroundDiscount.length == 0">
+                                    <app-uploader
+                                        (selectImage)="selectImageMainWeb($event,'lisImageBackgroundDiscount')"
+                                        [maxSize]='listImageField.image_background_discount'
+                                        [maxDimension]='listImageDimension.image_background_discount'
+                                        [suplierId]='f.supplier.value'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisImageBackgroundDiscount', false,null,listImageField.image_background_discount,listImageDimension.image_background_discount)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.image_background_discount" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.image_background_discount,"lisImageBackgroundDiscount","image_background_discount");$event.stopPropagation()'>
+                                </div>
+
+                            </section>
+                            <br>
+                            <p class="subtitle">Descripción de Descuento</p>
+                            <hr />
+                            <div>
+                                <editor formControlName="description_discount"
+                                    apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                                    [initialValue]="description_discount" [init]="tinyEditorConfig"></editor>
+                                <ng-container *ngIf="f.title.errors">
+                                    <mat-error *ngIf="
+                  f.title.errors.required && (f.title.touched || submitted)
+                ">
+                                        El campo es obligatorio
+                                    </mat-error>
+                                </ng-container>
+                                <ng-container *ngIf="infoCompare.request_change">
+                                    <mat-error *ngIf="infoCompare.title != infoCompare.request_change.title">
+                                        Cambio: {{ infoCompare.request_change.title }}
+                                    </mat-error>
+                                </ng-container>
+                            </div>
+                            <br><br>
+
+                            <div class="header-admin">
+                                <div class="container full-container">
+                                    <div class="title subtitle main-subtitle">Administrador de reglas</div>
+                                    <ng-container *ngIf="!haveFather && !haveVariations">
+                                        <ng-container *ngIf="!showOptions">
+                                            <div class="buttons-container">
+                                                <button type="button" class="primary-button delete-button"
+                                                    (click)="deleteAdminRule()">
+                                                    <i class="fas fa-trash"></i> &nbsp; Eliminar
+                                                </button>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                </div>
+                                <hr />
+                                <div class="container full-container">
+                                    <ng-container *ngIf="showOptions">
+                                        <div class="buttons-container">
+                                            <button type="button" class="primary-button save-button button-rules"
+                                                (click)="toggleShowRulesAdminForm()">
+                                                <i class="fas fa-plus"></i> &nbsp; Nuevo
+                                            </button>&nbsp;
+                                            <button type="button"
+                                                class="primary-button save-button button-rules large-button"
+                                                (click)="toggleShowRulesAdminGrid()">
+                                                <i class="fas fa-hand-pointer"></i> &nbsp; Seleccionar
+                                            </button>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <app-crud-rules-admin #cra (embeddedSaved)="configureMessage($event)"
+                                (deletedRulesAdmin)="unmountRulesAdminAndShowOptions($event)"
+                                (switchModal)="switchModal($event)" [isEmbedded]="true"
+                                [isEmbeddedUpdate]="editRulesAdmin" *ngIf="showRulesAdminForm"
+                                [readOnly]="haveVariations || haveFather">
+                            </app-crud-rules-admin>
+                            <app-grid #gridListRulesAdmin (actionAnswer)=" getRulesAdminId($event)"
+                                [hidden]="!showRulesAdminGrid">
+                            </app-grid>
+                        </div>
+                    </section>
+                    <!-- END OF RULES ADMIN SECTION -->
+                </ng-container>
+            </section>
+            <section class="p-row p-seven cont-right">
+                <section class="container-row" style="position: relative;">
+                    <mat-accordion>
+                        <mat-expansion-panel [expanded]="toogleProduct" disabled="true">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    <section class="main-subtitle subtitle-buttton container-expasion-header">
+                                        <span>Detalle del producto</span>
+                                        <div (click)='toogleOption()'>
+                                            <i class="far fa-angle-up"
+                                                [ngClass]="{ 'up-expansion': toogleProduct, 'down-expansion': !toogleProduct }"></i>
+                                        </div>
+                                    </section>
+                                </mat-panel-title>
+                                <div class="subtitle-container-expansion">
+                                </div>
+                            </mat-expansion-panel-header>
+                            <br />
+                            <div *ngFor="let detail of listDetailProduct; let position = index" class="detail-generate">
+                                <ng-container *ngIf="!imFather"><i class="fas fa-trash-alt delete"
+                                        (click)="deleteDetail(position)"></i></ng-container>
+                                <section>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="Título" color="blue"
+                                            class="form-control" [(ngModel)]="detail.title"
+                                            [ngModelOptions]="{ standalone: true }" autocomplete="off"
+                                            [disabled]="imFather || (penddingRequest && approve_user && typeRequest == 'U')" />
+                                    </mat-form-field>
+                                </section>
+                                <section>
+                                    <p>Detalle</p>
+                                    <editor [(ngModel)]="detail.description" [ngModelOptions]="{ standalone: true }"
+                                        apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                                        [initialValue]="detail.description" [init]="tinyEditorConfig"
+                                        [disabled]="imFather || (penddingRequest && approve_user && typeRequest == 'U')">
+                                    </editor>
+                                </section>
+                            </div>
+                            <ng-container *ngIf='existChange.related_detail_list'>
+                                <p class="ticket-reeplace ticket center" [ngStyle]='{"justify-content": "center"}'>
+                                    Reemplazo</p>
+                                <div *ngFor="let detail of detailDiference; let position = index"
+                                    class="detail-generate">
+                                    <i class="fas fa-trash-alt delete" (click)="deleteDetail(position)"></i>
+                                    <section>
+                                        <mat-form-field>
+                                            <input matInput type="text" placeholder="Título" color="blue"
+                                                class="form-control" [(ngModel)]="detail.title"
+                                                [ngModelOptions]="{ standalone: true }" autocomplete="off"
+                                                [disabled]="imFather" />
+                                        </mat-form-field>
+                                    </section>
+                                    <section>
+                                        <p>Detalle</p>
+                                        <editor [(ngModel)]="detail.description" [ngModelOptions]="{ standalone: true }"
+                                            apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                                            [initialValue]="detail.description" [init]="tinyEditorConfig"
+                                            [disabled]="imFather">
+                                        </editor>
+                                    </section>
+                                </div>
+                            </ng-container>
+
+
+                            <div style="width: 100%; display: block; text-align: center;" *ngIf="!imFather">
+                                <button type="button" class="primary-button save-button button-subtitle"
+                                    (click)="addDetail();$event.stopPropagation()" style="margin-right: 10px;">
+                                    <i class="fas fa-plus"></i> <span> &nbsp; Agregar Detalle</span>
+                                </button>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </section>
+
+                <ng-container *ngIf='f.type_variation.value === "V" || !f.is_product_variation_select.value '>
+                    <section class="container-row" style="position: relative;">
+                        <mat-accordion>
+                            <mat-expansion-panel [expanded]="toggleMultimediaSection" disabled="true">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <section class="main-subtitle subtitle-buttton container-expasion-header">
+                                            <span>Galería Multimedia</span>
+                                            <div (click)='toggleMultimedia()'>
+                                                <i class="far fa-angle-up"
+                                                    [ngClass]="{ 'up-expansion': toggleMultimediaSection, 'down-expansion': !toggleMultimediaSection }"></i>
+                                            </div>
+                                        </section>
+                                    </mat-panel-title>
+                                    <div class="subtitle-container-expansion">
+                                    </div>
+                                </mat-expansion-panel-header>
+                                <br />
+
+                                <section *ngIf="!existChange.lisAddPicture">
+                                    <section class="img-container-only-one">
+                                        <section class="images" *ngFor="let picture of lisAddPicture; let i = index">
+
+                                            <section class="icon-change-level">
+                                                <i class="fas fa-arrow-left" (click)='upLabel(i,"lisAddPicture")'></i>
+                                                <i class="fas fa-arrow-right"
+                                                    (click)='downLabel(i,"lisAddPicture")'></i>
+                                            </section>
+                                            <section class="icon-open-image">
+                                                <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                            </section>
+
+
+                                            <img src="{{ url_attachment }}{{picture}}" width="250" alt=""
+                                                (click)="showWindowMultimedia('lisAddPicture', true,i,listImageField.multimedia_gallery,listImageDimension.multimedia_gallery)" />
+
+                                            <section class="icon-change-number">
+                                                <input type='number'
+                                                    (blur)="changePositionBlur(i,infoChangePosition[i],picture,'lisAddPicture')"
+                                                    (keypress)="changePosition(i,infoChangePosition[i],picture,$event,'lisAddPicture');$event.stopPropagation()"
+                                                    [(ngModel)]='infoChangePosition[i]'
+                                                    [ngModelOptions]="{ standalone: true }">
+                                            </section>
+                                            <section class="icon-delete">
+                                                <button type="button" class="primary-button delete-button"
+                                                    (click)="deleteImageBase(i, 'lisAddPicture')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </section>
+                                        </section>
+
+
+                                        <section class="images center" *ngIf="!limitGalleryOut">
+                                            <button type="button" class="primary-button save-button button-subtitle"
+                                                (click)="showWindowMultimedia('lisAddPicture', true,null,listImageField.multimedia_gallery,listImageDimension.multimedia_gallery)">
+                                                Añadir otra Imagen
+                                            </button>
+                                        </section>
+                                    </section>
+
+                                    <section class="img-container-mobile">
+                                        <div class="arrow" (click)="previousImage()">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </div>
+
+                                        <div class="image">
+                                            <p class="delete-item"
+                                                (click)="deleteImage(imagePositionMobile, 'lisAddPicture')">
+                                                Eliminar imagen
+                                            </p>
+                                            <img src="{{ imageShowSlider }}" alt="" width="250" />
+                                        </div>
+                                        <div class="arrow" (click)="nextImage()">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </div>
+                                    </section>
+                                </section>
+                                <section [hidden]="!existChange.lisAddPicture">
+                                    <app-compare-image #compareLisAddPicture></app-compare-image>
+                                </section>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </section>
+                </ng-container>
+
+                <section class="container-general row">
+                    <section class='p-row p-five cont-left'>
+                        <section class="container-row" *ngIf='f.type_variation.value !== "V"'>
+                            <p class="main-subtitle subtitle-container">
+                                Imagen Web
+                            </p>
+                            <section>
+                                <section class="img-container-one"
+                                    *ngIf="lisMainAddPicture.length > 0 && !existChange.lisMainAddPicture">
+                                    <section class="images" *ngFor="let picture of lisMainAddPicture; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{lisMainAddPicture[lisMainAddPicture.length - i - 1]}}"
+                                            width="250"
+                                            (click)="showWindowMultimedia('lisMainAddPicture', false,0,listImageField.image_web,listImageDimension.image_web)"
+                                            alt=" " />
+                                        <section class="icon-delete ">
+                                            <button type="button" class="primary-button delete-button "
+                                                (click)="deleteImage(i + 1, 'lisMainAddPicture',$event)">
+                                                <i class="fas fa-trash-alt "></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <section class="one-image column " [hidden]="lisMainAddPicture.length> 0"
+                                    *ngIf="lisMainAddPicture.length == 0">
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'lisMainAddPicture')"
+                                        [maxSize]='listImageField.image_web'
+                                        [maxDimension]='listImageDimension.image_web' [suplierId]='f.supplier.value'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisMainAddPicture', false,null,listImageField.image_web,listImageDimension.image_web)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.image_web" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.image_web,"lisMainAddPicture","image_web");$event.stopPropagation()'>
+                                </div>
+                                <section [hidden]="!existChange.lisMainAddPicture">
+                                    <app-compare-image #compareMainImage></app-compare-image>
+                                </section>
+                            </section>
+                        </section>
+                    </section>
+                    <section class='p-row p-five cont-right'>
+                        <section class="container-row" *ngIf='f.type_variation.value !== "V"'>
+                            <p class="main-subtitle subtitle-container">
+                                Imagen App
+                            </p>
+                            <section>
+                                <section class="img-container-one"
+                                    *ngIf="lisMainAddPictureMobile.length > 0 && !existChange.lisMainAddPictureMobile">
+                                    <section class="images"
+                                        *ngFor="let picture of lisMainAddPictureMobile; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{lisMainAddPictureMobile[lisMainAddPictureMobile.length - i - 1]}}"
+                                            (click)="showWindowMultimedia('lisMainAddPictureMobile', false,0,listImageField.image_app,listImageDimension.image_app)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type="button" class="primary-button delete-button"
+                                                (click)="deleteImage(i + 1, 'lisMainAddPictureMobile')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <section class="one-image column" [hidden]="lisMainAddPictureMobile.length > 0"
+                                    *ngIf="lisMainAddPictureMobile.length == 0 && !existChange.lisMainAddPictureMobile">
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'lisMainAddPictureMobile')"
+                                        [maxSize]='listImageField.image_app'
+                                        [maxDimension]='listImageDimension.image_app' [suplierId]='f.supplier.value'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisMainAddPictureMobile', false,null,listImageField.image_app,listImageDimension.image_app)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.image_app" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.image_app,"lisMainAddPictureMobile","image_app");$event.stopPropagation()'>
+                                </div>
+                                <section [hidden]="!existChange.lisMainAddPictureMobile">
+                                    <app-compare-image #compareMainMobileImage></app-compare-image>
+                                </section>
+                            </section>
+                        </section>
+                    </section>
+                </section>
+                <section class="container-general" [hidden]='f.is_variation.value'
+                    *ngIf='f.type_variation.value !== "V"'>
+                    <ng-container class="row">
+                        <section class='p-row'
+                            [ngClass]="{ 'cont-left':validProductField.banner_app, 'p-five': validProductField.banner_app , 'p-ten': !validProductField.banner_app }">
+                            <section class="container-row">
+                                <p class="main-subtitle subtitle-container">
+                                    Banner Web
+                                </p>
+                                <br />
+                                <section>
+                                    <p class="sub-tittle">
+                                        Principal
+                                    </p>
+                                    <section class="img-container-one"
+                                        *ngIf="lisBannerAddPicture.length > 0 && !existChange.lisBannerAddPicture">
+                                        <section class="images"
+                                            *ngFor="let picture of lisBannerAddPicture; let i = index">
+                                            <section class="icon-open-image">
+                                                <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                            </section>
+                                            <img src="{{ url_attachment }}{{lisBannerAddPicture[lisBannerAddPicture.length - i - 1]}}"
+                                                width="250" alt=""
+                                                (click)="showWindowMultimedia('lisBannerAddPicture', false,0,listImageField.banner_web,listImageDimension.banner_web)" />
+                                            <section class="icon-delete">
+                                                <button type="button" class="primary-button delete-button"
+                                                    (click)="deleteImage(i + 1, 'lisBannerAddPicture')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </section>
+                                        </section>
+                                    </section>
+                                    <section class='one-image column' [hidden]="lisBannerAddPicture.length > 0"
+                                        *ngIf="lisBannerAddPicture.length == 0">
+                                        <app-uploader (selectImage)="selectImageMainWeb($event,'lisBannerAddPicture')"
+                                            [maxSize]='listImageField.banner_web'
+                                            [maxDimension]='listImageDimension.banner_web'
+                                            [suplierId]='f.supplier.value'>
+                                        </app-uploader>
+                                        <section>
+                                            <button type='button'
+                                                (click)="showWindowMultimedia('lisBannerAddPicture', false,null,listImageField.banner_web,listImageDimension.banner_web)"
+                                                class="primary-button save-button button-subtitle button-width">
+                                                Selecciona desde la galeria
+                                            </button>
+                                        </section>
+                                    </section>
+                                    <div>
+                                        <input type="text" placeholder="Ingrese un nombre para agregar"
+                                            [(ngModel)]="searchName.banner_picture" [ngStyle]='{"width": "100%"}'
+                                            [ngModelOptions]="{ standalone: true }"
+                                            (keypress)='addByName($event,searchName.banner_picture,"lisBannerAddPicture","banner_picture");$event.stopPropagation()'>
+                                    </div>
+                                    <section [hidden]="!existChange.lisBannerAddPicture">
+                                        <app-compare-image #compareBannerImage></app-compare-image>
+                                    </section>
+                                </section>
+                                <br> <br>
+                                <section>
+                                    <p class="sub-tittle">Logo</p>
+                                    <section class="img-container-one" *ngIf="
+                      lisBannerLogoAddPicture.length > 0 &&
+                      !existChange.lisBannerLogoAddPicture
+                    ">
+                                        <section class="images"
+                                            *ngFor="let picture of lisBannerLogoAddPicture; let i = index">
+                                            <section class="icon-open-image">
+                                                <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                            </section>
+                                            <img src="{{ url_attachment }}{{lisBannerLogoAddPicture[lisBannerLogoAddPicture.length - i - 1]
+                        }}" (click)="showWindowMultimedia('lisBannerLogoAddPicture', false,0,listImageField.logo_web,listImageDimension.logo_web)"
+                                                width="250" alt="" />
+                                            <section class="icon-delete">
+                                                <button type="button" class="primary-button delete-button"
+                                                    (click)="deleteImage(i + 1, 'lisBannerLogoAddPicture')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </section>
+                                        </section>
+                                    </section>
+                                    <section class='one-image column' [hidden]="lisBannerLogoAddPicture.length > 0"
+                                        *ngIf="lisBannerLogoAddPicture.length == 0 && !existChange.lisBannerLogoAddPicture">
+                                        <app-uploader
+                                            (selectImage)="selectImageMainWeb($event,'lisBannerLogoAddPicture')"
+                                            [maxSize]='listImageField.logo_web'
+                                            [maxDimension]='listImageDimension.logo_web' [suplierId]='f.supplier.value'>
+                                        </app-uploader>
+                                        <section>
+                                            <button type='button'
+                                                (click)="showWindowMultimedia('lisBannerLogoAddPicture', false,null,listImageField.logo_web,listImageDimension.logo_web)"
+                                                class="primary-button save-button button-subtitle button-width">
+                                                Selecciona desde la galeria
+                                            </button>
+                                        </section>
+                                    </section>
+                                    <div>
+                                        <input type="text" placeholder="Ingrese un nombre para agregar"
+                                            [(ngModel)]="searchName.banner_mobile_picture" [ngStyle]='{"width": "100%"}'
+                                            [ngModelOptions]="{ standalone: true }"
+                                            (keypress)='addByName($event,searchName.banner_mobile_picture,"lisBannerLogoAddPicture","banner_mobile_picture");$event.stopPropagation()'>
+                                    </div>
+                                    <section [hidden]="!existChange.lisBannerLogoAddPicture">
+                                        <app-compare-image #compareLogoImage></app-compare-image>
+                                    </section>
+                                </section>
+                            </section>
+                        </section>
+                        <section class='p-row p-five cont-right' *ngIf='validProductField.banner_app'>
+                            <section class="container-row">
+                                <p class="main-subtitle subtitle-container">
+                                    Banner App
+                                </p>
+                                <br />
+                                <section>
+                                    <p class="sub-tittle">
+                                        Principal
+                                    </p>
+                                    <section class="img-container-one" *ngIf="
+                      lisBannerAddPictureMobile.length > 0 &&
+                      !existChange.lisBannerAddPictureMobile
+                    ">
+                                        <section class="images" *ngFor="
+                        let picture of lisBannerAddPictureMobile;
+                        let i = index
+                      ">
+                                            <section class="icon-open-image">
+                                                <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                            </section>
+                                            <img src="{{ url_attachment }}{{
+                          lisBannerAddPictureMobile[
+                            lisBannerAddPictureMobile.length - i - 1
+                          ]
+                        }}" (click)="showWindowMultimedia('lisBannerAddPictureMobile', false,0,listImageField.banner_app,listImageDimension.banner_app)"
+                                                width="250" alt="" />
+                                            <section class="icon-delete">
+                                                <button type="button" class="primary-button delete-button"
+                                                    (click)="deleteImage(i + 1, 'lisBannerAddPictureMobile')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </section>
+                                        </section>
+                                    </section>
+                                    <section class='one-image column' [hidden]="lisBannerAddPictureMobile.length > 0"
+                                        *ngIf="lisBannerAddPictureMobile.length == 0 && !existChange.lisBannerAddPictureMobile">
+                                        <app-uploader
+                                            (selectImage)="selectImageMainWeb($event,'lisBannerAddPictureMobile')"
+                                            [maxSize]='listImageField.banner_app'
+                                            [maxDimension]='listImageDimension.banner_app'
+                                            [suplierId]='f.supplier.value'>
+                                        </app-uploader>
+                                        <section>
+                                            <button type='button'
+                                                (click)="showWindowMultimedia('lisBannerAddPictureMobile', false,null,listImageField.banner_app,listImageDimension.banner_app)"
+                                                class="primary-button save-button button-subtitle button-width">
+                                                Selecciona desde la galeria
+                                            </button>
+                                        </section>
+                                    </section>
+                                    <section [hidden]="!existChange.lisBannerAddPictureMobile">
+                                        <app-compare-image #compareBannerMobileImage></app-compare-image>
+                                    </section>
+                                </section>
+                                <section>
+                                    <p class="sub-tittle">Logo</p>
+                                    <section class="img-container-one"
+                                        *ngIf="lisBannerLogoAddPictureMobile.length > 0 && !existChange.lisBannerLogoAddPictureMobile">
+                                        <section class="images"
+                                            *ngFor="let picture of lisBannerLogoAddPictureMobile; let i = index">
+                                            <section class="icon-open-image">
+                                                <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                            </section>
+                                            <img src="{{ url_attachment }}{{lisBannerLogoAddPictureMobile[lisBannerLogoAddPictureMobile.length - i - 1 ] }}"
+                                                (click)="showWindowMultimedia('lisBannerLogoAddPictureMobile', false,0,listImageField.logo_app,listImageDimension.logo_app)"
+                                                width="250" alt="" />
+                                            <section class="icon-delete">
+                                                <button type="button" class="primary-button delete-button"
+                                                    (click)="deleteImage(i + 1, 'lisBannerLogoAddPictureMobile')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </section>
+                                        </section>
+                                    </section>
+                                    <section class='one-image column'
+                                        [hidden]="lisBannerLogoAddPictureMobile.length > 0"
+                                        *ngIf="lisBannerLogoAddPictureMobile.length == 0 && !existChange.lisBannerLogoAddPictureMobile">
+                                        <app-uploader
+                                            (selectImage)="selectImageMainWeb($event,'lisBannerLogoAddPictureMobile')"
+                                            [maxSize]='listImageField.logo_app'
+                                            [maxDimension]='listImageDimension.logo_app' [suplierId]='f.supplier.value'>
+                                        </app-uploader>
+                                        <section>
+                                            <button type='button'
+                                                (click)="showWindowMultimedia('lisBannerLogoAddPictureMobile', false,null,listImageField.logo_app,listImageDimension.logo_app)"
+                                                class="primary-button save-button button-subtitle button-width">
+                                                Selecciona desde la galeria
+                                            </button>
+                                        </section>
+                                    </section>
+                                    <section [hidden]="!existChange.lisBannerLogoAddPictureMobile">
+                                        <app-compare-image #compareLogoMobileImage></app-compare-image>
+                                    </section>
+                                </section>
+                            </section>
+                        </section>
+                    </ng-container>
+                </section>
+
+                <!--                 <section class="container-row" *ngIf='!f.is_variation.value'>
+                    <p class="main-subtitle subtitle-container">Productos Relacionados</p>
+                    <ng-container *ngIf="listAddSku">
+                        <p *ngIf="existChange.related_products" class="ticket-actually ticket">
+                            Actual
+                        </p>
+                        <section style="margin-bottom: 1.5em;" *ngIf="listAddSku.length > 0">
+                            <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                                <div class="example-box" *ngFor="let product of listAddSku; let position = index"
+                                    cdkDrag>
+                                    <span>{{ product.SKU }} - {{ product.name }}</span>
+                                    <ng-container *ngIf="!haveVariations && !haveFather">
+                                        <div (click)="deleteSkuList(position, 'listAddSku')" class="delete-drop-item">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <p class="error" *ngIf="duplicateSKU">
+                                El SKU ya ha sido agregado
+                            </p>
+                        </section>
+                        <section *ngIf="existChange.related_products">
+                            <p class="ticket-reeplace ticket">Reemplazo</p>
+                            <section style="margin-bottom: 1.5em;" *ngIf="listAddSkuRelated.length > 0">
+                                <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                                    <div class="example-box"
+                                        *ngFor="let product of listAddSkuRelated; let position = index" cdkDrag>
+                                        <span>{{ product.SKU }} - {{ product.name }}</span>
+                                    </div>
+                                </div>
+                                <p class="error" *ngIf="duplicateSKU">
+                                    El SKU ya ha sido agregado
+                                </p>
+                            </section>
+                        </section>
+                    </ng-container>
+
+                    <ng-container *ngIf='f.type_variation.value === "B" || !f.is_product_variation_select.value'>
+                        <div *ngIf="!infoCompare.request_change">
+                            <mat-form-field class="example-full-width">
+                                <input type="text" placeholder="Buscar SKU" matInput formControlName="search_sku"
+                                    [matAutocomplete]="auto" />
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    <mat-option *ngFor="let option of listSKUProduct" [value]="option.SKU">
+                                        <div (click)="addSKU(option, 'listAddSku', 'SKU')">
+                                            {{ option.SKU }} - {{ option.name }}
+                                        </div>
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                </section> -->
+            </section>
+        </section>
+    </form>
+</div>
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<app-dialog-reason #dialogReason (answerModal)="getReason($event)"></app-dialog-reason>
+<app-multimedia-gallery #multimediaList (imageChoose)="dataPictureSave($event)" [suplierId]='f.supplier.value'>
+</app-multimedia-gallery>
+<app-multimedia-gallery #multimediaListFatherVariations (imageChoose)="dataPictureSaveFatherVariation($event)"
+    [suplierId]='f.supplier.value'>
+</app-multimedia-gallery>
+<app-modal-search-father-variation-product (listProductSelect)='listProductSelect($event)'
+    #fatherVariationProductSearch>
+</app-modal-search-father-variation-product>
+<article class="container-modal" *ngIf="openSelectMehod">
+    <section class="modal-body modal-small">
+        <header>
+            <strong>Elige los métodos</strong>
+            <div id="close-button" (click)="closeSelectMehod()">&times;</div>
+        </header>
+        <section class="body">
+            <section>
+                <section *ngFor="let method of listMethod" class="brand-section">
+                    <mat-checkbox [(ngModel)]="method.select">{{ method.name }}
+                    </mat-checkbox>
+                </section>
+            </section>
+        </section>
+        <footer>
+            <button type='button' class="primary-button button-subtitle cancel-button" (click)="closeSelectMehod()">
+                Cancelar
+            </button>
+            <button type='button' class="primary-button save-button button-subtitle save-button-style"
+                (click)="addMethod()">
+                Aceptar
+            </button>
+        </footer>
+    </section>
+</article>
+<section>
+    <article class="container-modal" *ngIf="showDenyMessage">
+        <section class="modal-body modal-small">
+            <header>
+                <strong>Motivo de rechazo</strong>
+                <div id="close-button" (click)="closeMessageDeny()">&times;</div>
+            </header>
+            <section class="body">
+                <mat-form-field>
+                    <textarea matInput maxlength="1500" placeholder="Descripción" cdkTextareaAutosize
+                        cdkAutosizeMinRows="3" cdkAutosizeMaxRows="7" [(ngModel)]="denyMessage"
+                        [ngModelOptions]="{ standalone: true }"></textarea>
+                </mat-form-field>
+            </section>
+            <footer>
+                <button type="button" class="primary-button button-subtitle cancel-button" (click)="closeMessageDeny()">
+                    Cancelar
+                </button>
+                <button type="button" class="primary-button save-button button-subtitle save-button-style"
+                    (click)="denyRequest(denyMessage)">
+                    Aceptar
+                </button>
+            </footer>
+        </section>
+    </article>
+</section>

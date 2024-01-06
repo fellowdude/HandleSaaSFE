@@ -1,0 +1,597 @@
+<app-upload-excel #uploadExcel (resultInfo)="resultInfo($event)">
+</app-upload-excel>
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+  <div class="container">
+    <div class="return-button"><i (click)="returnSupplier()" class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idSupplier">Nuevo método de envío</div>
+    <div class="title" *ngIf="idSupplier">Editar método de envío</div>
+    <div class="buttons-container">
+
+      <button type="button" class="primary-button" (click)="ubigeoMasive()">
+        <i class="fas fa-plus-circle"></i> Subida masiva ubigeos
+      </button>
+
+      <button type="button" class="primary-button " *ngIf="idMethod" (click)="confirmDeleteItem()">
+        <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+      </button>
+      <button type="button" class="primary-button " (click)="saveMethod()">
+        <i class="fas fa-save"></i> &nbsp; Guardar
+      </button>
+    </div>
+  </div>
+</div>
+<section class="content">
+  <section class="container-partition">
+    <section class="p-row p-three cont-left ">
+      <form [formGroup]="methodForm" style="display: contents;">
+        <section class="container-row left">
+          <p class="sub-tittle main-subtitle subtitle-container">Detalles</p>
+          <br>
+          <section class="visibility separate">
+            <section>Activado</section>
+            <section id="slide">
+              <span *ngIf="f.active.value">Si</span>
+              <span *ngIf="!f.active.value">No</span>
+              <mat-slide-toggle formControlName="active"></mat-slide-toggle>
+            </section>
+          </section>
+          <div>
+            <mat-form-field>
+              <mat-select placeholder="Tipo" formControlName="type" name="type">
+                <mat-option *ngFor="let method of listMethod" [value]="method._id">
+                  {{ method.value }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ng-container *ngIf="f.type.errors">
+              <mat-error *ngIf="f.type.errors.required && (f.type.touched || submitted)">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+
+          <div>
+            <mat-form-field>
+              <input matInput type="text" maxlength="50" placeholder="Nombre" class="form-control"
+                formControlName="name" autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="f.name.errors">
+              <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="f.name.errors.maxlength && (f.name.touched || submitted)">
+                La cantidad máxima de caracteres es de 50
+              </mat-error>
+            </ng-container>
+          </div>
+
+
+          <div *ngIf="activeBlock.message">
+            <mat-form-field>
+              <textarea matInput placeholder="Mensaje General" cdkTextareaAutosize cdkAutosizeMinRows="3"
+                cdkAutosizeMaxRows="7" class="form-control" formControlName="message"></textarea>
+            </mat-form-field>
+            <ng-container *ngIf="f.message.errors">
+              <mat-error *ngIf="
+                  f.message.errors.required && (f.message.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+
+          <div>
+            <ng-container *ngIf="activeBlock.rangeHour">
+              <mat-form-field>
+                <textarea matInput placeholder="Dirección" maxlength="50" cdkTextareaAutosize cdkAutosizeMinRows="3"
+                  cdkAutosizeMaxRows="7" class="form-control" formControlName="description"></textarea>
+              </mat-form-field>
+            </ng-container>
+            <ng-container *ngIf="!activeBlock.rangeHour">
+              <mat-form-field>
+                <textarea matInput placeholder="Descripción" maxlength="1500" cdkTextareaAutosize cdkAutosizeMinRows="3"
+                  cdkAutosizeMaxRows="7" class="form-control" formControlName="description"></textarea>
+              </mat-form-field>
+            </ng-container>
+
+            <!--  <ng-container *ngIf="f.description.errors">
+              <mat-error *ngIf="
+                  f.description.errors.required &&
+                  (f.description.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="
+                  f.description.errors.maxlength &&
+                  (f.description.touched || submitted)
+                ">
+                La cantidad máxima de caracteres es de 1500
+              </mat-error>
+            </ng-container> -->
+          </div>
+        </section>
+
+        <!--    <section class="container-row" *ngIf="activeBlock.rangeDay">
+          <p class="sub-tittle main-subtitle">Rango días de entrega</p>
+          <div *ngIf="activeBlock.rangeDay">
+            <div style="width: 110%;">
+              <mat-form-field>
+                <input matInput type="number" maxlength="50" placeholder="Días minimo" class="form-control"
+                  formControlName="rangeMin" autocomplete="off" />
+              </mat-form-field>
+              <ng-container *ngIf="f.rangeMin.errors">
+                <mat-error *ngIf="
+                    f.rangeMin.errors.required &&
+                    (f.rangeMin.touched || submitted)
+                  ">
+                  El campo es obligatorio
+                </mat-error>
+              </ng-container>
+            </div>
+
+            <div style="width: 110%;">
+              <mat-form-field>
+                <input matInput type="number" maxlength="50" placeholder="Días máximo" class="form-control"
+                  formControlName="rangeMax" autocomplete="off" />
+              </mat-form-field>
+              <ng-container *ngIf="f.rangeMax.errors">
+                <mat-error *ngIf="
+                    f.rangeMax.errors.required &&
+                    (f.rangeMax.touched || submitted)
+                  ">
+                  El campo es obligatorio
+                </mat-error>
+              </ng-container>
+            </div>
+          </div>
+        </section> -->
+
+      </form>
+
+      <ng-container *ngIf="showUbigeoSection != 'Recojo en tienda'">
+        <section class="container-row" *ngIf="activeBlock.available && !activeBlock.rangeDay">
+          <p class="sub-tittle main-subtitle">Disponibilidad</p>
+          <hr />
+          <section>
+            <div class="date-assign" *ngFor="let time of arrayTimeAvailable; let position = index">
+              <div class="check-day">
+                <mat-checkbox [(ngModel)]="time.active">
+                  {{ time.name }}
+                </mat-checkbox>
+              </div>
+              <div class="time-day">
+                <span (click)="openModalTime(position, 'ini_hour')" *ngIf="!time.ini_hour">Hora Inicio</span>
+                <span (click)="openModalTime(position, 'ini_hour')" *ngIf="time.ini_hour">{{ time.ini_hour | date: "HH : mm" }}</span>
+                <span (click)="openModalTime(position, 'end_hour')" *ngIf="!time.end_hour">Hora Fin</span>
+                <span (click)="openModalTime(position, 'end_hour')" *ngIf="time.end_hour">{{ time.end_hour | date: "HH :mm" }}</span>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="container-row" *ngIf="activeBlock.rangeHour">
+          <p class="sub-tittle main-subtitle">Intervalo de reserva</p>
+          <hr />
+          <section>
+            <div class="date-assign">
+              <div class="check-day">
+                Intervalo
+              </div>
+              <div class="time-day">
+                <span (click)="openIntervalTime('time')" *ngIf="!intervalTime.time">Elegir intervalo de horas</span>
+                <span (click)="openIntervalTime('time')" *ngIf="intervalTime.time">
+                  {{ intervalTime.time | date: "HH : mm" }}</span>
+              </div>
+            </div>
+          </section>
+        </section>
+      </ng-container>
+
+      <form [formGroup]="methodForm" style="display: contents;" *ngIf="activeBlock.configuration">
+        <section class="container-row">
+          <p class="sub-tittle main-subtitle">Configuración</p>
+          <hr />
+          <section *ngIf="activeBlock.maxSchedule">
+            <mat-form-field>
+              <input matInput type="number" placeholder="Máximo días para programar" class="form-control"
+                formControlName="maxDaySchedule" autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="f.maxDaySchedule.errors">
+              <mat-error *ngIf="
+                  f.maxDaySchedule.errors.required &&
+                  (f.maxDaySchedule.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </section>
+
+          <section *ngIf="activeBlock.maxDeliver">
+            <mat-form-field>
+              <input matInput type="number" placeholder="Máximo días de entrega" class="form-control"
+                formControlName="maxDayDelivery" autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="f.maxDayDelivery.errors">
+              <mat-error *ngIf="
+                  f.maxDayDelivery.errors.required &&
+                  (f.maxDayDelivery.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </section>
+        </section>
+      </form>
+    </section>
+
+    <ng-container *ngIf="showUbigeoSection == 'Recojo en tienda'">
+      <section class="p-row p-four cont-right">
+        <section class="container-row" *ngIf="activeBlock.available && !activeBlock.rangeDay">
+          <p class="sub-tittle main-subtitle">Disponibilidad</p>
+          <hr />
+          <section>
+            <div class="date-assign" *ngFor="let time of arrayTimeAvailable; let position = index">
+              <div class="check-day">
+                <mat-checkbox [(ngModel)]="time.active">
+                  {{ time.name }}
+                </mat-checkbox>
+              </div>
+              <div class="time-day">
+                <span (click)="openModalTime(position, 'ini_hour')" *ngIf="!time.ini_hour">Hora Inicio</span>
+                <span (click)="openModalTime(position, 'ini_hour')" *ngIf="time.ini_hour">{{ time.ini_hour | date: "HH : mm" }}</span>
+                <span (click)="openModalTime(position, 'end_hour')" *ngIf="!time.end_hour">Hora Fin</span>
+                <span (click)="openModalTime(position, 'end_hour')" *ngIf="time.end_hour">{{ time.end_hour | date: "HH : mm" }}</span>
+              </div>
+            </div>
+          </section>
+        </section>
+      </section>
+
+      <section class="p-row p-three cont-right">
+        <section class="container-row" *ngIf="activeBlock.rangeHour">
+          <p class="sub-tittle main-subtitle">Intervalo de reserva</p>
+          <hr />
+          <section>
+            <div class="date-assign">
+              <div class="check-day">
+                Intervalo
+              </div>
+              <div class="time-day">
+                <span (click)="openIntervalTime('time')" *ngIf="!intervalTime.time">Elegir intervalo de horas</span>
+                <span (click)="openIntervalTime('time')" *ngIf="intervalTime.time">
+                  {{ intervalTime.time | date: "HH : mm" }}</span>
+              </div>
+            </div>
+          </section>
+        </section>
+      </section>
+    </ng-container>
+
+    <ng-container *ngIf="showUbigeoSection != 'Recojo en tienda'">
+      <section class="p-row p-seven cont-right">
+        <section class="container-row">
+          <section>
+            <button [disabled]="!enableAddPrice" [ngClass]="{'button-disabled': !enableAddPrice}"
+              class="primary-button save-button" style="max-width: 160px !important;" (click)="openModalAddPrice()">
+              Ingresar Precio
+            </button>
+            <p class="info">
+              {{ quantityLocationSelect }}
+              <span *ngIf="quantityLocationSelect != 1">ubigeos</span>
+              <span *ngIf="quantityLocationSelect == 1">ubigeo</span>
+              seleccionado.
+            </p>
+          </section>
+          <br>
+          <section class="container-table">
+            <section class="container-table">
+
+              <section class="row">
+                <div class="select table-title">
+                  <mat-checkbox [(ngModel)]="checkAll" (ngModelChange)="changeCheckAll()"></mat-checkbox>
+                </div>
+                <div class="active table-title">Activo</div>
+                <div class="location">
+                  <i class="fas fa-times-circle" *ngIf="departmentFilter" (click)="outFilter('department')"></i>
+                  <mat-form-field>
+                    <mat-select placeholder="Departamento" [(ngModel)]="departmentFilter"
+                      (ngModelChange)="changeDepartment()">
+                      <mat-option *ngFor="let department of listDepartment" [value]="department._id">
+                        {{ department.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="location">
+                  <i class="fas fa-times-circle" *ngIf="provinceFilter" (click)="outFilter('province')"></i>
+                  <mat-form-field>
+                    <mat-select placeholder="Provincia" [(ngModel)]="provinceFilter" (ngModelChange)="changeProvince()">
+                      <mat-option *ngFor="let province of listProvince" [value]="province._id">
+                        {{ province.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="location">
+                  <i class="fas fa-times-circle" *ngIf="districtFilter" (click)="outFilter('district')"></i>
+                  <mat-form-field>
+                    <mat-select placeholder="Distrito" [(ngModel)]="districtFilter" (ngModelChange)="changeDistrict()">
+                      <mat-option *ngFor="let district of listDistrict" [value]="district._id">
+                        {{ district.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="ubigeo table-title">Ubigeo</div>
+                <div class="price table-title" style="justify-content: flex-end;">
+                  Precio
+                </div>
+              </section>
+
+              <!-- <tbody> -->
+
+              <cdk-virtual-scroll-viewport style="height: 300px" itemSize="10">
+
+                <ng-container *cdkVirtualFor="let location of listLocation">
+                  <section class="row column-table">
+                    <div class="select center">
+                      <mat-checkbox [(ngModel)]="location.active"
+                        (ngModelChange)="verifyStateCheck(); quantitySelect()">
+                      </mat-checkbox>
+                    </div>
+                    <div class="active center check-use" (click)="changeStateUbigeo(location)">
+                      <span *ngIf="!location.use"><i class="fas fa-times-circle"></i></span>
+                      <span *ngIf="location.use"><i class="fas fa-check-circle"></i></span>
+                    </div>
+                    <div class="location" (click)="openModalAddPrice(location)">
+                      {{ location.department }}
+                    </div>
+                    <div class="location" (click)="openModalAddPrice(location)">
+                      {{ location.province }}
+                    </div>
+                    <div class="location" (click)="openModalAddPrice(location)">
+                      {{ location.district }}
+                    </div>
+                    <div class="ubigeo center" (click)="openModalAddPrice(location)">
+                      {{ location.ubigeo }}
+                    </div>
+                    <div class="price right" (click)="openModalAddPrice(location)">
+                      <!-- <ng-container *ngIf="!location.currency">
+                        {{ location.price }}
+                      </ng-container> -->
+                      <ng-container *ngIf="location.currency">
+                        {{ location.price | currency: location.currency.ref1 }}
+                      </ng-container>
+                    </div>
+                  </section>
+                </ng-container>
+
+              </cdk-virtual-scroll-viewport>
+
+              <!-- </tbody> -->
+            </section>
+          </section>
+        </section>
+      </section>
+    </ng-container>
+
+  </section>
+</section>
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<section>
+  <article class="container-modal" *ngIf="showModalPrice">
+    <section class="modal-body modal-small">
+      <header>
+        <strong>Aplicar Precio</strong>
+        <div id="close-button" (click)="closeModalAddPrice()">&times;</div>
+      </header>
+      <section class="body">
+        Se aplicará el precio
+        <span *ngIf="quantityLocationSelect == 1">al ubigeo seleccionado.</span>
+        <span *ngIf="quantityLocationSelect > 1">a los <strong> {{ quantityLocationSelect }} </strong> ubigeos
+          seleccionados.
+        </span>
+
+        <form [formGroup]="locationForm" style="display: contents;">
+          <div class="add-price">
+            <div style="margin-top: 0.5px;">
+              <mat-form-field>
+                <input matInput type="number" class="form-control" class="form-control" formControlName="amount"
+                  autocomplete="off" min="0"
+                  oninput="value == '' ? value = null : value < 0 ? value = value * -1 : false" />
+              </mat-form-field>
+              <ng-container *ngIf="l.amount.errors">
+                <mat-error *ngIf="
+                  l.amount.errors.required &&
+                  (l.amount.touched || submittedLocation)
+                ">
+                  El campo es obligatorio
+                </mat-error>
+              </ng-container>
+            </div>
+
+            <div>
+              <mat-form-field>
+                <mat-select placeholder="soles" class="form-control" formControlName="currency">
+                  <mat-option *ngFor="let currency of listCurrency" [value]="currency._id">
+                    {{ currency.value }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <ng-container *ngIf="l.currency.errors">
+                <mat-error *ngIf="
+                  l.currency.errors.required &&
+                  (l.currency.touched || submittedLocation)
+                ">
+                  El campo es obligatorio
+                </mat-error>
+              </ng-container>
+            </div>
+          </div>
+          <section *ngIf="activeBlock.rangeDay">
+            <p class="sub-tittle">Rango días de entrega</p>
+            <div *ngIf="activeBlock.rangeDay">
+              <mat-form-field>
+                <input matInput type="number" maxlength="50" placeholder="Días minimo" class="form-control"
+                  formControlName="rangeMin" autocomplete="off" min="0" oninput="this.value = Math.round(this.value)" />
+              </mat-form-field>
+              <ng-container *ngIf="l.rangeMin.errors">
+                <mat-error *ngIf="
+                              l.rangeMin.errors.required &&
+                                  (l.rangeMin.touched || submittedLocation)
+                              ">
+                  El campo es obligatorio
+                </mat-error>
+                <mat-error *ngIf="l.rangeMin.errors.max" style="margin-left: 7.5%;">
+                  El valor debe ser menor o igual a rango de días máximo
+                </mat-error>
+              </ng-container>
+
+              <mat-form-field>
+                <input matInput type="number" maxlength="50" placeholder="Días máximo" class="form-control"
+                  formControlName="rangeMax" autocomplete="off" min="0" oninput="this.value = Math.round(this.value)" />
+              </mat-form-field>
+              <ng-container *ngIf="l.rangeMax.errors">
+                <mat-error *ngIf="
+                              l.rangeMax.errors.required &&
+                              (l.rangeMax.touched || submittedLocation)
+                              ">
+                  El campo es obligatorio
+                </mat-error>
+                <mat-error *ngIf="l.rangeMax.errors.min" style="margin-left: 7.5%;">
+                  El valor debe ser mayor o igual a rango de días mínimo
+                </mat-error>
+              </ng-container>
+            </div>
+          </section>
+        </form>
+
+        <section id="slide" *ngIf="editPriceUbigeo.index >= 0">
+          <span *ngIf="editPriceUbigeo.use">Activo</span>
+          <span *ngIf="!editPriceUbigeo.use">No Activo</span> &nbsp; &nbsp;
+          <mat-slide-toggle [(ngModel)]="editPriceUbigeo.use"></mat-slide-toggle>
+        </section>
+      </section>
+      <footer [ngClass]="{ 'footer-buttons': editPriceUbigeo.index < 0 }">
+        <button
+          [ngClass]="[editPriceUbigeo.index >= 0 ? 'primary-button button-subtitle cancel-button' : 'button-option button-cancel']"
+          (click)="closeModalAddPrice()">
+          Cancelar
+        </button>
+        <button
+          [ngClass]="[editPriceUbigeo.index >= 0 ? 'primary-button save-button button-subtitle save-button-style' : 'button-option button-confirm']"
+          (click)="editUbigeo(false)" *ngIf="editPriceUbigeo.index >= 0">
+          Actualizar
+        </button>
+        <button class="button-option button-confirm" (click)="addPriceUbigeo(false)" *ngIf="editPriceUbigeo.index < 0">
+          Aplicar Precio
+        </button>
+        <button class="button-option button-confirm" (click)="addPriceUbigeo(true)" *ngIf="editPriceUbigeo.index < 0">
+          Aplicar Precio y Activar
+        </button>
+      </footer>
+    </section>
+  </article>
+</section>
+
+<section>
+  <article class="container-modal" *ngIf="showModalTime">
+    <section class="modal-body modal-small">
+      <header>
+        <strong>Elige un Horario</strong>
+      </header>
+      <section class="body">
+        <section class="timer">
+          <section class="container-timer">
+            <div>
+              <i class="fas fa-caret-up" (click)="addTime('hour')"></i>
+            </div>
+            <input type="number" [(ngModel)]="hourTime.hour" (ngModelChange)="validTimer('hour', hourTime.hour)" />
+            <div>
+              <i class="fas fa-caret-down" (click)="downTime('hour')"></i>
+            </div>
+          </section>
+          <section class="container-timer">
+            <p class="separator">:</p>
+          </section>
+          <section class="container-timer">
+            <div>
+              <i class="fas fa-caret-up" (click)="addTime('minute')"></i>
+            </div>
+            <input type="number" [(ngModel)]="hourTime.minute"
+              (ngModelChange)="validTimer('minute', hourTime.minute)" />
+            <div>
+              <i class="fas fa-caret-down" (click)="downTime('minute')"></i>
+            </div>
+          </section>
+        </section>
+        <ng-container *ngIf="!hourTime.intervalReserve">
+          <mat-checkbox [(ngModel)]="hourTime.useAll">
+            Usar en todas las horas
+            <span *ngIf="hourTime.moment == 'ini_hour'">inicio</span>
+            <span *ngIf="hourTime.moment == 'end_hour'">fin</span> .
+          </mat-checkbox>
+        </ng-container>
+      </section>
+      <footer>
+        <p *ngIf="hourTime.errorSave">{{ hourTime.meesageError }}</p>
+        <button class="button-option button-cancel" (click)="closeModalTime()">
+          Cancelar
+        </button>
+        <ng-container *ngIf="!hourTime.intervalReserve">
+          <button class="button-option button-confirm" (click)="saveTime()">
+            Aceptar
+          </button>
+        </ng-container>
+        <ng-container *ngIf="hourTime.intervalReserve">
+          <button class="button-option button-confirm" (click)="saveIntervalTime()">
+            Aceptar
+          </button>
+        </ng-container>
+      </footer>
+    </section>
+  </article>
+</section>
+
+<article class="container-modal" *ngIf="showSummary">
+  <section class="modal-body modal-big">
+    <header class='card-title'>
+      Precios Agregados
+    </header>
+    <section class="body row">
+      <table>
+        <thead>
+          <tr>
+            <th>Departamento</th>
+            <th>Provincia</th>
+            <th>Distrito</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th>Mensaje de error</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let card of listResultAddCard">
+            <td>{{ card.department }}</td>
+            <td>{{ card.province }}</td>
+            <td>{{ card.district }}</td>
+            <td>{{ card.price }}</td>
+            <td>
+              <label *ngIf="card.save" [ngClass]="{ 'valid-true': card.save }">Ha sido agregado</label>
+              <label *ngIf="!card.save" [ngClass]="{ 'valid-false': !card.save }">No pudo ser
+                agregado</label>
+            </td>
+            <td>{{ card.error }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <footer>
+      <button type="button" class="primary-button" (click)="closeSummary()">
+        Continuar
+      </button>
+    </footer>
+  </section>
+</article>

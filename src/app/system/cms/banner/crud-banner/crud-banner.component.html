@@ -1,0 +1,470 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+    <div class="container">
+        <div class="return-button"><i (click)="returnBanner()" class="fas fa-chevron-left"></i></div> &nbsp;
+        <div class="title" *ngIf="!idsearchBanner">Nueva Sección de Banner</div>
+        <div class="title" *ngIf="idsearchBanner">Edición de Sección de Banner</div>
+        <div class="buttons-container">
+            <button type="button" class="primary-button" *ngIf="idsearchBanner" (click)="OpenModalDeleteConfirm()">
+                <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+            </button>
+            <button type="button" class="primary-button " (click)="saveBlock()">
+                <i class="fas fa-save"></i> &nbsp; Guardar
+            </button>
+        </div>
+    </div>
+</div>
+<app-multimedia-gallery #multimediaList (imageChoose)="dataPictureSave($event)"></app-multimedia-gallery>
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<section>
+    <article class="container-modal" *ngIf="showAddNewElement">
+        <section class="modal-body modal-small">
+            <header>
+                <strong>Nuevo Contenido</strong>
+                <div id="close-button" (click)="closeAddElement()">&times;</div>
+            </header>
+            <section class="body">
+                <form [formGroup]="blockForm">
+                    <div>
+                        <mat-form-field>
+                            <mat-select placeholder="Tipo" name="type" class="form-control"
+                                formControlName="type_banner">
+                                <mat-option *ngFor="let addElement of listOptionAddElement" [value]="addElement._id">
+                                    {{ addElement.value }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <ng-container *ngIf="b.type_banner.errors">
+                            <mat-error
+                                *ngIf="b.type_banner.errors.required && (b.type_banner.touched || submittedElement)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                    <section [hidden]="!b.type_banner.value">
+                        <div *ngIf="b.select_type.value == 'Image' && !imageAdd">
+                            <section class='one-image column'>
+                                <app-uploader (selectImage)="selectImageMainWeb($event,'marker_position')"
+                                    [maxSize]='listImageField?.image'
+                                    [maxDimension]='listImageDimension?.image'>
+                                </app-uploader>
+                                <section>
+                                    <button type='button'
+                                        (click)="showWindowMultimedia('marker_position',listImageField?.image,listImageDimension?.image)"
+                                        class="primary-button save-button button-subtitle button-width">
+                                        Selecciona desde la galeria
+                                    </button>
+                                </section>
+                            </section>
+                        </div>
+                        <div *ngIf="imageAdd && imageAdd">
+                            <section class="img-container-one">
+                                <section class="images img-add">
+                                    <img src="{{ url_attachment }}{{imageAdd}}" width="250" alt="" />
+
+                                    <section class="icon-delete icon-delete-add">
+                                        <button type="button" class="primary-button delete-button"
+                                            (click)="dataPictureDelete()">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </section>
+                                </section>
+                            </section>
+                            <!-- <img src="{{ url_attachment }}{{ imageAdd }}" alt="" style="width:100%" /> -->
+                        </div>
+                        <div *ngIf="b.select_type.value == 'Video'">
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Nombre descriptivo Video" class="form-control"
+                                    formControlName="video_description" autocomplete="off" />
+                            </mat-form-field>
+                            <ng-container *ngIf="b.video_description.errors">
+                                <mat-error
+                                    *ngIf="b.video_description.errors.required && (b.video_description.touched || submittedElement)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Url de Video" class="form-control"
+                                    formControlName="add_video" autocomplete="off" />
+                            </mat-form-field>
+                            <ng-container *ngIf="b.add_video.errors">
+                                <mat-error
+                                    *ngIf="b.add_video.errors.required && (b.add_video.touched || submittedElement)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+                        <div *ngIf="b.select_type.value == 'Text'">
+                            <mat-form-field>
+                                <textarea matInput placeholder="Texto para mostrarse" cdkTextareaAutosize
+                                    cdkAutosizeMinRows="3" cdkAutosizeMaxRows="7" class="form-control"
+                                    formControlName="add_text"></textarea>
+                            </mat-form-field>
+                        </div>
+                    </section>
+
+                    <mat-form-field>
+                        <input matInput type="number" placeholder="Tiempo de transición, en segundos"
+                            class="form-control" formControlName="transition_second" autocomplete="off" />
+                    </mat-form-field>
+                    <ng-container *ngIf="b.transition_second.errors">
+                        <mat-error
+                            *ngIf="b.transition_second.errors.required && (b.transition_second.touched || submittedElement)">
+                            El campo es obligatorio
+                        </mat-error>
+                    </ng-container>
+                    <mat-form-field>
+                        <input matInput type="text" placeholder="Descripción del Botón de Acción (Opcional)"
+                            class="form-control" formControlName="button_label" autocomplete="off" />
+                    </mat-form-field>
+                    <ng-container *ngIf="b.button_label.errors">
+                        <mat-error
+                            *ngIf="b.button_label.errors.required && (b.button_label.touched || submittedElement)">
+                            El campo es obligatorio
+                        </mat-error>
+                    </ng-container>
+
+                    <!-- drops downs para banners pop up -->
+
+                    <mat-form-field>
+                        <mat-select placeholder="Elija tipo de redirección" (selectionChange)="selectedTypeRedirection($event)" formControlName="redirectType"
+                            name="redirectType">
+                            <mat-option *ngFor="let option of redirectTypes" [value]="option._id">
+                                {{ option.value }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <ng-container *ngIf="b.redirectType.value && redirectType && redirectType.value === 'Interno'">
+                        <mat-form-field>
+                            <mat-select placeholder="Elegir opción de redireccionamiento"
+                                (selectionChange)="selectedOption($event, null)" formControlName="redirectOption"
+                                name="redirectOption">
+                                <mat-option *ngFor="let option of redirectOptions" [value]="option._id">
+                                    {{ option.value }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field *ngIf="selectedBannerOption && 
+                        selectedBannerOption !== 'Producto'">
+                            <mat-select placeholder={{directSelectedOptionChild}}
+                                (selectionChange)="selectedOptionChild($event)" formControlName="redirectOptionChild"
+                                name="redirectOptionChild">
+                                <mat-option *ngFor="let option of redirectOptionChildren" [value]="option._id">
+                                    {{ option.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field *ngIf="selectedBannerOption && 
+                        selectedBannerOption == 'Experiencia'">
+                            <mat-select placeholder="Seleccione categoría"
+                                (selectionChange)="selectedOptionChildCategory($event)" formControlName="redirectOptionChildCategory"
+                                name="redirectOptionChildCategory">
+                                <mat-option *ngFor="let option of redirectOptionChildrenCategories" [value]="option._id">
+                                    {{ option.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <ng-container *ngIf="selectedBannerOption === 'Producto'">
+                            <mat-form-field class="example-full-width">
+                                <input type="text" placeholder="Buscar SKU" matInput formControlName="search_product"
+                                    [matAutocomplete]="auto" />
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    <mat-option (onSelectionChange)="selectProduct(option, $event)" *ngFor="let option of listProduct" [value]="option.SKU">
+                                        {{ option.SKU }}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </ng-container>
+                    </ng-container>
+
+                     <!-- END drops downs para banners pop up -->
+
+                    <ng-container *ngIf="b.redirectType.value">
+                        <!-- <div *ngIf="b.redirect.value && !editRedirect" class='redirection'>
+                            <span>Url redirección web</span>
+                            <p>{{ b.redirect.value }}
+                                <ng-container
+                                    *ngIf="(redirectTypes && redirectType && redirectType.value === 'Externo') || redirectTypes && !redirectType">
+                                    <i class="fas fa-edit" (click)='toogleEditRedirect(true)'></i>
+                                </ng-container>
+                            </p>
+                        </div> -->
+
+                        <!-- <div
+                            *ngIf="((!b.redirect.value || editRedirect) && (redirectTypes && redirectType && redirectType.value === 'Externo')) || (!b.redirect.value || editRedirect) &&redirectTypes && !redirectType"> -->
+                            <mat-form-field>
+                                <input [readonly]="redirectType && redirectType.value !== 'Externo'" matInput type="text" placeholder="Url redirección web" class="form-control"
+                                    formControlName="redirect_complete" autocomplete="off" />
+                            </mat-form-field>
+
+                            <ng-container *ngIf="b.redirect_complete.errors">
+                                <mat-error *ngIf="
+                                    b.redirect_complete.errors.required &&
+                                    (b.redirect_complete.touched || submittedElement)
+                                ">
+                                {{
+                                    selectRedirectType === "Externo"
+                                      ? "Agregue una Url válida"
+                                      : ( selectRedirectType === "Interno"
+                                      ? "Complete los campos de redireccionamiento" 
+                                      : "Seleccione tipo de redirección" )
+                                  }}
+                                </mat-error>
+                            </ng-container>
+                        <!-- </div> -->
+
+                    </ng-container>
+
+
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Título" class="form-control"
+                                formControlName="text_info" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.transition_time.errors">
+                            <mat-error
+                                *ngIf="f.transition_time.errors.required && (f.transition_time.touched || submitBanner)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Subtítulo" class="form-control"
+                                formControlName="subtitle" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="b.subtitle.errors">
+                            <mat-error *ngIf="b.subtitle.errors.required && (b.subtitle.touched || submitBanner)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+
+                    <section>
+                        <div>
+                            <p class="title-text">Lista de textos</p>
+                        </div>
+                        <div *ngFor="let detail of listDetail; let position = index" class="detail-generate">
+                            <i class="fas fa-trash-alt delete" (click)="deleteDetail(position)"></i>
+                            <section>
+                                <p>Detalle</p>
+                                <editor [(ngModel)]="detail.description" [ngModelOptions]="{ standalone: true }"
+                                    apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                                    [initialValue]="detail.description" [init]="tinyEditorConfig"></editor>
+                            </section>
+
+                        </div>
+                        <div>
+
+                            <button class="primary-button save-button" (click)='addDetail()'>Agregar Texto</button>
+                        </div>
+                    </section>
+                    <br>
+
+                    <!-- <div class="text-add">
+                        <editor formControlName="text_info" apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                            [initialValue]="b.text_info.value" [init]="tinyEditorConfig"></editor>
+                    </div> -->
+                    <!-- <div class="text-add">
+                        <p style="color: rgba(0, 0, 0, 0.54); text-align: left;">Subtítulo</p>
+                        <editor formControlName="subtitle" apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                            [initialValue]="b.subtitle.value" [init]="tinyEditorConfig"></editor>
+                    </div> -->
+                </form>
+
+                <div>
+                    <app-date-range #daterange></app-date-range>
+                </div>
+            </section>
+            <footer>
+                <button type='buttton' class="primary-button button-subtitle cancel-button" (click)="closeAddElement()">
+                    Cancelar
+                </button>
+                <button type='buttton' class="primary-button save-button button-subtitle save-button-style"
+                    (click)="addElement(b.select_type.value)" *ngIf="updateElementId == -1">
+                    Aceptar
+                </button>
+                <button type='buttton' class="primary-button save-button button-subtitle save-button-style"
+                    (click)="addElement(b.select_type.value)" *ngIf="updateElementId >= 0">
+                    Grabar
+                </button>
+            </footer>
+        </section>
+    </article>
+</section>
+<!-- <h1 class="title" *ngIf="!idsearchBanner">NUEVO BLOQUE</h1>
+<h1 class="title" *ngIf="idsearchBanner">EDITAR BLOQUE</h1>
+
+
+<section class="container  window-buttton">
+  <section class="return" (click)="returnBanner()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button class="button-option button-danger" (click)="OpenModalDeleteConfirm()"
+      *ngIf="!headerFixed && idsearchBanner">
+      <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+    </button>
+    <button class="button-option button-confirm" (click)="saveBlock()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section>
+
+<section class="container  window-buttton header-fixed" *ngIf="headerFixed">
+  <section class="return" (click)="returnBanner()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button class="button-option button-danger" (click)="OpenModalDeleteConfirm()"
+      *ngIf="!headerFixed && idsearchBanner">
+      <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+    </button>
+    <button class="button-option button-confirm" (click)="saveBlock()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section> -->
+<div class="content">
+    <form [formGroup]="bannerForm">
+        <section class="container-partition">
+            <section class="p-row p-four cont-left">
+                <section class="container-row">
+                    <section class="visibility">
+                        <p class="main-subtitle subtitle-container">Caracteríticas del Banner</p>
+                        <br />
+                        <section>Habilitado</section>
+                        <section id="slide">
+                            <mat-slide-toggle formControlName="active">
+                                <span *ngIf="f.active.value">Si</span>
+                                <span *ngIf="!f.active.value">No</span>
+                            </mat-slide-toggle>
+                            <ng-container *ngIf="f.active.errors">
+                                <mat-error *ngIf="f.active.errors.required && (f.active.touched || submitBanner)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </section>
+                    </section>
+                    <br>
+                    <div>
+                        <mat-form-field>
+                            <mat-select placeholder="Tipos" name="type" class="form-control" formControlName="type">
+                                <mat-option *ngFor="let addElement of listTypeBlock" [value]="addElement._id">
+                                    {{ addElement.value }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <ng-container *ngIf="f.type.errors">
+                            <mat-error *ngIf=" f.type.errors.required && (f.type.touched || submitBanner)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Nombre" class="form-control" formControlName="name"
+                                autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.name.errors">
+                            <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitBanner)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                    <div class="alone">
+                        <span>End point : </span> block/data/{{ f.code.value }}
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="number" placeholder="Tiempo de transición entre contenido"
+                                class="form-control" formControlName="transition_time" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.transition_time.errors">
+                            <mat-error
+                                *ngIf="f.transition_time.errors.required && (f.transition_time.touched || submitBanner)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <textarea matInput placeholder="Descripción" cdkTextareaAutosize cdkAutosizeMinRows="3"
+                                cdkAutosizeMaxRows="7" class="form-control" formControlName="description"></textarea>
+                        </mat-form-field>
+                        <ng-container *ngIf="f.description.errors">
+                            <mat-error *ngIf="
+                  f.description.errors.required &&
+                  (f.description.touched || submitBanner)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                </section>
+            </section>
+            <section class="p-row p-six cont-right">
+                <section class="container-row">
+                    <div class="sub-tittle main-subtitle subtitle-buttton subtitle-container">
+                        Contenido
+                        <div class="buttons-container">
+                            <button type="button" class="primary-button save-button " (click)="openAddElement()"
+                                *ngIf="typeBlockSelect">
+                                <i class="fas fa-plus"></i> &nbsp; Agregar
+                            </button>
+                            <!--  <i class="fas fa-plus-square" (click)="openAddElement()" *ngIf="typeBlockSelect"></i> -->
+                        </div>
+                    </div>
+                    <section class="img-container-one" *ngIf="listAddElement.length > 0">
+                        <section class="images" *ngFor="let element of listAddElement; let i = index">
+                            <section class="icon-change-level">
+
+                                <i class="fas fa-arrow-left" (click)='upLabel(i)'></i>
+                                <i class="fas fa-arrow-right" (click)='downLabel(i)'></i>
+
+                            </section>
+                            <section class="icon-open-image">
+                                <p
+                                    [ngClass]='{"active": "Activado" | activeBannerColor:element ,"inactive": "Desactivado" | activeBannerColor:element}'>
+                                    {{ element.posotion | activeBanner:element}}</p>
+                            </section>
+                            <section (click)="getInfoElement(i)">
+                                <section *ngIf="element.type == 'Image'">
+                                    <img src="{{ url_attachment }}{{ element.value }}" alt="" />
+                                </section>
+                                <section id="section-video-text" *ngIf="element.type == 'Text'">
+                                    <p>{{ element.value }}</p>
+                                </section>
+                                <section id="section-video-text" *ngIf="element.type == 'Video'">
+                                    <p>
+                                        <i class="fas fa-play"></i>
+                                        <span> {{ element.video_description }}</span>
+                                    </p>
+                                </section>
+                            </section>
+                            <section class="icon-change-number">
+                                <input type='number'
+                                    (blur)="changePositionBlur(i,element.position,element,'listAddElement');$event.stopPropagation()"
+                                    (keypress)="changePosition(i,element.position,element,$event,'listAddElement');$event.stopPropagation()"
+                                    [(ngModel)]='element.position' [ngModelOptions]="{ standalone: true }">
+                            </section>
+                            <section class="icon-delete">
+                                <button type='button' class="primary-button delete-button"
+                                    (click)="deleteContent(i);$event.stopPropagation()">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </section>
+                        </section>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </form>
+</div>

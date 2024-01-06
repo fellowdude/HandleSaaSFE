@@ -1,0 +1,53 @@
+<section class="container-component">
+    <section>
+        <section class="overflow-table">
+            <table class="table-expand">
+                <thead>
+                    <tr>
+                        <th width="70px"> # Pedido </th>
+                        <th> Cliente </th>
+                        <th width="150px"> Estado </th>
+                        <th width="100px" class="th-currency"> Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let order of listOrder" (click)="openOrder(order)">
+
+                        <td width="70px" class="center-row">{{ order.code }}</td>
+                        <td class="center-row" class="truncate">
+                            <ng-container *ngIf='order.user_id'>
+                                <ng-container *ngIf='order.user_id.additionals'>
+                                    {{order.user_id.additionals.name}} {{order.user_id.additionals.last_name_father}}
+                                    {{order.user_id.additionals.last_name_mother}}
+                                </ng-container>
+                            </ng-container>
+                        </td>
+                        <td width="150px" class="center-row" *ngIf='order.status_order'>
+
+                            <label *ngIf="order.status_order.value != 'No pagado'" [ngClass]="{
+                      'state-paid': order.status_order.value == 'Pagado',
+                      'state-rejected': order.status_order.value == 'Rechazado',
+                      'state-pending': order.status_order.value == 'No pagado',
+                      'state-empaque': order.status_order.value == 'Empaque',
+                      'state-distribution': order.status_order.value == 'Distribución',
+                      'state-entregado': order.status_order.value == 'Entregado',
+                      'state-pre-empaque': order.status_order.value == 'Pre empaque',
+                      'state-pendding-state': order.status_order.value == 'Pendiente',
+                      'state-ruteo': order.status_order.value == 'En ruteo',
+                      'state-validation': order.status_order.value == 'Validación',
+                      'state-ausente': order.status_order.value == 'Ausente'
+                    }">{{ order.status_order.value }}</label>
+
+                            <label class="state-pending"
+                                *ngIf="order.status_order.value == 'No pagado'">Pendiente</label>
+                        </td>
+                        <td width="100px" class="number-style">S/ {{order.amount_total | number:'1.2-2' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <br />
+        <p class="total">Total de Pedidos: {{ totalOrder }}</p>
+    </section>
+    <app-loading-local-table class="loading" *ngIf='showLoading'></app-loading-local-table>
+</section>

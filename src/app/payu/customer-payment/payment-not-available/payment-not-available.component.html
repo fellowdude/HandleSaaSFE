@@ -1,0 +1,17 @@
+<mat-toolbar color="warn">Link de Pago</mat-toolbar>
+<section id='container'>
+  <ng-container *ngIf="rejectedType == 2">
+    <figure>
+      <img src="assets/img/disabled.png" alt="">
+    </figure>
+    <p class='title-message'>Estimado Cliente</p>
+    <p class='sub-title-message'>El pago de su pedido ya no se encuentra disponible</p>
+  </ng-container>
+  <ng-container *ngIf="rejectedType == 1">
+    <figure>
+      <img src="assets/img/brokenLink.png" alt="">
+    </figure>
+    <p class='title-message'>Estimado Cliente</p>
+    <p class='sub-title-message'>Ya ha realizado esta operación</p>
+  </ng-container>
+</section>

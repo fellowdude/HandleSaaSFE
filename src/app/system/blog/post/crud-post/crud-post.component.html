@@ -1,0 +1,355 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+  <div class="container">
+    <div class="return-button"><i (click)='returnPosts()' class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idPost">
+      Nuevo post
+    </div>
+    <div class="title" *ngIf="idPost">
+      Edición de post
+    </div>
+
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)="confirmDeleteItem()" *ngIf="idPost && availableDelete">
+        <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+      </button>
+      <button type="button" class="primary-button " *ngIf="(idPost && availableUpdate) || (!idPost && availableCreate)"
+        (click)="save()">
+        <i class="fas fa-save"></i> &nbsp; Guardar
+      </button>
+    </div>
+  </div>
+</div>
+<div class="content">
+  <section class="container-partition">
+    <section class="p-row p-four cont-left">
+      <form [formGroup]="postForm">
+        <section class="container-row ">
+          <p class="subtitle main-subtitle subtitle-container">Características de la publicación</p>
+          <br />
+          <section class="visibility">
+            <div>
+              <section>Visibilidad</section>
+              <section id="slide">
+                <mat-slide-toggle class="form-control" formControlName="active"><span *ngIf="f.active.value">Si</span>
+                  <span *ngIf="!f.active.value">No</span>
+                </mat-slide-toggle>
+              </section>
+            </div>
+
+            <br /><br />
+
+            <div>
+              <section>Destacado</section>
+              <section id="slide">
+                <mat-slide-toggle class="form-control" formControlName="featured"><span
+                    *ngIf="f.featured.value">Si</span>
+                  <span *ngIf="!f.featured.value">No</span>
+                </mat-slide-toggle>
+              </section>
+
+            </div>
+
+
+          </section>
+
+          <br />
+          <br />
+          <div>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Código" class="form-control" formControlName="code"
+                autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="f.code.errors">
+              <mat-error *ngIf="f.code.errors.required && (f.code.touched || submitted)">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+
+          <div>
+            <mat-form-field>
+              <textarea matInput placeholder="Título del Post" cdkTextareaAutosize cdkAutosizeMinRows="3"
+                cdkAutosizeMaxRows="7" class="form-control" formControlName="title"></textarea>
+            </mat-form-field>
+            <ng-container *ngIf="f.title.errors">
+              <mat-error *ngIf="
+                  f.title.errors.required && (f.title.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+
+          <div>
+            <mat-form-field>
+              <mat-select placeholder="Autor" formControlName="author" name="author">
+                <mat-option [value]=null>Ninguno</mat-option>
+                <mat-option *ngFor="let author of listAuthor" [value]="author._id">
+                  {{ author.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <section>
+            <mat-form-field>
+              <input matInput [matDatepicker]="disabletext" placeholder="Fecha de Publicación" class="form-control"
+                [readonly]='true' disabled formControlName="publication_date">
+              <mat-datepicker-toggle matSuffix [for]="disabletext">
+              </mat-datepicker-toggle>
+              <mat-datepicker #disabletext disabled="false">
+              </mat-datepicker>
+            </mat-form-field>
+
+          </section>
+
+          <!-- 
+          <div>
+            <mat-form-field>
+              <input matInput [matDatepicker]="dp3" placeholder="Fecha de inicio" class="form-control"
+                formControlName="publication_date" disabled />
+              <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+              <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+            </mat-form-field>
+
+             <ng-container *ngIf="f.publication_date.errors">
+              <mat-error *ngIf="
+                  f.publication_date.errors.required && (f.publication_date.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div> -->
+
+          <section class="column">
+            <section>
+              <p class="sub-tittle">
+                Imagen de Publicación
+              </p>
+
+              <section class="img-container-one" *ngIf="lisBannerAddPicture.length > 0">
+                <section class="images" *ngFor="let picture of lisBannerAddPicture; let i = index">
+                  <img src="{{ url_attachment }}{{
+                      lisBannerAddPicture[lisBannerAddPicture.length - i - 1]
+                    }}" width="250" alt="" />
+
+                  <section class="icon-delete">
+                    <button type="button" class="primary-button delete-button"
+                      (click)="deleteImage(i + 1, 'lisBannerAddPicture')">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </section>
+
+                </section>
+              </section>
+
+
+              <section class='one-image column' [hidden]="lisBannerAddPicture.length > 0"
+                *ngIf="lisBannerAddPicture.length == 0">
+                <app-uploader (selectImage)="selectImageMainWeb($event,'lisBannerAddPicture')"
+                  [maxSize]='listImageField.image_public' [maxDimension]='listImageDimension.image_public'>
+                </app-uploader>
+                <section class="center">
+                  <button type='button'
+                    (click)="showWindowMultimedia('lisBannerAddPicture', false,null,listImageField.image_public,listImageDimension.image_public)"
+                    class="primary-button save-button button-subtitle button-width">
+                    Selecciona desde la galeria
+                  </button>
+                </section>
+              </section>
+
+            </section>
+
+            <br>
+            <br>
+            <section>
+              <p class="sub-tittle">
+                Imagen Destacada
+              </p>
+
+              <section class="img-container-one" *ngIf="lisFeactureAddPicture.length > 0">
+                <section class="images" *ngFor="let picture of lisFeactureAddPicture; let i = index">
+                  <img src="{{ url_attachment }}{{
+                      lisFeactureAddPicture[lisFeactureAddPicture.length - i - 1]
+                    }}" width="250" alt="" />
+
+                  <section class="icon-delete">
+                    <button type="button" class="primary-button delete-button"
+                      (click)="deleteImage(i + 1, 'lisFeactureAddPicture')">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </section>
+                </section>
+              </section>
+
+
+              <section class='one-image column' [hidden]="lisFeactureAddPicture.length > 0"
+                *ngIf="lisFeactureAddPicture.length == 0">
+                <app-uploader (selectImage)="selectImageMainWeb($event,'lisFeactureAddPicture')"
+                  [maxSize]='listImageField.image_featured' [maxDimension]='listImageDimension.image_featured'>
+                </app-uploader>
+                <section class="center">
+                  <button type='button'
+                    (click)="showWindowMultimedia('lisFeactureAddPicture', false,null,listImageField.image_featured,listImageDimension.image_featured)"
+                    class="primary-button save-button button-subtitle button-width">
+                    Selecciona desde la galeria
+                  </button>
+                </section>
+              </section>
+
+            </section>
+          </section>
+
+
+          <br />
+          <br />
+          <section>
+            <section>
+              <p>Detalle</p>
+              <!--  <div [froalaEditor] class="form-control" formControlName="detail"></div> -->
+              <editor formControlName="detail" apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                [initialValue]="f.detail.value" [init]="tinyEditorConfig"></editor>
+            </section>
+            <br />
+            <section class="error-froala">
+              <ng-container *ngIf="f.detail.errors">
+                <mat-error *ngIf="
+                    f.detail.errors.required && (f.detail.touched || submitted)
+                  ">
+                  El campo es obligatorio
+                </mat-error>
+              </ng-container>
+            </section>
+          </section>
+        </section>
+
+        <section class="container-row">
+          <p class="subtitle main-subtitle subtitle-container">Artículos Relacionados</p>
+          <br>
+          <ng-container *ngIf="listAddSku">
+            <section style="margin-bottom: 1.5em;" *ngIf="listAddSku.length > 0">
+              <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                <div class="example-box" *ngFor="let post of listAddSku; let position = index" cdkDrag>
+                  <span>{{ post.code }}</span>
+                  <div (click)="deleteSkuList(position, 'listAddSku')" class="delete-drop-item">
+                    <i class="fas fa-trash-alt"></i>
+                  </div>
+                </div>
+              </div>
+              <p class="error" *ngIf="duplicateSKU">
+                El código ya ha sido agregado
+              </p>
+            </section>
+          </ng-container>
+
+          <div>
+            <mat-form-field class="example-full-width">
+              <input type="text" placeholder="Buscar por código" matInput formControlName="search_sku"
+                [matAutocomplete]="auto" />
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of listSKUProduct" [value]="option.code">
+                  <div (click)="addSKU(option, 'listAddSku', 'SKU')">
+                    {{ option.code }}
+                  </div>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+
+        </section>
+        <section class="container-row">
+          <p class="sub-tittle main-subtitle subtitle-container">Categoría</p>
+          <ng-container>
+            <section>
+              <section class="row">
+                <section class="col-50">
+                  <app-dynamic-tree-view (categorySelected)="displayFilters($event)" #categoryTree>
+                  </app-dynamic-tree-view>
+                </section>
+              </section>
+            </section>
+          </ng-container>
+        </section>
+      </form>
+    </section>
+    <section class="p-row p-six cont-right">
+      <section class="container-row">
+        <p class="subtitle main-subtitle subtitle-container">Publicación</p>
+        <br />
+        <section>
+          <section *ngFor="let post of listPostDetail; let position = index">
+            <section class="section-post">
+              <section class="post-header">
+                <i class="fas fa-trash-alt" (click)="deleteSection(position)"></i>
+              </section>
+              <ng-container *ngIf="post.type == 'image'">
+                <section>
+                  <section class="img-container-one" style="justify-content: center;"
+                    *ngIf="post.value && post.value != ''">
+                    <section class="images">
+                      <img src="{{ url_attachment }}{{ post.value }}" width="250" alt="" />
+
+                      <section class="icon-delete">
+                        <button type="button" class="primary-button delete-button" (click)="deleteImagePost(position)">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </section>
+                    </section>
+                  </section>
+
+                  <section class='one-image column' *ngIf="!post.value || post.value == ''">
+                    <app-uploader (selectImage)="selectImageMainPost($event,position)"
+                      [maxSize]='listImageField.image_gallery' [maxDimension]='listImageDimension.image_gallery'>
+                    </app-uploader>
+                    <section class="center">
+                      <button type='button' (click)="addImagePublic(position,listImageField.image_gallery,listImageDimension.image_gallery)"
+                        class="primary-button save-button button-subtitle button-width">
+                        Selecciona desde la galeria
+                      </button>
+                    </section>
+                  </section>
+
+
+                  <!-- 
+
+                  <section *ngIf="!post.value || post.value == ''" class="block-center">
+                    <section class="part-section-empty-image" (click)="addImagePublic(position)">
+                      <i class="fas fa-file-image"></i>
+                      <p>selecciona una imagen</p>
+                    </section>
+                  </section>
+ -->
+
+
+                </section>
+              </ng-container>
+              <ng-container *ngIf="post.type == 'text'">
+                <section>
+                  <p>Detalle</p>
+                  <!--  <div [froalaEditor] [(ngModel)]="post.value" [ngModelOptions]="{ standalone: true }"></div> -->
+                  <editor [(ngModel)]="post.value" [ngModelOptions]="{ standalone: true }"
+                    apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw" [initialValue]="post.value"
+                    [init]="tinyEditorConfig"></editor>
+                </section>
+              </ng-container>
+            </section>
+          </section>
+        </section>
+        <footer class="block-center row">
+          <button class="primary-button" (click)="addDetail('image')">
+            Agregar Imagen
+          </button>
+          <button class="primary-button" (click)="addDetail('text')">
+            Agregar Texto
+          </button>
+        </footer>
+      </section>
+    </section>
+  </section>
+</div>
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+
+<app-multimedia-gallery #multimediaList (imageChoose)="dataPictureSave($event)"></app-multimedia-gallery>
+<app-multimedia-gallery #multimediaPost (imageChoose)="dataPicturePost($event)"></app-multimedia-gallery>

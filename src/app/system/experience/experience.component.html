@@ -1,0 +1,39 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="title">Listado de Experiencias</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)="changeEditMode()">
+        <i class="fas fa-pencil"></i> Modo edición
+      </button>
+      <button type="button" class="primary-button" (click)='createExperience()'><i class="fas fa-plus-circle"></i>
+        Agregar
+        Experiencia</button>
+    </div>
+  </div>
+</div>
+<!-- <h1 class='title'>EXPERIENCIAS</h1>
+<app-dialog-confirm></app-dialog-confirm>
+
+<section class='container  window-buttton'>
+  <section class='buttons-list'>
+    <button class='button-option' (click)='createExperience()'>
+      <i class="fas fa-layer-plus"></i> <span>Crear Experiencia</span>
+    </button>
+  </section>
+
+</section>
+<section class='container buttons-list mobile-buttton'>
+  <button class='button-option button-confirm' (click)='createExperience()'>
+    <i class="fas fa-layer-plus"></i> <span>Crear Experiencia</span>
+  </button>
+</section> -->
+<div class="content">
+  <section class='container'>
+    <app-grid #gridList>
+    </app-grid>
+  </section>
+</div>
+
+<app-dialog-confirm></app-dialog-confirm>

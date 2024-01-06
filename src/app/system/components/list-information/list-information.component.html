@@ -1,0 +1,27 @@
+<article class="container-modal" *ngIf="showPopupContact">
+  <section class="modal-body modal-fluid-medium">
+    <header>
+      <strong>Contacto de email</strong>
+      <div id="close-button" (click)="close()">&times;</div>
+    </header>
+    <section class="body">
+      <table>
+        <thead>
+          <tr>
+            <td> Nombre </td>
+            <td> Correo </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let contact of detailGroupEmail">
+            <td> {{ contact.name }} </td>
+            <td> {{ contact.email }} </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <footer>
+      <button class="primary-button button-subtitle cancel-button" (click)="close()"> Cerrar </button>
+    </footer>
+  </section>
+</article>

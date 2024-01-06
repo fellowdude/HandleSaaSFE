@@ -1,0 +1,226 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="return-button"><i (click)="returnUser()" class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idUser">Nuevo Usuario</div>
+    <div class="title" *ngIf="idUser">Editar Usuario </div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button " *ngIf="idUser" (click)="confirmDeleteItem()"><i
+          class="fas fa-trash-alt"></i> &nbsp;
+        Eliminar</button>
+      <button type="button" class="primary-button " (click)='saveUser()'><i class="fas fa-save"></i> &nbsp;
+        Guardar</button>
+    </div>
+  </div>
+</div>
+<<!-- h1 class="title" *ngIf="!idUser">NUEVO USUARIO</h1>
+<h1 class="title" *ngIf="idUser">EDITAR USUARIO</h1>
+
+<section class="container  window-buttton">
+  <section class="return" (click)="returnUser()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button
+      class="button-option button-danger"
+      (click)="confirmDeleteItem()"
+      *ngIf="!headerFixed && idUser"
+    >
+      <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+    </button>
+
+    <button class="button-option button-confirm" (click)="saveUser()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section> -->
+<!-- 
+<section class="container  window-buttton header-fixed" *ngIf="headerFixed">
+  <section class="return" (click)="returnUser()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button class="button-option button-confirm" (click)="saveUser()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section> -->
+<div class="content">
+<form [formGroup]="userForm">
+  <section class="container-partition">
+    <section class="p-row p-five cont-left">
+      <section class="container-row">
+        <p class='main-subtitle subtitle-container'>Datos Principales del Usuario</p>
+        <br>
+        <div>
+          <mat-form-field>
+            <input
+              matInput
+              type="text"
+              placeholder="Nombre"
+              class="form-control"
+              formControlName="name"
+              autocomplete="off"
+            />
+          </mat-form-field>
+          <ng-container *ngIf="f.name.errors">
+            <mat-error
+              *ngIf="f.name.errors.required && (f.name.touched || submitted)"
+            >
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </div>
+
+        <div>
+          <mat-form-field>
+            <input
+              matInput
+              type="text"
+              placeholder="Apellido Paterno"
+              class="form-control"
+              formControlName="last_name_father"
+              autocomplete="off"
+            />
+          </mat-form-field>
+          <ng-container *ngIf="f.last_name_father.errors">
+            <mat-error
+              *ngIf="
+                f.last_name_father.errors.required &&
+                (f.last_name_father.touched || submitted)
+              "
+            >
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </div>
+
+        <div>
+          <mat-form-field>
+            <input
+              matInput
+              type="text"
+              placeholder="Apellido Materno"
+              class="form-control"
+              formControlName="last_name_mother"
+              autocomplete="off"
+            />
+          </mat-form-field>
+          <ng-container *ngIf="f.last_name_mother.errors">
+            <mat-error
+              *ngIf="
+                f.last_name_mother.errors.required &&
+                (f.last_name_mother.touched || submitted)
+              "
+            >
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </div>
+
+        <div>
+          <mat-form-field>
+            <input
+              matInput
+              type="number"
+              placeholder="Número de documento"
+              class="form-control"
+              formControlName="number_document"
+              autocomplete="off"
+              min="0"
+              (keypress)="validateInput($event)"
+            />
+          </mat-form-field>
+          <ng-container *ngIf="f.number_document.errors">
+            <mat-error
+              *ngIf="
+                f.number_document.errors.required &&
+                (f.number_document.touched || submitted)
+              "
+            >
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </div>
+
+        <div>
+          <mat-form-field>
+            <input
+              matInput
+              type="text"
+              placeholder="Teléfono"
+              class="form-control"
+              formControlName="phone"
+              autocomplete="off"
+              (keypress)="validatePhoneInput($event)"
+            />
+          </mat-form-field>
+          <ng-container *ngIf="f.phone.errors">
+            <mat-error
+              *ngIf="f.phone.errors.required && (f.phone.touched || submitted)"
+            >
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </div>
+      </section>
+    </section>
+    <section class="p-row p-five cont-right">
+      <section class="container-row">
+        <p class="main-subtitle subtitle-container">Datos Secundarios del usuario</p>
+        <br>
+        <div>
+          <mat-form-field>
+            <input
+              matInput
+              type="text"
+              placeholder="Correo"
+              class="form-control"
+              formControlName="email"
+              autocomplete="off"
+            />
+          </mat-form-field>
+          <ng-container *ngIf="f.email.errors">
+            <mat-error
+              *ngIf="f.email.errors.required && (f.email.touched || submitted)"
+            >
+              El campo es obligatorio
+            </mat-error>
+            <mat-error
+              *ngIf="f.email.errors.email && (f.email.touched || submitted)"
+            >
+              Ingrese un email válido
+            </mat-error>
+          </ng-container>
+        </div>
+        <div *ngIf='!isSupplier'>
+          <mat-form-field>
+            <mat-label>Rol</mat-label>
+            <mat-select
+              placeholder="Grupo"
+              name="type"
+              class="form-control"
+              formControlName="role_id"
+            >
+              <mat-option
+                *ngFor="let addElement of listRole"
+                [value]="addElement._id"
+              >
+                {{ addElement.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <ng-container *ngIf="f.role_id.errors">
+            <mat-error
+              *ngIf="f.role_id.errors.required && (f.role_id.touched || submitted)"
+              >El campo es obligatorio</mat-error
+            >
+          </ng-container>
+        </div>
+      </section>
+    </section>
+  </section>
+</form>
+</div>
+<app-dialog-confirm #deleteUser (answerModal)="acceptModal($event)"></app-dialog-confirm>

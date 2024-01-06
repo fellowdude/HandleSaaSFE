@@ -1,0 +1,99 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="return-button"><i (click)="returnGroupCustomer()" class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idGroupCustomer">Nuevo Grupo de Clientes</div>
+    <div class="title" *ngIf="idGroupCustomer">Edición de Grupo de Clientes</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button " *ngIf=" idGroupCustomer" (click)="confirmDeleteItem()"><i
+          class="fas fa-trash-alt"></i> &nbsp;
+        Eliminar</button>
+      <button type="button" class="primary-button" (click)='saveGroupCustomer()'><i class="fas fa-save"></i>
+        &nbsp;
+        Guardar</button>
+    </div>
+  </div>
+</div>
+<div class="content">
+    <form [formGroup]="customerGroupForm">
+        <section class="container-partition">
+            <section class="p-10 cont-right">
+                <section class="container-row">
+                    <p class='main-subtitle subtitle-container'>Características del Grupo</p>
+                    <br>
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" maxlength="50" placeholder="Nombre" class="form-control"
+                                formControlName="name" autocomplete="off"/>
+                        </mat-form-field>
+                        <ng-container *ngIf="f.name.errors">
+                            <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                            <mat-error *ngIf="f.name.errors.maxlength && (f.name.touched || submitted)">
+                                La cantidad máxima de caracteres es de 50
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                </section>
+            </section>
+        </section>
+        <section class="container-partition">
+            <section class="p-row p-10 cont-right">
+                <section class="container-row">
+                    <p class="main-subtitle subtitle-container">
+                        Lista de clientes
+                    </p>
+                    <br />
+                    <div class="center">
+                        <section class="p-four card-product">
+                            <app-grid #gridList (itemSelecReturn)="itemSelecReturn($event)"></app-grid>
+                        </section>
+                        <section class="p-six card-product">
+                            <table style="margin-top: 52px;">
+                                <thead>
+                                    <tr>
+                                        <th class="t-user">Usuario</th>
+                                        <th class="t-card">Num. Tarjeta</th>
+                                        <th class="t-dni">Num. DNI</th>
+                                    </tr>
+                                </thead>
+                                <tbody #scrollMe>
+                                    <div *ngIf="customerList.length > 0">
+                                        <ng-container *ngFor="let customer of customerList;">
+                                            <tr>
+                                                <td class="t-user">
+                                                    <label class="label-replace">{{
+                                                        customer.complete_name ? customer.complete_name: customer.additionals.name + " " + customer.additionals.last_name_father + " " + customer.additionals.last_name_mother
+                                                    }}</label>
+                                                    <br />
+                                                </td>
+                                                <td class="t-card">
+                                                    <label class="label-replace">{{
+                                                        customer.additionals.number_card
+                                                    }}</label>
+                                                </td>
+                                                <td class="t-dni">
+                                                    <label class="label-replace">{{
+                                                        customer.additionals.number_document
+                                                    }}</label>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </div>
+                                </tbody>
+                            </table>
+                            <div style="margin-top: 18px; padding-top: 10px;">
+                                <p style="text-align: left; color: #777;">
+                                    Usuarios agregados: {{this.gridList.config.listItemSelect.length}}
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+                </section>
+            </section>
+        </section>
+    </form>
+</div>
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>

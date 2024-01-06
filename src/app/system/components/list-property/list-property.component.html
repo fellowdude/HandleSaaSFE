@@ -1,0 +1,8 @@
+<section id='info-container' *ngIf='listEnterpriseInfo.value'>
+  <ng-container *ngFor='let info of listEnterpriseInfo.value; let position = index'>
+    <div id='options'>
+      <mat-checkbox class="form-control" [(ngModel)]="info.state">{{info.name}}
+      </mat-checkbox>
+    </div>
+  </ng-container>
+</section>

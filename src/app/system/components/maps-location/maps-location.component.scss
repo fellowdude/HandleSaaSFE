@@ -1,0 +1,38 @@
+agm-map {
+  height: 300px;
+}
+
+.search-input {
+  width: 98%;
+  margin-bottom: 1em;
+  border-radius: 3px;
+  padding: 5px;
+  border: 1px solid gray;
+  &:focus {
+    outline: none;
+  }
+}
+
+.search-address {
+  text-align: center;
+  padding: 0.5em;
+}
+
+.hide-map {
+  visibility: collapse;
+}
+
+.show-map {
+  visibility: inherit;
+}
+header {
+  position: relative;
+#close-button {
+    position: absolute;
+    right: 1.5%;
+    font-size: 25px;
+    color: gray;
+    cursor: pointer;
+    top: 14%;
+  }
+}

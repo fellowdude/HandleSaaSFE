@@ -1,0 +1,14 @@
+<div class="container-component">
+    <div class="card-row">
+        <div class="card-col">
+          <span class="fal fa-dollar-sign background-round"></span>
+          <!--     <p>Venta total acumulada</p> -->
+        </div>
+        <div class="card-col right-align">
+          <h5 class="mb-0">{{todayTotalSells | currency : 'S/.'}}</h5>
+          <p class="no-margin">Ventas de hoy</p>
+          <!--         <p>{{totalSells | currency : 'S/.'}}</p> -->
+        </div>
+      </div>
+    <app-loading-local #sellTodayLoading class="loading"></app-loading-local>
+</div>

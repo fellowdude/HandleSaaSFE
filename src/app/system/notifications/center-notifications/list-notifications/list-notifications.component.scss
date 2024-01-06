@@ -1,0 +1,40 @@
+@import "../../../../../variables.scss";
+
+.squeletor-number {
+    background: #d3dce2;
+    width: 28px;
+    height: 23px;
+    margin: 0px 4px;
+}
+
+.right {
+    float: right;
+}
+
+.circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 100%;
+    border: none;
+    color: transparent;
+    cursor: pointer;
+}
+
+.button {
+    display: inline-block;
+    margin: auto;
+    width: fit-content;
+    margin-left: 10px;
+    min-width: 120px;
+    background-color: $color-primary;
+    color: #1d72e8;
+    border: 1px solid #1d72e8;
+    border-radius: 5px;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 11px;
+    text-decoration: none;
+    font-family: $font-black;
+}

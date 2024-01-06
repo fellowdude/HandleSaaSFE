@@ -1,0 +1,19 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+  <div class="container">
+    <div class="title">Listado de Formularios</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)='createNewForm()'><i class="fas fa-plus-circle"></i> Agregar
+        Formulario</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <section class='container'>
+    <app-grid #gridList>
+    </app-grid>
+  </section>
+</div>
+<app-dialog-confirm></app-dialog-confirm>

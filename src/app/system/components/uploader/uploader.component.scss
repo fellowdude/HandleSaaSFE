@@ -1,0 +1,19 @@
+@import "../../../../variables.scss";
+.uploader-image-container {
+    form {
+        height: 100%;
+        cursor: pointer;
+        .drop-zone {
+            height: 100%;
+            .drop-zone {
+                height: 100%;
+                color: $text-gray;
+                flex-direction: column;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+        }
+    }
+}

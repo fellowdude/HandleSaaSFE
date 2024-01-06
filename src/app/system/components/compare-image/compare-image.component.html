@@ -1,0 +1,25 @@
+<section class="row" id="compare-image">
+  <section class="col-50 group-image group-actually">
+    <div class="ticket-actually ticket">
+      Actual
+    </div>
+    <div  class="container-image" *ngFor='let actually of config.arrayActually'>
+      <img
+        alt=""
+        src="{{url_attachment}}{{actually}}"
+      />
+    </div>
+  </section>
+
+  <section class="col-50 group-image">
+    <div class="ticket-reeplace ticket">
+      Reemplazo
+    </div>
+    <div  class="container-image" *ngFor='let change of config.arrayChange'>
+      <img
+        alt=""
+        src="{{url_attachment}}{{change}}"
+      />
+    </div>
+  </section>
+</section>

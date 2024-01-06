@@ -1,0 +1,205 @@
+<div class="fake-header">
+</div>
+<!-- <div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+  <div class="container">
+    <div class="title">Reportes y Estadísticas</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button">
+        <i class="fas fa-shopping-cart"></i> Comprar Report Plus®
+      </button>
+    </div>
+  </div>
+</div> -->
+<div class="content">
+
+  <section class="container-partition">
+    <section class="card-group">
+      <div class="card-element first-card">
+        <app-order-day #orderDay></app-order-day>
+      </div>
+      <div class="card-element second-card">
+        <app-session-active #activeSession></app-session-active>
+      </div>
+      <div class="card-element third-card">
+        <app-growth #growth></app-growth>
+      </div>
+      <div class="card-element fourth-card">
+        <app-sell-today #sellToday></app-sell-today>
+      </div>
+    </section>
+  </section>
+
+  <section class="container-partition flex-section">
+    <section class="p-row p-five cont-left">
+      <section class="container-row full-height">
+        <p class="subtitle main-subtitle subtitle-container">Últimos pedidos</p>
+        <section class="relative-position">
+          <app-last-order #lastOrder></app-last-order>
+        </section>
+      </section>
+    </section>
+    <section class="p-row p-five cont-right">
+      <section class="container-row full-height">
+        <section class="loadin-header" *ngIf='!isSupplier && !panel_title'>
+        </section>
+        <p class="subtitle main-subtitle subtitle-container">{{ !isSupplier ? panel_title : 'Productos en lista de
+          favoritos' }}</p>
+        <section class="relative-position">
+          <app-customer-list #customerList></app-customer-list>
+        </section>
+        <br>
+        <p class="total"> {{!isSupplier? 'Total de Usuarios: ' + totalUser: ''}}</p>
+       
+      </section>
+    </section>
+  </section>
+
+  <section class="container-partition flex-section">
+    <section class="p-row p-three cont-left">
+      <section class="container-row full-height">
+        <p class="subtitle main-subtitle subtitle-container">Ventas por Categoría</p>
+
+        <section class="relative-position">
+          <app-sell-category #categorySell></app-sell-category>
+        </section>
+
+      </section>
+    </section>
+    <section class="p-row p-seven cont-right">
+      <section class="container-row full-height">
+        <p class="subtitle main-subtitle subtitle-container">Cantidad de ventas por últimos 15 días</p>
+        <section class="relative-position">
+          <app-bar-graphic #barGraphic></app-bar-graphic>
+        </section>
+      </section>
+    </section>
+  </section>
+
+
+  <section class="container-partition flex-section">
+    <section class="p-row p-three-half cont-left-three">
+      <section class="container-row cont-change full-height">
+        <ul class="general-ul">
+          <li class="ul-item ul-header">
+            <i class="far fa-tag fa-lg circle-purple"></i>
+            <h6 class="li-header m-0">Top 10 Productos</h6>
+            <p>más vendidos</p>
+          </li>
+
+          <section class="relative-position">
+            <li class="ul-item">
+              <div class="row-item">
+                <div class="col-item col-s6">
+                  <p class="item-title" style="font-weight: bolder;">Nombre</p>
+                </div>
+                <div class="col-item col-s6">
+                  <p class="item-title" style="float: right; font-weight: bolder;">Cantidad</p>
+                </div>
+              </div>
+            </li>
+            <ng-container *ngFor="let product of top10products">
+              <li class="ul-item">
+                <div class="row-item">
+                  <div class="col-item col-s6">
+                    <p class="item-title">{{ product._id.name }}</p>
+                    <!--<p class="item-content">AEC Company</p>-->
+                  </div>
+                  <div class="col-item col-s6">
+                    <label class="label-style cyan" style="float: right;">{{ product.total }}</label>
+                  </div>
+                </div>
+              </li>
+            </ng-container>
+            <app-loading-local-table class="loading padding-loading" *ngIf='showLoading10Product'>
+            </app-loading-local-table>
+          </section>
+
+        </ul>
+      </section>
+    </section>
+
+    <section class="p-row p-three-half cont-middle">
+      <section class="container-row cont-change full-height">
+        <ul class="general-ul">
+          <li class="ul-item ul-header">
+            <i class="far fa-megaphone fa-lg circle-red"></i>
+            <h6 class="li-header m-0">Top 10 Marcas</h6>
+            <p>más vendidas</p>
+          </li>
+
+          <section class="relative-position">
+            <li class="ul-item">
+              <div class="row-item">
+                <div class="col-item col-s6">
+                  <p class="item-title" style="font-weight: bolder;">Nombre</p>
+                </div>
+                <div class="col-item col-s6">
+                  <p class="item-title" style="float: right; font-weight: bolder;">Cantidad</p>
+                </div>
+              </div>
+            </li>
+            <ng-container *ngFor="let brand of top10brands">
+              <li class="ul-item">
+                <div class="row-item">
+                  <div class="col-item col-s6">
+                    <p class="item-title">{{ brand._id.name }}</p>
+                    <!--<p class="item-content">AEC Company</p>-->
+                  </div>
+                  <div class="col-item col-s6">
+                    <label class="label-style cyan" style="float: right;">{{ brand.total }}</label>
+                  </div>
+                </div>
+              </li>
+            </ng-container>
+            <app-loading-local-table class="loading padding-loading" *ngIf='showLoading10Brand'>
+            </app-loading-local-table>
+          </section>
+
+        </ul>
+      </section>
+    </section>
+
+    <section class="p-row p-three-half cont-right-three">
+      <section class="container-row cont-change full-height">
+        <ul class="general-ul">
+          <li class="ul-item ul-header">
+            <i class="far fa-chart-pie fa-lg circle-cyan"></i>
+            <h6 class="li-header m-0">Top 10 Categorías</h6>
+            <p>más vendidas</p>
+          </li>
+
+          <section class="relative-position">
+            <li class="ul-item">
+              <div class="row-item">
+                <div class="col-item col-s6">
+                  <p class="item-title" style="font-weight: bolder;">Nombre</p>
+                </div>
+                <div class="col-item col-s6">
+                  <p class="item-title" style="float: right; font-weight: bolder;">Cantidad</p>
+                </div>
+              </div>
+            </li>
+            <ng-container *ngFor="let category of top10categories">
+              <li class="ul-item">
+                <div class="row-item">
+                  <div class="col-item col-s6">
+                    <p class="item-title">{{ category._id.name }}</p>
+                    <!--<p class="item-content">AEC Company</p>-->
+                  </div>
+                  <div class="col-item col-s6">
+                    <label class="label-style cyan" style="float: right;">{{ category.total }}</label>
+                  </div>
+                </div>
+              </li>
+            </ng-container>
+            <app-loading-local-table class="loading padding-loading" *ngIf='showLoading10Category'>
+            </app-loading-local-table>
+          </section>
+
+        </ul>
+      </section>
+    </section>
+  </section>
+
+
+</div>

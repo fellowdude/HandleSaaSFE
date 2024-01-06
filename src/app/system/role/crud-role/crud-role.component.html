@@ -1,0 +1,80 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="return-button"><i (click)="returnRole()" class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idRole">Nuevo rol</div>
+    <div class="title" *ngIf="idRole">Editar Rol </div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button " *ngIf="idRole && !onlyBd" (click)="confirmDeleteItem()"><i
+          class="fas fa-trash-alt"></i> &nbsp;
+        Eliminar</button>
+      <button type="button" class="primary-button "  *ngIf='!onlyBd' (click)='saveRole()'><i class="fas fa-save"></i> &nbsp;
+        Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <section class="container-partition">
+    <section class="p-row p-ten cont-left">
+      <section class="container-row">
+        <form [formGroup]="roleForm">
+          <div>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Nombre" class="form-control" formControlName="name"
+                autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="f.name.errors">
+              <mat-error *ngIf="
+                f.name.errors.required && (f.name.touched || submitted)
+              ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+
+          <div>
+            <mat-form-field>
+              <textarea matInput maxlength="1500" placeholder="Descripción" cdkTextareaAutosize cdkAutosizeMinRows="3"
+                cdkAutosizeMaxRows="7" class="form-control" formControlName="description"></textarea>
+            </mat-form-field>
+            <ng-container *ngIf="f.description.errors">
+              <mat-error *ngIf="
+                f.description.errors.required &&
+                (f.description.touched || submitted)
+              ">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="
+                f.description.errors.maxlength && (f.name.touched || submitted)
+              ">
+                La cantidad máxima de caracteres es de 1500
+              </mat-error>
+            </ng-container>
+          </div>
+        </form>
+
+        <div>
+          <mat-tab-group mat-align-tabs="start">
+            <mat-tab *ngFor="let functionality of listFunctionality" label="{{ functionality.module }}">
+              <section *ngFor="let functionality of functionality.functionality" class="functionality-row">
+                <h2>{{ functionality.name }}</h2>
+                <section>
+                  <ul>
+                    <li *ngFor="let operation of functionality.operations">
+                      <mat-checkbox [(ngModel)]="operation.select">{{
+                      operation.description
+                    }}</mat-checkbox>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </section>
+    </section>
+  </section>
+</div>
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>

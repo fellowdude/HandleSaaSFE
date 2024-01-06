@@ -1,0 +1,108 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+  <div class="container">
+    <div class="return-button"><i (click)="returnGroups()" class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idGroup">Nuevo grupo</div>
+    <div class="title" *ngIf="idGroup">Editar grupo</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button " *ngIf="idGroup" (click)="OpenModalDeleteConfirm()">
+        <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+      </button>
+      <button type="button" class="primary-button " (click)="saveGroup()">
+        <i class="fas fa-save"></i> &nbsp; Guardar
+      </button>
+    </div>
+  </div>
+</div>
+<app-dialog-confirm (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<!-- <h1 class="title" *ngIf="!idGroup">NUEVO GRUPO</h1>
+<h1 class="title" *ngIf="idGroup">EDITAR GRUPO</h1>
+<section class="container  window-buttton">
+  <section class="return" (click)="returnGroups()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button
+      class="button-option button-danger"
+      (click)="OpenModalDeleteConfirm()"
+      *ngIf="!headerFixed && idGroup"
+    >
+      <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+    </button>
+    <button class="button-option button-confirm" (click)="saveGroup()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section>
+
+<section class="container  window-buttton header-fixed" *ngIf="headerFixed">
+  <section class="return" (click)="returnGroups()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button
+      class="button-option button-danger"
+      (click)="OpenModalDeleteConfirm()"
+      *ngIf="!headerFixed && idGroup"
+    >
+      <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+    </button>
+    <button class="button-option button-confirm" (click)="saveGroup()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section> -->
+<div class="content">
+  <form [formGroup]="groupForm">
+    <section class="container-partition">
+      <section class="p-row p-four cont-left">
+        <section class="container-row">
+          <p class="main-subtitle subtitle-container">Caraterísticas del grupo</p>
+          <br />
+          <div>
+            <mat-form-field>
+              <input matInput type="text" maxlength="50" placeholder="Nombre" class="form-control"
+                formControlName="name" autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="f.name.errors">
+              <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="f.name.errors.maxlength && (f.name.touched || submitted)">
+                La cantidad máxima de caracteres es de 50
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="number" placeholder="Cantidad mínima de aprobación" class="form-control"
+                formControlName="approval_amount" autocomplete="off" min="0" />
+            </mat-form-field>
+            <ng-container *ngIf="f.approval_amount.errors">
+              <mat-error *ngIf="
+                  f.approval_amount.errors.required &&
+                  (f.approval_amount.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+        </section>
+      </section>
+      <section class="p-row p-six cont-right">
+        <section class="container-row">
+          <p class="sub-tittle main-subtitle subtitle-container">Lista de usuarios</p>
+          <br />
+          <ng-container *ngIf="!f.approval_user.value && submitted">
+            <mat-error>
+              Selecione por lo menos un Usuario
+            </mat-error>
+          </ng-container>
+          <app-grid #gridList (itemSelecReturn)="itemSelecReturn($event)">
+          </app-grid>
+        </section>
+      </section>
+    </section>
+  </form>
+</div>

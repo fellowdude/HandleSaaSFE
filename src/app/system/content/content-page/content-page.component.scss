@@ -1,0 +1,137 @@
+@import "../../../../variables.scss";
+:host {
+    background-color: $bg-color;
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /*   height: calc(100vh - 64px);
+  overflow-y: auto;
+  font-size: 14px; */
+    font-size: 14px;
+
+    ::ng-deep {
+        .tox.tox-tinymce.tox-fullscreen {
+            top: 70px !important;
+            margin-left: 64px;
+            width: calc(100% - 64px) !important;
+        }
+    }
+
+    .container {
+        width: 100%;
+        max-width: unset;
+    }
+
+    .header {
+        //position: absolute;
+        position: fixed;
+        display: inline-block;
+        height: 120px;
+        width: 100%;
+        background: #fa6f48 !important;
+        .container {
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+        }
+        .title {
+            display: inline-block;
+            color: #efefef;
+            text-align: left;
+        }
+    }
+    .fake-header {
+        width: 100%;
+        height: 64px;
+    }
+    .buttons-container {
+        display: inline-block;
+        text-align: right;
+        flex-grow: 2;
+        button {
+            display: inline-block;
+            margin: auto;
+            margin-right: 0;
+            width: fit-content;
+            margin-left: 10px;
+            min-width: 120px;
+        }
+    }
+
+    #add-button-general {
+        text-align: center;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px dashed rgba(0, 0, 0, 0.2);
+        margin-top: 10px;
+        /*  margin-bottom: 2em;
+    i {
+      font-size: 32px;
+      cursor: pointer;
+    } */
+    }
+
+    mat-form-field {
+        width: 100%;
+    }
+
+    .content {
+        /*width: 100%;
+        margin-right: auto;
+        margin-left: auto;
+        display: block;*/
+        position: relative;
+        margin-top: 70px;
+        margin-left: 64px;
+        z-index: 10;
+        .container-partition {
+            padding: 0 !important;
+            margin: 0 auto;
+            box-sizing: border-box;
+            width: calc(100% - 80px) !important;
+            max-width: unset;
+            width: 100%;
+        }
+        .container {
+            @include shadow();
+            border-radius: 6px;
+        }
+    }
+    .button-subtitle {
+        width: auto;
+        max-width: unset !important;
+        align-self: center;
+    }
+    p {
+        display: flex !important;
+        align-content: space-between;
+        justify-content: space-between;
+        display: inline-block;
+        width: 100%;
+    }
+    .img-container-one {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: space-between;
+        align-items: center;
+        justify-content: space-between;
+        .images {
+            align-self: stretch;
+            width: calc(50% - 10px);
+            box-sizing: border-box;
+            padding: 20px;
+            margin-top: 15px;
+            @include shadow();
+            min-width: 250px;
+            img {
+                background-color: #efefef;
+                object-fit: contain;
+                object-position: center;
+                width: 100%;
+                height: 200px;
+            }
+        }
+    }
+}

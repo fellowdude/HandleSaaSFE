@@ -1,0 +1,91 @@
+@import "../../variables.scss";
+
+:host {
+  font-family: $font-book;
+}
+
+
+@media only screen and (min-width: 700px) {
+  .block-window {
+    background-color: transparent;
+    position: absolute;
+    z-index: 500;
+    height: calc(100vh - 64px);
+    width: calc(100vw - 300px);
+  }
+  #content {
+    position: absolute;
+  }
+  .active-slide {
+    #slide {
+      width: 300px;
+      transform: translateX(0px);
+      -ms-transform: translateX(0px);
+      -webkit-transform: translateX(0px);
+      -moz-transform: translateX(0px);
+      -webkit-transition: all 0.8s;
+      -moz-transition: all 0.8s;
+      -ms-transition: all 0.8s;
+    }
+    #content {
+      left: 300px;
+      width: calc(100% - 300px);
+      -webkit-transition: all 0.8s;
+      -moz-transition: all 0.8s;
+      -ms-transition: all 0.8s;
+    }
+  }
+  .desactive-slide {
+    #slide {
+      width: 300px;
+      transform: translateX(-320px);
+      -ms-transform: translateX(-320px);
+      -webkit-transform: translateX(-320px);
+      -moz-transform: translateX(-320px);
+      -webkit-transition: all 0.8s;
+      -moz-transition: all 0.8s;
+      -ms-transition: all 0.8s;
+    }
+    #content {
+      width: 100%;
+      left: 0;
+      -webkit-transition: all 0.8s;
+      -moz-transition: all 0.8s;
+      -ms-transition: all 0.8s;
+    }
+  }
+}
+
+@media only screen and (max-width: 699px) {
+  #content {
+    width: 100%;
+  }
+  #slide {
+    z-index: 10;
+    position: absolute;
+  }
+  .active-slide {
+    #slide {
+      width: 100%;
+      transform: translateX(0px);
+      -ms-transform: translateX(0px);
+      -webkit-transform: translateX(0px);
+      -moz-transform: translateX(0px);
+      -webkit-transition: all 0.8s;
+      -moz-transition: all 0.8s;
+      -ms-transition: all 0.8s;
+    }
+  }
+  .desactive-slide {
+    #slide {
+      width: 0%;
+      transform: translateX(-320px);
+      -ms-transform: translateX(-320px);
+      -webkit-transform: translateX(-320px);
+      -moz-transform: translateX(-320px);
+      -webkit-transition: all 0.8s;
+      -moz-transition: all 0.8s;
+      -ms-transition: all 0.8s;
+    }
+  }
+}

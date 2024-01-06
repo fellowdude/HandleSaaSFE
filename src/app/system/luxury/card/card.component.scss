@@ -1,0 +1,111 @@
+@import "../../../../variables.scss";
+:host {
+  background-color: $bg-color;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /*   height: calc(100vh - 64px);
+overflow-y: auto;
+font-size: 14px; */
+  font-size: 14px;
+
+  footer {
+    display: flex;
+    justify-content: center;
+    button {
+      width: 150px;
+    }
+  }
+  .valid-true {
+    background: #e8f5e9;
+    color: #3dd47a;
+    padding: 2px 10px;
+    border-radius: 5px;
+  }
+
+  .valid-false {
+    background: #fce4ec;
+    color: #fd96b9;
+    padding: 2px 10px;
+    border-radius: 5px;
+  }
+  .card-title {
+    font-size: 18px;
+  }
+
+  .container {
+    width: calc(100% - 80px);
+    max-width: unset;
+  }
+
+  .header {
+    //position: absolute;
+    position: fixed;
+    display: inline-block;
+    height: 120px;
+    width: 100%;
+    background: #fa6f48 !important;
+    .container {
+      background-color: transparent;
+      display: flex;
+      align-items: center;
+    }
+    .title {
+      display: inline-block;
+      color: #efefef;
+      text-align: left;
+    }
+  }
+  .fake-header {
+    width: 100%;
+    height: 64px;
+  }
+  .buttons-container {
+    display: inline-block;
+    text-align: right;
+    flex-grow: 2;
+    button {
+      display: inline-block;
+      margin: auto;
+      margin-right: 0;
+      width: fit-content;
+      margin-left: 10px;
+      min-width: 120px;
+    }
+  }
+  .content {
+    /*width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    display: block;*/
+    position: relative;
+    margin-top: 70px;
+    margin-left: 64px;
+    z-index: 10;
+    .container-partition {
+      padding: 0 !important;
+      margin: 0 auto;
+      box-sizing: border-box;
+      width: calc(100% - 80px) !important;
+      max-width: unset;
+      width: 100%;
+    }
+    .container {
+      @include shadow();
+      border-radius: 6px;
+    }
+  }
+
+  header {
+    position: relative;
+    #close-button {
+      position: absolute;
+      right: 4%;
+      font-size: 25px;
+      color: gray;
+      cursor: pointer;
+      top: 10%;
+    }
+  }
+}

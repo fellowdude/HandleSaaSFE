@@ -1,0 +1,32 @@
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+
+<div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+  <div *ngFor="let node of childrenCategoryGroup" class='example-box' cdkDrag>
+    <tr class='group-section'>
+      <td class='category-group' (click)='goDetail(node)'>
+        <p>{{node.name}}</p>
+      </td>
+
+      <td class="create-date" (click)='goDetail(node)'>
+        <p>{{node.create_date | date: 'dd-MM-yyyy'}}</p>
+      </td>
+
+      <ng-container *ngIf="!activeChangeBoolean">
+        <td class="visible-category" (click)='goDetail(node)'>
+          <span *ngIf='node.active' class="status-visible">Visible</span>
+          <span *ngIf='!node.active' class="status-invisible">No Visible</span>
+        </td>
+      </ng-container>
+
+      <td class="position" (click)='goDetail(node)'>
+        <span>Pos. {{node.position}}</span>
+      </td>
+
+      <td class="trash">
+        <i class="fas fa-trash-alt delete"
+          (click)="confirmDeleteItem(node._id, node.position); $event.stopPropagation()" matTooltip="Eliminar">
+        </i>
+      </td>
+    </tr>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<!-- <div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="title">Campaña</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)="changeEditMode()">
+        <i class="fas fa-pencil"></i> Modo edición
+      </button>
+      <button type="button" class="primary-button" (click)="createCampaign()">
+        <i class="fas fa-plus-circle"></i> Agregar Campaña
+      </button>
+    </div>
+  </div>
+</div>
+<div class="content">
+  <section class="container">
+    <app-grid #gridList> </app-grid>
+  </section>
+</div>
+<app-dialog-confirm></app-dialog-confirm> -->
+
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="title">Listado de campañas</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)="changeEditMode()">
+        <i class="fas fa-pencil"></i> Modo edición
+      </button>
+      <button type="button" class="primary-button" (click)='createCampaign()'><i class="fas fa-plus-circle"></i> Agregar
+        campaña</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <section class='container'>
+    <form [formGroup]="searchForm">
+      <section class='container-table' formArrayName="searchs">
+        <section *ngFor="let group of data; let search of searchs.controls; index as i">
+          <section class='group-section' (click)='actionScroll(group)'>
+            {{group.name}}
+            <i class="fas fa-chevron-down" [ngClass]="{'rotate': group.scroll, 'out-rotate': !group.scroll}"></i>
+          </section>
+          <section [ngClass]="{'active-accordion': group.scroll, 'no-active-accordion': !group.scroll}">
+            <ng-container *ngIf="group.scroll">
+
+              <section id="search">
+                <section class='container-search'>
+                  <input type="text" id="searchInput" placeholder="Buscar" [(ngModel)]="group.search"
+                    (ngModelChange)="setGroupIndex(i)" autocomplete="off" (keypress)="validateInput($event, i)"
+                    (paste)="onPaste($event, i)" [formControlName]="i" />
+                  <i class="far fa-search" *ngIf='seachInputIndex !== i'></i>
+                  <app-search-loader [visibility]="seachInputIndex == i ? 'visible' : 'hidden'"></app-search-loader>
+                </section>
+              </section>
+
+              <tr class="group-section headers">
+                <td class="category name">
+                  <p>Nombre de campaña</p>
+                </td>
+                <td class="category visibility">
+                  <p>Activo</p>
+                </td>
+                <td class="category position">
+                  <p>Posición</p>
+                </td>
+              </tr>
+            </ng-container>
+            <app-list-campaign #listTableCampaign [scrolled]="scrolled.asObservable()"
+              [campaigns]="group.campaign"
+              [valueShow]='treeInfo' [activeChangeBoolean]='editMode'
+              [index]="group.index">
+            </app-list-campaign>
+          </section>
+        </section>
+      </section>
+    </form>
+  </section>
+</div>
+<app-dialog-confirm></app-dialog-confirm>

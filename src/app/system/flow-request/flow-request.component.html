@@ -1,0 +1,102 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="title">Listado de Flujos de Aprobación</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)='openNewFlow()'><i class="fas fa-plus-circle"></i> Agregar
+        Flujo</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <section class="container">
+    <app-grid #gridList (actionAnswer)="actionAnswer($event)"> </app-grid>
+  </section>
+</div>
+
+<!-- modales -->
+<article class="container-modal" *ngIf="showPopupFlowAproval">
+  <section class="modal-body modal-small">
+    <header>
+      Flujo de Aprobación
+      <div id="close-button" (click)="closeFlow()">&times;</div>
+    </header>
+    <section class="body">
+      <form [formGroup]="flowApprovalForm">
+        <div>
+          <mat-form-field>
+            <input matInput type="text" maxlength="50" placeholder="Nombre" class="form-control" formControlName="name"
+              autocomplete="off" />
+          </mat-form-field>
+          <ng-container *ngIf="f.name.errors">
+            <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+              El campo es obligatorio
+            </mat-error>
+            <mat-error *ngIf="f.name.errors.maxlength && (f.name.touched || submitted)">
+              La cantidad máxima de caracteres es de 50
+            </mat-error>
+          </ng-container>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>Tipo</mat-label>
+            <mat-select name="entity" formControlName="entity" placeholder="Tipo">
+              <mat-option value="product"> Producto </mat-option>
+              <mat-option value="brand"> Marca </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>Acción</mat-label>
+            <mat-select name="action" formControlName="action" placeholder="Acción">
+              <mat-option value="create"> Crear </mat-option>
+              <mat-option value="edit"> Editar </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <p class="sub-tittle">Flujo de grupos</p>
+        <hr>
+        <div>
+          <div class="row">
+            <mat-form-field>
+              <mat-select placeholder="Grupo" name="type" class="form-control" formControlName="group">
+                <mat-option *ngFor="let group of listGroupApproval" [value]="group._id">
+                  {{ group.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button type="button" class="primary-button button-subtitle cancel-button button-plus" (click)="addGroupFlow()">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+
+          <ng-container *ngIf="f.group.errors">
+            <mat-error *ngIf="f.group.errors.required && (f.group.touched || submitted)">
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+
+          <section>
+            <ul class="chip">
+              <li *ngFor="let group of groupApprovalSelectInfo; let position = index">
+                <span>{{ group.name }}</span>
+                <i class="fas fa-times-circle" (click)="removeGroup(position)"></i>
+              </li>
+            </ul>
+          </section>
+        </div>
+      </form>
+    </section>
+    <footer>
+      <button class="primary-button button-subtitle cancel-button" (click)="closeFlow()">
+        Cancelar
+      </button>
+      <button class="primary-button save-button button-subtitle save-button-style" (click)="saveFlow()">
+        Grabar
+      </button>
+    </footer>
+  </section>
+</article>

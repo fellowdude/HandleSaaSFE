@@ -1,0 +1,35 @@
+@import "../../../../variables.scss";
+
+.mat-card{
+    box-shadow: none;
+}
+.container-drop {
+  text-align: center;
+  padding: 3em;
+  border: 1px solid gray;
+}
+.cursor-delete{
+    cursor: pointer;
+    color:Red;
+}
+
+table{
+    margin-top: 1em;
+    font-size: 14px;
+    padding-bottom: 1em;
+    font-family: $font-book;
+    tr{
+        th{
+            font-weight: 100;
+        }
+    }
+}
+.footer{
+    text-align: center;
+}
+
+i{
+    color: $gray-light;
+    font-size: 44px;
+
+}

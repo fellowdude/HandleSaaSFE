@@ -1,0 +1,280 @@
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)" [RightButtonText]="config.deleteService">
+</app-dialog-confirm>
+
+<section>
+    <!-- <section id="search">
+        <section class='container-search'>
+            <form [formGroup]="searchForm">
+                <input type="text" id="searchInput" placeholder="Buscar" autocomplete="off"
+                    (keypress)="validateInput($event)" (paste)="onPaste($event)" formControlName="search" />
+            </form>
+            <i class="far fa-search" *ngIf='!searchLoading'></i>
+            <app-search-loader [visibility]="searchLoading ? 'visible' : 'hidden'"></app-search-loader>
+        </section>
+
+    </section> -->
+
+    <section id="search" [ngClass]="{ 'space-between': config.customFilterButtons }">
+        <section class="options-wrapper">
+            <ng-container *ngIf="config.customFilterButtons && config.customFilterButtons.length > 0">
+                <div *ngFor="let btnFilter of config.customFilterButtons; index as i">
+                    <span class="option-item" (click)="addFilter(btnFilter.filter, i)"
+                        [ngClass]="{ 'first': i==0, 'last': i == config.customFilterButtons.length - 1, 'active-button': btnFilter.current }">{{btnFilter.value}}</span>
+                </div>
+            </ng-container>
+        </section>
+        <section class='container-search'>
+            <form [formGroup]="searchForm">
+                <input type="text" id="searchInput" placeholder="Buscar" autocomplete="off"
+                    (keypress)="validateInput($event)" (paste)="onPaste($event)" formControlName="search" />
+            </form>
+            <i class="far fa-search" *ngIf='!searchLoading' (click)='searchData()'></i>
+            <app-search-loader [visibility]="searchLoading ? 'visible' : 'hidden'"></app-search-loader>
+        </section>
+
+    </section>
+
+    <section>
+        <section>
+            <section [hidden]='!loadingActive' class="overflow-table">
+                <table class="squeletor" [ngClass]="{'table-expand': expand_table}">
+                    <thead>
+                        <tr [ngClass]="{'padding-scroll': existScroll }">
+                            <th *ngIf="config.select" class="select-check"></th>
+                            <th *ngFor="let column of columns; let position = index" class="header-grid"
+                                [ngClass]="{'select-filter': selectFilterPosition == position }"
+                                [ngStyle]="{ width: column.width}">
+                                <section>
+                                    <p>{{ column.title }}</p>
+                                    <div *ngIf="column.type !='image' ">
+                                        <div class="double-angle" *ngIf="!column.upFilter && !column.downFilter"
+                                            (click)="changeFilter(position, 'up')">
+                                            <i class="far fa-angle-up"></i>
+                                            <i class="far fa-angle-down"></i>
+                                        </div>
+                                        <i class="far fa-angle-up" (click)="changeFilter(position, 'up')"
+                                            *ngIf="!column.downFilter && column.upFilter"></i>
+                                        <i class="far fa-angle-down" (click)="changeFilter(position, 'down')"
+                                            *ngIf="!column.upFilter && column.downFilter"></i>
+                                    </div>
+                                </section>
+                            </th>
+                            <ng-container *ngIf="actions || config.deleteService">
+                                <th class="action">Acciones</th>
+                            </ng-container>
+                        </tr>
+
+                        <!--  <tr>
+              <ng-container *ngFor='let column of columns'>
+                <th *ngIf='column.type != "image"' [ngStyle]="{
+                  width: column.width
+                }">
+                  <div></div>
+                </th>
+                <th *ngIf='column.type == "image"' [ngStyle]="{
+                  width: column.width
+                }">
+                  <div></div>
+                </th>
+              </ng-container>
+             
+            </tr> -->
+                    </thead>
+                    <tbody>
+                        <tr *ngFor='let loop3 of counter(5)'>
+                            <ng-container *ngFor='let column of columns'>
+                                <td *ngIf='column.type != "image"' [ngStyle]="{ width: column.width }">
+                                    <div class="general-div"></div>
+                                </td>
+
+                                <td *ngIf='column.type == "image"' [ngStyle]="{ width: column.width }">
+                                    <div class="image-div"></div>
+                                </td>
+                            </ng-container>
+                            <ng-container *ngIf="actions || config.deleteService">
+                                <td class="action">
+                                    <div class="general-div"></div>
+                                </td>
+                            </ng-container>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <section [hidden]='loadingActive' class="overflow-table">
+                <table [ngClass]="{'table-expand': expand_table}">
+                    <thead>
+                        <tr [ngClass]="{ 'padding-scroll': existScroll }">
+                            <th *ngIf="config.select" class="select-check"></th>
+                            <th *ngFor="let column of columns; let position = index" class="header-grid"
+                                [ngClass]="{ 'select-filter': selectFilterPosition == position }"
+                                [ngStyle]="{width: column.width}">
+                                <section>
+                                    <p [ngStyle]="{
+                                        'text-align': column.align
+                                    }">{{ column.title }}</p>
+                                    <!-- [ngStyle]="{
+                                        'text-align': field.align,
+                                        width: field.width,
+                                        'font-weight':field.fontWeight,
+                                        color:field.color
+                                    }" -->
+                                    <div *ngIf="column.type !='image' ">
+                                        <div class="double-angle" *ngIf="!column.upFilter && !column.downFilter"
+                                            (click)="changeFilter(position, 'up')">
+                                            <i class="far fa-angle-up"></i>
+                                            <i class="far fa-angle-down"></i>
+                                        </div>
+                                        <i class="far fa-angle-up" (click)="changeFilter(position, 'up')"
+                                            *ngIf="!column.downFilter && column.upFilter"></i>
+                                        <i class="far fa-angle-down" (click)="changeFilter(position, 'down')"
+                                            *ngIf="!column.upFilter && column.downFilter"></i>
+                                    </div>
+                                </section>
+                            </th>
+                            <ng-container *ngIf="actions || config.deleteService">
+                                <th class="action">Acciones</th>
+                            </ng-container>
+                        </tr>
+                    </thead>
+                    <tbody #scrollMe [ngStyle]="config.bodyStyle">
+                        <ng-container *ngFor="let data of dataSource">
+                            <tr>
+                                <td *ngIf="config.select" class="select-check">
+                                    <mat-checkbox class="form-control" [(ngModel)]="data.select"
+                                        (ngModelChange)="changeSelectItem(data)" >
+                                    </mat-checkbox>
+                                </td>
+                                <ng-container *ngFor="let field of columns; let positiondata = index">
+                                    <ng-container *ngIf='!field.activeChangeBoolean'>
+                                        <td (click)="openItem(data._id); $event.stopPropagation()" [ngClass]="{
+                                            'select-filter': selectFilterPosition == positiondata , 'img-color': field.type=='image'
+                                            }" [ngStyle]="{
+                                            'text-align': field.align,
+                                            width: field.width,
+                                            'font-weight':field.fontWeight,
+                                            color:field.color
+                                        }">
+
+
+                                            <ng-container *ngIf="field.replace">
+                                                <ng-container *ngFor="let replace of field.replace">
+                                                    <ng-container *ngIf="data[field.field] == replace.value">
+                                                        <ng-container *ngIf="replace.type && replace.type == 'label'">
+                                                            <label class="label-replace" [ngStyle]="{
+                                                            background: replace.background,
+                                                            color: replace.color
+                                                            }">{{ data | fieldValue: field }}</label>
+                                                        </ng-container>
+                                                        <span *ngIf="!replace.type">
+                                                            {{ data | fieldValue: field }}
+                                                        </span>
+                                                    </ng-container>
+                                                </ng-container>
+                                            </ng-container>
+                                            <ng-container *ngIf="!field.replace">
+                                                <ng-container *ngIf="field.type !='image' ">
+                                                    <span>
+                                                        {{ data | fieldValue: field }}
+                                                    </span>
+                                                </ng-container>
+
+                                                <ng-container *ngIf="field.type=='image'">
+                                                    <img width="100%"
+                                                        src="{{data | fieldValue: field : url_attachment}}" alt="">
+                                                    <!-- <img width="70%" src="./assets/img/blank_image.png" alt=""> -->
+                                                </ng-container>
+                                            </ng-container>
+
+                                        </td>
+                                    </ng-container>
+                                    <ng-container *ngIf='field.activeChangeBoolean'>
+                                        <td [ngClass]="{'select-filter': selectFilterPosition == positiondata , 'img-color': field.type=='image'}"
+                                            [ngStyle]="{'text-align': field.align,width: field.width,'font-weight':field.fontWeight,color:field.color}">
+
+                                            <ng-container *ngIf='field.changeBoolean'>
+                                                <mat-checkbox class="form-control" [(ngModel)]="data[field.field]"
+                                                    (ngModelChange)="updateDataField(data._id,field.field,data[field.field],field.changeBoolean.url,field.changeBoolean.urlType,data)"
+                                                    exclusive>
+                                                </mat-checkbox>
+                                            </ng-container>
+                                        </td>
+                                    </ng-container>
+
+                                </ng-container>
+
+                                <ng-container *ngIf="actions || config.deleteService">
+                                    <td class="action">
+                                        <ng-container ng-if="actions">
+                                            <ng-container *ngFor="let action of actions">
+
+                                                <ng-container *ngIf="action.conditionShow">
+                                                    <i *ngIf="data[action.conditionShow.field] == action.conditionShow.value"
+                                                        [ngStyle]="{ color: action.color }"
+                                                        class="{{ action.icon }} icon-action"
+                                                        (click)="sendAction(data[action.fieldReturn], action.action)"
+                                                        matTooltip="{{ action.tooltip }}"> </i>
+                                                </ng-container>
+                                                <ng-container *ngIf="!action.conditionShow">
+                                                    <i class="{{ action.icon }} icon-action"
+                                                        (click)="sendAction(data[action.fieldReturn], action.action)"
+                                                        [ngStyle]="{ color: action.color }"
+                                                        matTooltip="{{ action.tooltip }}"></i>
+                                                </ng-container>
+                                            </ng-container>
+                                        </ng-container>
+                                        <ng-container *ngIf="config.deleteService">
+                                            <i class="fas fa-trash-alt delete"
+                                                (click)="confirmDeleteItem(data._id,data); $event.stopPropagation()"
+                                                matTooltip="Eliminar"></i>
+                                        </ng-container>
+                                    </td>
+                                </ng-container>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </section>
+        </section>
+    </section>
+
+    <section id="pagination" class="container-table table-footer">
+        <section class="left">
+            <section [hidden]='loadingActive' *ngIf='dataSource'>
+                <!--<p>Cantidad {{ totalItems }} Items</p>-->
+                <p>{{ dataSource.length != 0 ? config.pagQuantity * pagNumber - (config.pagQuantity - 1) : 0 }} - {{
+                    config.pagQuantity * pagNumber + dataSource.length - config.pagQuantity }} de {{ totalItems }} items
+                </p>
+            </section>
+            <section [hidden]='!loadingActive'>
+                <!--<div class="squeletor-items">Cantidad <div></div> Items</div>-->
+                <div class="squeletor-items">
+                    <div></div> - <div></div> de <div></div> items
+                </div>
+            </section>
+        </section>
+        <section class="right">
+            <section>
+                <p (click)="firstPage()"><i class="fas fa-step-backward"></i></p>
+                <p (click)="previousPage()"><i class="fas fa-caret-left"></i></p>
+                <section *ngIf='!loadingActive'>
+                    <div class="page-number">
+                        Página
+                        <input type="number" [(ngModel)]="pagNumber" (keydown)="changePageManual($event)" />
+                        de {{ totalPage }}
+                    </div>
+                </section>
+
+                <section *ngIf='loadingActive'>
+                    <div class="page-number">
+                        Página
+                        <div class="squeletor-number"></div>
+                        de <div class="squeletor-number"></div>
+                    </div>
+                </section>
+
+                <p (click)="nextPage()"><i class="fas fa-caret-right"></i></p>
+                <p (click)="lastPage()"><i class="fas fa-step-forward"></i></p>
+            </section>
+        </section>
+    </section>
+</section>

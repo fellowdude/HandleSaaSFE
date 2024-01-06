@@ -1,0 +1,22 @@
+#compare-image {
+  .group-actually {
+    background: #fbfbfb;
+  }
+  .group-image {
+    margin: 0.2em;
+  }
+  .container-image {
+    height: 250px;
+    overflow-y: hidden;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    margin: 0.4em 0.5em;
+    box-sizing: border-box;
+  }
+  img {
+    width: 100%;
+    object-fit: cover;
+    height: 250px;
+  }
+  
+}

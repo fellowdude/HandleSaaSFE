@@ -1,0 +1,27 @@
+<section class="activation-card" *ngIf="data">
+    <div class="upper-corner">
+        <mat-slide-toggle [(ngModel)]="data.activation.active" [ngModelOptions]="{ standalone: true }">
+            <span *ngIf="data.activation.active">
+                <!-- Visible --></span>
+            <span *ngIf="!data.activation.active">
+                <!-- No Visible --></span>
+        </mat-slide-toggle>
+    </div>
+
+    <section class="icon-change-level">
+        <i class="fas fa-arrow-left" (click)='upLabel(data.index,"listAdvantage")'></i>
+        <i class="fas fa-arrow-right" (click)='downLabel(data.index,"listAdvantage")'></i>
+    </section>
+    <img src="{{ data.url_attachment }}{{ data.activation.image_thumbnail }}" (click)="openActivationModal()" alt="" />
+    <p class="title">{{ data.activation.title }}</p>
+
+    <section class="icon-change-number">
+        <input type='number' (blur)="changePositionBlur(data.index,data.activation.position,data,$event,'listAdvantage');$event.stopPropagation()" (keypress)="changePosition(data.index,data.activation.position,data,$event,'listAdvantage');$event.stopPropagation()"
+            [(ngModel)]='data.activation.position' [ngModelOptions]="{ standalone: true }">
+    </section>
+    <section class="icon-delete">
+        <button type="button" class="primary-button delete-button" (click)="openDeleteModal(i, 'listAdvantage')">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </section>
+</section>

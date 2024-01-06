@@ -1,0 +1,56 @@
+#block-window{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top:0;
+    left: 0;
+    //z-index: 10000;
+}
+
+.table-row{
+    padding: 5px 0px;
+    box-sizing: border-box;
+}
+
+.state-ok{
+    background: #10d09b;
+}
+.state-pendding{
+    background: #ababab;
+}
+
+.state-error{
+    background: #ff4081;
+}
+.state-modified{
+    background: #1977fa;
+}
+.state{
+    
+    color: white;
+    padding: 1px 10px;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.upload-summary{
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+}
+.upload-ok{  
+    background: #e8f5e9;  
+    color: #3dd47a;
+    margin-right: 10px;
+}
+.upload-error{  
+    background: #fce4ec;  
+    color: #fd96b9;
+}
+
+.summary {
+    margin: auto;
+    margin-bottom: 20px;
+    text-align: center;
+}

@@ -1,0 +1,35 @@
+<section class="row" id="compare-video">
+  <section class="col-50 group-video group-actually">
+    <div class="ticket-actually ticket">
+      Actual
+    </div>
+    <div class="container-video" *ngFor="let actually of config.arrayActually">
+      <iframe
+        width="100%"
+        [src]="
+        actually
+            | saveVideo
+        "
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </section>
+
+  <section class="col-50 group-video">
+    <div class="ticket-reeplace ticket">
+      Reemplazo
+    </div>
+    <div class="container-video" *ngFor="let change of config.arrayChange">
+      <iframe
+        width="100%"
+        [src]="
+      change
+          | saveVideo
+      "
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </section>
+</section>

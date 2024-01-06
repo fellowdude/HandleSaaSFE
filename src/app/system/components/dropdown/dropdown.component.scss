@@ -1,0 +1,82 @@
+
+.dropdown-content {
+  margin: auto;
+  max-width: 200px;
+  margin-right: 5px;
+  margin-left: 5px;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  flex-flow: row;
+  flex-wrap: wrap;
+}
+
+.custom-select, .custom-select-action {
+  height: fit-content;
+  position: relative;
+  width: 170px;
+}
+
+/*style the arrow inside the select element:*/
+.select-selected:after, .select-selected-action:after {
+  position: absolute;
+  content: "";
+  top: 17px;
+  right: 12px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #444 transparent transparent transparent;
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after, .select-selected-action.select-arrow-active:after {
+  border-color: transparent transparent #444 transparent;
+  top: 10px;
+  border-radius: 0px !important;
+}
+
+.select-selected-action.select-arrow-active:after, .select-selected-action:after {
+  margin-right: 5px;
+  border-radius: 0px !important;
+}
+
+
+/*style the items (options), including the selected item:*/
+.select-items div, .select-selected, .select-selected-action {
+  &.options {
+    color: #444;
+    background: #FFF;
+    cursor: pointer;
+    user-select: none;
+  }
+
+}
+
+/*style items (options):*/
+.select-items {
+  position: relative;
+  width: 200px;
+  z-index: 99;
+}
+
+.options {
+  position: absolute;
+  top: 38px;
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.option {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  &:hover {
+    background-color: #EAEAEA;
+    transition: all 0.5s;
+  }
+}
+
+.select-items.action {
+  background: #FFF;
+  margin-right: 10px;
+}

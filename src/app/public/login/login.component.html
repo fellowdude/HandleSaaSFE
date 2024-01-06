@@ -1,0 +1,57 @@
+<div class="login-background">
+  <!--   <img src="./assets/img/background.jpg"> -->
+  <div class="login-modal">
+    <!-- <h2>Sonr SaaS</h2> -->
+    <img style="width: 50%; margin: 0 auto; display: block; margin-bottom: 20px;"
+      src="assets/img/Handel_v2_lines.svg" />
+    <form [formGroup]='loginForm'>
+      <div>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Usuario" class="form-control" formControlName="user"
+            autocomplete="off" (keydown)="onKeydown($event)">
+        </mat-form-field>
+        <ng-container *ngIf='f.user.errors'>
+          <mat-error *ngIf="f.user.errors.required && (f.user.touched || submitted)">
+            El campo es obligatorio
+          </mat-error>
+        </ng-container>
+      </div>
+
+      <div>
+        <mat-form-field>
+          <input matInput type="password" placeholder="Contraseña" color='blue' class="form-control"
+            formControlName="password" autocomplete="off" (keydown)="onKeydown($event)">
+        </mat-form-field>
+        <ng-container *ngIf='f.password.errors'>
+          <mat-error *ngIf='f.password.errors.required && (f.password.touched || submitted)' class='require-class'>
+            <span>El campo es obligatorio</span>
+          </mat-error>
+        </ng-container>
+      </div>
+
+      <button type="button" style="width:100%; display:block; max-width: 100% !important;"
+        class="primary-button login-button" (click)='onSubmit()'>INGRESAR</button>
+
+      <section [ngStyle]='{"font-size": "13px","padding-top": "10px","font-family": "Muli"}'>
+        <mat-checkbox class="check-user" formControlName="save_user" [checked]="checked_user">Recordar cuenta
+        </mat-checkbox>
+      </section>
+
+      <p class='forget-password' (click)='goRecovery()'>Olvide mi contraseña</p>
+    </form>
+  </div>
+</div>
+
+
+<!-- <section class="login-divider">
+  <div class="left-side">
+  </div>
+  <div class="right-side">
+    <h2>Bienvenido</h2>
+
+    <section>
+    </section>
+  </div>
+
+
+</section> -->

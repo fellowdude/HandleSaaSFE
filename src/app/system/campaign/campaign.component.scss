@@ -1,0 +1,231 @@
+// @import "../../../variables.scss";
+// :host {
+//   background-color: $bg-color;
+//   display: block;
+//   margin: 0;
+//   padding: 0;
+//   width: 100%;
+//   height: calc(100vh - 64px);
+//   //overflow-y: auto;
+//   font-size: 14px;
+//   .container {
+//     width: 100%;
+//     max-width: unset;
+//   }
+
+//   .fake-header {
+//     width: 100%;
+//     height: 64px;
+//   }
+
+//   .content {
+//     margin-left: 64px;
+//     position: relative;
+//     margin-top: 70px;
+//     z-index: 10;
+//     .container-partition {
+//       padding: 0 !important;
+//       margin: 0 auto;
+//       box-sizing: border-box;
+//       width: calc(100% - 80px) !important;
+//       max-width: unset;
+//       width: 100%;
+//     }
+//     .container {
+//       @include shadow();
+//       border-radius: 6px;
+//     }
+//   }
+
+//   .header {
+//     position: fixed;
+//     top: 64px;
+//     display: inline-block;
+//     height: 120px;
+//     width: 100%;
+//     background: #fa6f48 !important;
+//     .container {
+//       background-color: transparent;
+//       display: flex;
+//       align-items: center;
+//     }
+//     .title {
+//       display: inline-block;
+//       color: #efefef;
+//       text-align: left;
+//     }
+//   }
+//   .buttons-container {
+//     display: inline-block;
+//     text-align: right;
+//     flex-grow: 2;
+//     button {
+//       display: inline-block;
+//       margin: auto;
+//       margin-right: 0;
+//       width: fit-content;
+//       margin-left: 10px;
+//       min-width: 120px;
+//     }
+//   }
+// }
+
+@import "../../../variables.scss";
+:host {
+  background-color: $bg-color;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: calc(100vh - 64px);
+  //overflow-y: auto;
+  font-size: 14px;
+
+  .container {
+    width: calc(100% - 80px);
+    max-width: unset;
+  }
+  .header {
+    position: fixed;
+    top: 64px;
+    display: inline-block;
+    height: 120px;
+    width: 100%;
+    background: #fa6f48 !important;
+    .container {
+      background-color: transparent;
+      display: flex;
+      align-items: center;
+    }
+    .title {
+      display: inline-block;
+      color: #efefef;
+      text-align: left;
+    }
+  }
+  .buttons-container {
+    display: inline-block;
+    text-align: right;
+    flex-grow: 2;
+    button {
+      display: inline-block;
+      margin: auto;
+      margin-right: 0;
+      width: fit-content;
+      margin-left: 10px;
+      min-width: 120px;
+    }
+  }
+  .active-accordion {
+    height: 100%;
+  }
+
+  .rotate {
+    -webkit-transform: rotate(-180deg);
+    -moz-transform: rotate(-180deg);
+    rotation: -180deg;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -ms-transition: all 0.5s;
+  }
+
+  .out-rotate {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    rotation: 0deg;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -ms-transition: all 0.5s;
+  }
+  .category {
+    &.name {
+      width: 60%;
+    }
+    &.visibility {
+      width: 20%;
+    }
+    &.position {
+      width: 10%;
+    }
+    
+    p {
+      padding-left: 10px;
+    }
+  }
+
+  .group-section {
+    cursor: pointer;
+    line-height: 1.5;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+    background-color: #fff;
+    padding: 0.5em;
+    position: relative;
+    margin-top: 14px;
+    font-weight: bold;
+    i {
+      position: absolute;
+      right: 5px;
+      bottom: 5px;
+      font-size: 18px;
+      color: #303f9f;
+    }
+  }
+  .group-section.headers {
+    margin-top: 0px;
+  }
+  .no-active-accordion {
+    height: 0px;
+    overflow: auto;
+  }
+  .table-td {
+    width: 20%;
+  }
+
+  .table-title {
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .fake-header {
+    width: 100%;
+    height: 64px;
+  }
+
+  .content {
+    position: relative;
+    margin-top: 70px;
+    z-index: 10;
+    margin-left: 64px;
+    .container {
+      @include shadow();
+      border-radius: 6px;
+    }
+  }
+
+  .container-search {
+    border: 1px solid gray;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0.5em;
+    border-radius: 20px;
+    margin-top: 15px;
+    input {
+      width: 100%;
+      border: none;
+      &:focus {
+        border: none;
+        outline: none;
+      }
+    }
+    app-search-loader {
+      position: absolute;
+      right: 3px;
+    }
+  }
+}

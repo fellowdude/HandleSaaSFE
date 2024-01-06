@@ -1,0 +1,14 @@
+<div class="container-component">
+    <div class="card-row">
+        <div class="card-col">
+          <span class="fal fa-user background-round"></span>
+          <p>{{ isSupplier ? 'Total de productos en lista de favoritos:' : 'Total de clientes:' }} </p>
+        </div>
+        <div class="card-col right-align">
+          <h5 class="mb-0">{{ isSupplier ? countInWishListTotal : activeSessions }}</h5>
+          <p *ngIf="!isSupplier" class="no-margin">Sesiones activas</p>
+          <p>{{ !isSupplier ? totalUser : '' }} </p>
+        </div>
+      </div>
+      <app-loading-local #sessionActiveLoading class="loading"></app-loading-local>
+</div>

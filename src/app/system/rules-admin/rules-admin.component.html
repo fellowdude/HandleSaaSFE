@@ -1,0 +1,20 @@
+<h1 class="title">ADMINISTRADOR DE REGLAS DE DESCUENTO</h1>
+<section class="container window-button">
+  <section class="buttons-list">
+    <button class="button-option" (click)="createRulesAdmin()">
+      <i class="fas fa-layer-plus"></i>
+      <span>Crear administrador de reglas de descuento</span>
+    </button>
+  </section>
+</section>
+
+<section class="container buttons-list mobile-buttton">
+  <button class="button-option button-confirm" (click)="(createRulesAdmin)">
+    <i class="fas fa-layer-plus"></i>
+    <span>Crear administrador de reglas de descuento</span>
+  </button>
+</section>
+
+<section class="container">
+  <app-grid #gridList></app-grid>
+</section>

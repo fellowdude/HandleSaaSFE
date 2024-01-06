@@ -1,0 +1,17 @@
+<div class="fake-header">
+</div>
+<div class="header">
+    <div class="container">
+        <div class="title">Listado de Publicaciones</div>
+        <div class="buttons-container">
+            <button type="button" class="primary-button" (click)="createPost()" *ngIf='availableCreate'>
+        <i class="fas fa-plus-circle"></i> Agregar Publicación
+      </button>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <section class="container">
+        <app-grid #gridList> </app-grid>
+    </section>
+</div>

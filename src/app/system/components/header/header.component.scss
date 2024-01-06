@@ -1,0 +1,200 @@
+@import "../../../../variables.scss";
+:host {
+  @include shadow();
+  .redirect {
+    cursor: pointer;
+  }
+  mat-toolbar {
+   /*  background: #fa6f48 !important; */
+    background: #fa6f48;
+    color: white;
+    font-weight: bold;
+    width: calc(100% - 64px);
+    margin-left: auto;
+    padding: 0;
+    position: fixed;
+    z-index: 999;
+    right: 0;
+    height: 64px !important;
+  }
+  .brand {
+    display: flex;
+    min-width: 240px;
+    align-items: center;
+    i {
+      cursor: pointer;
+    }
+    span {
+      text-align: center;
+      flex-grow: 2;
+    }
+    box-sizing: border-box;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .current-page {
+    padding-left: 25px;
+  }
+
+  .active-menu {
+    z-index: 1000;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+    -moz-transition: all 1s;
+    -ms-transition: all 1s;
+    svg {
+      /*   color:white; */
+      transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+      -moz-transform: rotate(90deg);
+      filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+
+      transition: all 1s;
+      -webkit-transition: all 1s;
+      -moz-transition: all 1s;
+      -ms-transition: all 1s;
+    }
+  }
+
+  .desactive-menu {
+    z-index: 0;
+    transition: all 1s;
+    -webkit-transition: all 1s;
+    -moz-transition: all 1s;
+    -ms-transition: all 1s;
+    svg {
+      transform: rotate(0deg);
+      -webkit-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0);
+      transition: all 1s;
+      -webkit-transition: all 1s;
+      -moz-transition: all 1s;
+      -ms-transition: all 1s;
+    }
+  }
+
+  .right {
+    position: absolute;
+    right: 0;
+    height: 64px;
+    top: 0;
+    font-size: 14px;
+    letter-spacing: 1px;
+    section {
+      display: flex;
+      flex-flow: row nowrap;
+    }
+  }
+  #profile,
+  #go-store {
+    position: relative;
+    height: 100%;
+    line-height: 60px;
+    //width: 160px;
+    padding: 0 40px 0 17px;
+    text-align: center;
+    padding-right: 40px;
+  }
+
+  #profile {
+    /*  border-left: solid 1px $gray-light;
+  border-right: solid 1px $gray-light; */
+    //cursor: pointer;
+    .span-container {
+      height: 100%;
+      width: 55px;
+      //margin-right: auto;
+      margin-left: auto;
+      justify-content: center;
+      line-height: 70px;
+      cursor: pointer;
+    }
+    .span-container:hover {
+      background-color: #e46642;
+    }
+    i {
+      margin-left: 1em;
+    }
+    .fa-user-circle {
+      font-size: 30px;
+    }
+    ul {
+      z-index: 10000;
+      position: absolute;
+      margin: 0;
+      top: 64px;
+      width: 155px;
+      padding: 0;
+      //left: 0;
+      right: 40px;
+      width: 200px;
+      background-color: white;
+      @include shadow();
+      display: none;
+      li {
+        padding: 8px 24px;
+        width: 100%;
+        background-color: white;
+        line-height: 35px;
+        //color: $gray;
+                text-align: left;
+        vertical-align: middle;
+        box-sizing: border-box;
+        cursor: pointer;
+        font-family: "Muli";
+        font-size: 16px;
+        color: #757575;
+        letter-spacing: normal;
+        font-weight: 400;
+        span {
+          width: 30px;
+          margin-right: 10px;
+        }
+        .fal {
+          font-size: 22px;
+          vertical-align: middle;
+        }
+        .fa-sign-out-alt {
+          width: 28px;
+          padding-left: 2px;
+        }
+        &:hover {
+          background-color: $gray-light;
+          color: $gray;
+        }
+      }
+      .top-border {
+        border-top: 1px solid #e0e0e0;
+      }
+    }
+  }
+
+  .open-profile {
+    display: block !important;
+  }
+
+  #go-store {
+    button {
+      background-color: #ff4081;
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 0.8em 1.5em;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+
+  @media only screen and (max-width: 749px) {
+    #go-store {
+      display: none;
+    }
+    .brand {
+      min-width: unset;
+      border-right: none;
+      span {
+        display: none;
+      }
+    }
+  }
+}

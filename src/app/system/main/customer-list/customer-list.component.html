@@ -1,0 +1,64 @@
+<section class="container-component">
+    <section>
+        <ng-container *ngIf="!isSupplier">
+            <section class="overflow-table">
+              <table class="table-expand">
+                <thead>
+                  <tr>
+                    <th> Nombre </th>
+                    <th style="width: 180px;"> Estado </th>
+                    <th style="width: 160px;"> Fecha de Creación </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of listUser" (click)="openCustomer(user)">
+                    <td>
+                      {{ user.additionals.name }}
+                      {{ user.additionals.last_name_father }}
+                      {{ user.additionals.last_name_mother }}
+                    </td>
+                    <td class="center-row" style="width: 180px;">
+  
+                      <!--<span *ngIf='user.state'>Habilitado</span>
+                      <span *ngIf='!user.state'>Deshabilitado</span>-->
+                      <label *ngIf='user.state' class="state-enabled">Habilitado</label>
+                      <label *ngIf='!user.state' class="state-disabled">Deshabilitado</label>
+                    </td>
+                    <td class="center-row" style="width: 160px;">
+                      {{ user.create_date | date: "dd-MM-yyyy" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+          </ng-container>
+  
+          <ng-container *ngIf="isSupplier">
+            <br>
+            <ng-container *ngIf="countInWishListTotal == 0">
+              <p class="total">No existen pedidos hasta el momento.</p>
+            </ng-container>
+            <ng-container *ngIf="countInWishListTotal > 0">
+     
+              <br />
+            
+              <table>
+                <thead>
+                  <tr>
+                    <th width="40%"> Producto </th>
+                    <th width="35%"> Veces en wishlist </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let product of top5wishlist" (click)="openProduct(product)">
+                    <td width="50%" class="center-row">{{ product.name }}</td>
+                    <td width="50%" class="row number-style">{{product.countInWishlist}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-container>
+  
+          </ng-container>
+    </section>
+    <app-loading-local-table class="loading" *ngIf='showLoading'></app-loading-local-table>
+</section>

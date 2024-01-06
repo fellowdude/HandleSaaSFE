@@ -1,0 +1,19 @@
+<section class="container-component">
+    <section [ngStyle]='{"background": "white"}'>
+        <br>
+        <ng-container *ngIf="multi && multi.length == 0">
+            <p class="total">Gráfica no disponible.</p>
+        </ng-container>
+        <ng-container *ngIf="multi && multi.length > 0">
+            <div class="chart-wrapper bar-chart">
+                <ngx-charts-bar-vertical *ngIf="multi" [scheme]="colorScheme" [legend]="legend"
+                    [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxis]="xAxis" [yAxis]="yAxis"
+                    [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" [results]="multi">
+
+                </ngx-charts-bar-vertical>
+            </div>
+        </ng-container>
+    </section>
+    
+    <app-loading-bar-graph class="loading" *ngIf='showLoading'></app-loading-bar-graph>
+</section>

@@ -1,0 +1,14 @@
+<div class="container-component">
+    <div class="card-row">
+        <div class="card-col">
+            <span class="fal fa-analytics background-round"></span>
+            <p>Venta total del día anterior</p>
+        </div>
+        <div class="card-col right-align">
+            <h5 class="mb-0">{{increase}}%</h5>
+            <p class="no-margin">Crecimiento últimas 24h</p>
+            <p>{{totalSellsDayBefore | currency : 'S/.'}}</p>
+        </div>
+    </div>
+    <app-loading-local #growthLoading class="loading"></app-loading-local>
+</div>

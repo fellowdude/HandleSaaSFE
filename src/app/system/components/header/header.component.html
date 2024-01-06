@@ -1,0 +1,28 @@
+<mat-toolbar>
+    <section class="brand">
+        <!--<i (click)='changeStateMenu()' class="far fa-bars bars-button"></i>-->
+        <span><img style="width: 120px; margin-top: 5px; cursor: pointer;" (click)='goInitPage()'  src="assets/img/Handel_v2_lines-white.svg"> </span>
+    </section>
+    <section class="current-page">{{title}}</section>
+    <section class='right'>
+        <!--<section id='profile' (click)='toogleProfile()'>
+            <p>{{nameUser}} <i class="fas fa-chevron-down" id='iconArray'></i> </p>
+            <ul [ngClass]="{'open-profile': profileShow}" >
+                <li (click)='goProfile()'>Mi Perfil</li>
+                <li (click)='closeSesion()'>Cerrar Sesión</li>
+            </ul>
+        </section>-->
+        <section id="profile">
+            <app-bell-notifications></app-bell-notifications>
+            <p>{{nameUser}}</p>
+            <div class="span-container" (click)='toogleProfile()'>
+                <span class="fas fa-user-circle"></span>
+            </div>
+            <ul [ngClass]="{'open-profile': profileShow}">
+                <li (click)='goProfile()'><span class="fal fa-id-card"></span>Mi Perfil</li>
+                <li (click)='goSupplier()' *ngIf='idSupplier'><span class="fal fa-cog"></span>Configurar</li>
+                <li (click)='closeSesion()' class="top-border"><span class="fal fa-sign-out-alt"></span>Cerrar Sesión</li>
+            </ul>
+        </section>
+    </section>
+</mat-toolbar>

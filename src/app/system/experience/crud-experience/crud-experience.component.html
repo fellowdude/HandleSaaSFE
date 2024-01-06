@@ -1,0 +1,1507 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+    <div class="container">
+        <div class="return-button"><i (click)="returnExperience()" class="fas fa-chevron-left"></i></div> &nbsp;
+        <div class="title" *ngIf="!idExperience">Nueva experiencia</div>
+        <div class="title" *ngIf="idExperience">Edición de experiencia</div>
+        <div class="buttons-container">
+            <button type="button" class="primary-button" (click)="confirmDeleteItem()" *ngIf="idExperience">
+                <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+            </button>
+            <button type="button" class="primary-button " (click)="validateUrlAndSave()">
+                <i class="fas fa-save"></i> &nbsp; Guardar
+            </button>
+        </div>
+    </div>
+</div>
+<app-list-information #listInformation></app-list-information>
+<app-maps-location #mapsLocation (sendInfo)="getInfoMap($event)" [title]="'Ingresar Dirección'"></app-maps-location>
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<app-multimedia-gallery #multimediaList (imageChoose)="dataPictureSave($event)"></app-multimedia-gallery>
+<!-- <h1 class="title" *ngIf="!idExperience">NUEVA EXPERIENCIA</h1>
+<h1 class="title" *ngIf="idExperience">EDITAR EXPERIENCIA</h1> -->
+
+<!-- <section class="container  window-buttton" [ngClass]="{ 'header-fixed': headerFixed }">
+  <section class="return" (click)="returnExperience()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button class="button-option button-danger" (click)="confirmDeleteItem()" *ngIf="!headerFixed && idExperience">
+      <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+    </button>
+    <button class="button-option button-confirm" (click)="saveExperience()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section> -->
+<!-- <section class="container buttons-list mobile-buttton">
+  <button class="button-option button-confirm" (click)="saveExperience()">
+    <i class="fas fa-save"></i> <span>Guardar</span>
+  </button>
+</section> -->
+<div class="content">
+    <form [formGroup]="experienceForm">
+        <section class="container-partition">
+            <section class="p-row p-three cont-left">
+                <section class="container-row visibility">
+                    <p class="subtitle main-subtitle subtitle-container">
+                        Características de la experiencia
+                    </p>
+                    <br />
+                    <br />
+                    <section>Visibilidad</section>
+                    <section id="slide">
+                        <mat-slide-toggle formControlName="active"><span *ngIf="f.active.value">Si</span>
+                            <span *ngIf="!f.active.value">No</span>
+                        </mat-slide-toggle>
+                    </section>
+                    <br /><br /><br />
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Nombre de la experiencia" class="form-control"
+                                formControlName="name" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.name.errors">
+                            <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+
+                    <div>
+                        <mat-form-field>
+                            <textarea matInput placeholder="Horario" cdkTextareaAutosize cdkAutosizeMinRows="3"
+                                cdkAutosizeMaxRows="7" class="form-control" formControlName="schedule"></textarea>
+                        </mat-form-field>
+                        <ng-container *ngIf="f.schedule.errors">
+                            <mat-error *ngIf="
+                  f.schedule.errors.required &&
+                  (f.schedule.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="tel" placeholder="Teléfono" class="form-control"
+                                formControlName="phone" autocomplete="off" (keypress)="validateInput($event)" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.phone.errors">
+                            <mat-error *ngIf="
+                  f.phone.errors.required && (f.phone.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                    <br /><br />
+                    <p class="subtitle main-subtitle subtitle-buttton">
+                        Sedes
+                        <button type="button" class="primary-button save-button button-subtitle" (click)="openMap()">
+                            <i class="fas fa-plus"></i> &nbsp;Agregar
+                        </button>
+                    </p>
+                    <hr />
+                    <br />
+
+                    <section *ngFor="let address of listAddress; let position = index" class="action-button-right">
+                        <span class="clearable">
+                            <i class="fas fa-trash-alt clearable__clear" (click)="delete('listAddress', position)"></i>
+                            <i (click)="editAddress(address.lat, address.lng, position, address.address, address)"
+                                class="clearable__edit fas fa-edit"></i>
+                        </span>
+
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Latitud" class="form-control"
+                                [(ngModel)]="address.lat" [ngModelOptions]="{ standalone: true }" readonly />
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Longitud" class="form-control"
+                                [(ngModel)]="address.lng" [ngModelOptions]="{ standalone: true }" readonly />
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Dirección" class="form-control"
+                                [(ngModel)]="address.address" [ngModelOptions]="{ standalone: true }" readonly />
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Nombre" class="form-control"
+                                [(ngModel)]="address.name" [ngModelOptions]="{ standalone: true }" />
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput type="tel" class="form-control" placeholder="Teléfono"
+                                [(ngModel)]="address.phone" [ngModelOptions]="{ standalone: true }"
+                                (keypress)="validateInput($event)" />
+                        </mat-form-field>
+                        <hr />
+                    </section>
+
+                    <p class="subtitle main-subtitle subtitle-buttton">
+                        Botones de acción
+                        <button type="button" class="primary-button save-button button-subtitle"
+                            (click)="newActionForm('listMainAccionEmailForm')">
+                            <i class="fas fa-plus"></i>&nbsp;Agregar Acción
+                        </button>
+                    </p>
+                    <hr />
+
+                    <section *ngFor="
+              let formEmail of listMainAccionEmailForm;
+              let position = index
+            " class="action-button-right delete-trash">
+                        <i class="fas fa-trash-alt delete" (click)="delete('listMainAccionEmailForm', position)"></i>
+                        <div>
+                            <div>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="Nombre del Botón"
+                                        [(ngModel)]="formEmail.button_name" [ngModelOptions]="{ standalone: true }"
+                                        autocomplete="off" />
+                                </mat-form-field>
+                                <ng-container *ngIf="!formEmail.button_name && submitted">
+                                    <mat-error>
+                                        El campo es obligatorio
+                                    </mat-error>
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <div>
+                            <mat-form-field>
+                                <mat-label>Tipo de Botón</mat-label>
+                                <mat-select [(ngModel)]="formEmail.type_button" [ngModelOptions]="{ standalone: true }">
+                                    <mat-option *ngFor="let addElement of listTypeButton" [value]="addElement.value">
+                                        {{ addElement.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="!formEmail.type_button && submitted">
+                                <mat-error>
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                        <div>
+                            <mat-form-field>
+                                <mat-label>Formulario de Email</mat-label>
+                                <mat-select [(ngModel)]="formEmail.email_form" [ngModelOptions]="{ standalone: true }">
+                                    <mat-option *ngFor="let addElement of listTypeEmailForm" [value]="addElement._id">
+                                        {{ addElement.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="!formEmail.email_form && submitted">
+                                <mat-error>
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+                        <div class="detail-select">
+                            <section>
+                                <mat-form-field>
+                                    <mat-select placeholder="Correos de recepción" name="type"
+                                        [(ngModel)]="formEmail.email" [ngModelOptions]="{ standalone: true }"
+                                        (ngModelChange)="selectDetailGroup(formEmail.email)">
+                                        <mat-option *ngFor="let group of listGroupEmail" [value]="group._id">
+                                            {{ group.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <ng-container *ngIf="!formEmail.email && submitted">
+                                    <mat-error>
+                                        El campo es obligatorio
+                                    </mat-error>
+                                </ng-container>
+                            </section>
+                            <button type="button" class="primary-button button-subtitle cancel-button"
+                                *ngIf="formEmail.email" (click)="openListContact(formEmail.email)">
+                                <span class="material-icons">visibility</span>
+                            </button>
+                        </div>
+
+                        <div class="detail-select">
+                            <section>
+                                <mat-form-field>
+                                    <mat-select placeholder="Correos de copia" name="type"
+                                        [(ngModel)]="formEmail.copy_email" [ngModelOptions]="{ standalone: true }"
+                                        (ngModelChange)="selectDetailGroup(formEmail.copy_email)">
+                                        <mat-option *ngFor="let group of listGroupEmail" [value]="group._id">
+                                            {{ group.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </section>
+                            <button type="button" class="primary-button button-subtitle cancel-button"
+                                *ngIf="formEmail.copy_email" (click)="openListContact(formEmail.copy_email)">
+                                <span class="material-icons">visibility</span>
+                            </button>
+                            <ng-container *ngIf="formEmail.copy_email">
+                                <button type="button" class="primary-button button-subtitle cancel-button"
+                                (click)="clearEmailCopy('listMainAccionEmailForm', position)">
+                                    <span class="material-icons">do_disturb_on</span>
+                                </button>
+                            </ng-container>
+                        </div>
+
+                        <hr />
+                    </section>
+
+                    <br />
+
+
+
+
+
+
+
+                    <br />
+                    <p class="subtitle main-subtitle subtitle-buttton">
+                        Botones de acción de beneficios
+                        <button type="button" class="primary-button save-button button-subtitle"
+                            (click)="newActionForm('listActionEmailForm')">
+                            <i class="fas fa-plus"></i> &nbsp; Agregar Acción
+                        </button>
+                    </p>
+                    <hr />
+                    <section *ngFor="let formEmail of listActionEmailForm; let position = index"
+                        class="action-button-right">
+                        <i class="fas fa-trash-alt delete" (click)="delete('listActionEmailForm', position)"></i>
+                        <br />
+                        <div>
+                            <div>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="Nombre del Botón"
+                                        [(ngModel)]="formEmail.button_name" [ngModelOptions]="{ standalone: true }"
+                                        autocomplete="off" />
+                                </mat-form-field>
+                                <ng-container *ngIf="!formEmail.button_name && submitted">
+                                    <mat-error>
+                                        El campo es obligatorio
+                                    </mat-error>
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <div>
+                            <mat-form-field>
+                                <mat-label>Tipo de Botón</mat-label>
+                                <mat-select [(ngModel)]="formEmail.type_button" [ngModelOptions]="{ standalone: true }">
+                                    <mat-option *ngFor="let addElement of listTypeButton" [value]="addElement.value">
+                                        {{ addElement.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="!formEmail.type_button && submitted">
+                                <mat-error>
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                        <div>
+                            <mat-form-field>
+                                <mat-label>Formulario de Email</mat-label>
+                                <mat-select [(ngModel)]="formEmail.email_form" [ngModelOptions]="{ standalone: true }"
+                                    (ngModelChange)='addListField(formEmail)'>
+                                    <mat-option *ngFor="let addElement of listTypeEmailForm" [value]="addElement._id">
+                                        {{ addElement.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container *ngIf="!formEmail.email_form && submitted">
+                                <mat-error>
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                        <ng-container *ngIf="formEmail.fieldListAutomatic">
+                            <div *ngIf="formEmail.fieldListAutomatic.length >= 1">
+                                <p>Configuración automática de campos</p>
+                                <section style="width: 100%;">
+                                    <table>
+                                        <tr *ngFor='let field of formEmail.fieldListAutomatic'>
+                                            <td>
+                                                {{field.value}}
+                                            </td>
+                                            <td>
+                                                <mat-form-field>
+                                                    <mat-label>Campo a utilizar</mat-label>
+                                                    <mat-select [(ngModel)]="field.field_replace"
+                                                        [ngModelOptions]="{ standalone: true }">
+                                                        <mat-option *ngFor="let addElement of formEmail.listField"
+                                                            [value]="addElement.field">
+                                                            {{ addElement.name }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </section>
+                            </div>
+                        </ng-container>
+
+                        <!--   <div>
+              <mat-form-field>
+                <input matInput type="text" placeholder="Correos de recepción" [(ngModel)]='formEmail.email'
+                  [ngModelOptions]="{standalone: true}" autocomplete="off">
+              </mat-form-field>
+            </div>
+ -->
+                        <div class="detail-select">
+                            <section>
+                                <mat-form-field>
+                                    <mat-select placeholder="Correos de recepción" name="type"
+                                        [(ngModel)]="formEmail.email" [ngModelOptions]="{ standalone: true }"
+                                        (ngModelChange)="selectDetailGroup(formEmail.email)">
+                                        <mat-option *ngFor="let group of listGroupEmail" [value]="group._id">
+                                            {{ group.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <ng-container *ngIf="!formEmail.email && submitted">
+                                    <mat-error>
+                                        El campo es obligatorio
+                                    </mat-error>
+                                </ng-container>
+                            </section>
+                            <button type="button" class="primary-button button-subtitle cancel-button"
+                                *ngIf="formEmail.email" (click)="openListContact(formEmail.email)">
+                                <span class="material-icons">visibility</span>
+                            </button>
+                        </div>
+
+                        <div class="detail-select">
+                            <section>
+                                <mat-form-field>
+                                    <mat-select placeholder="Correos de copia" name="type"
+                                        [(ngModel)]="formEmail.copy_email" [ngModelOptions]="{ standalone: true }"
+                                        (ngModelChange)="selectDetailGroup(formEmail.copy_email)">
+                                        <mat-option *ngFor="let group of listGroupEmail" [value]="group._id">
+                                            {{ group.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </section>
+                            <button type="button" class="primary-button button-subtitle cancel-button"
+                                *ngIf="formEmail.copy_email" (click)="openListContact(formEmail.copy_email)">
+                                <span class="material-icons">visibility</span>
+                            </button>
+                            <ng-container *ngIf="formEmail.copy_email">
+                                <button type="button" class="primary-button button-subtitle cancel-button"
+                                (click)="clearEmailCopy('listActionEmailForm', position)">
+                                    <span class="material-icons">do_disturb_on</span>
+                                </button>
+                            </ng-container>
+                        </div>
+
+                        <hr />
+                    </section>
+
+                    <br />
+                    <br />
+                    <p class="sub-tittle main-subtitle">SEO</p>
+                    <hr />
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Tìtulo" class="form-control"
+                                formControlName="title" autocomplete="off" />
+                        </mat-form-field>
+
+                        <ng-container *ngIf="f.title.errors">
+                            <mat-error *ngIf="
+                  f.title.errors.required && (f.title.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Meta description" class="form-control"
+                                formControlName="meta_description" autocomplete="off" />
+                        </mat-form-field>
+
+                        <ng-container *ngIf="f.meta_description.errors">
+                            <mat-error *ngIf="
+                  f.meta_description.errors.required &&
+                  (f.meta_description.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+
+                    <div>
+
+                        <p class="label-title">URL</p>
+                        <p class="label-info">
+                            {{f.friendly_url.value}}
+                        </p>
+
+                        <!-- 
+            <mat-form-field>
+              <input matInput type="text" placeholder="URL" class="form-control" formControlName="friendly_url"
+                autocomplete="off" [readonly]="true" />
+            </mat-form-field>
+
+            <ng-container *ngIf="f.friendly_url.errors">
+              <mat-error *ngIf="
+                  f.friendly_url.errors.required &&
+                  (f.friendly_url.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container> -->
+                    </div>
+                    <hr />
+                </section>
+
+                <section class="container-row" style="position: relative;">
+
+                    <mat-accordion>
+                        <mat-expansion-panel [expanded]="toogleCategories" disabled="true">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    <p class="sub-tittle main-subtitle">Categoría</p>
+                                    <div (click)='toogleCategoriesPanel()'>
+
+                                        <i class="far fa-angle-up"
+                                            [ngClass]="{ 'up-expansion': toogleCategories, 'down-expansion': !toogleCategories }"></i>
+                                    </div>
+                                </mat-panel-title>
+                                <div class="subtitle-container-expansion">
+                                </div>
+                            </mat-expansion-panel-header>
+                            <br />
+                            <div>
+                                <mat-form-field>
+                                    <mat-select placeholder="Grupo" name="type" class="form-control"
+                                        formControlName="group">
+                                        <mat-option *ngFor="let addElement of groupList" [value]="addElement._id">
+                                            {{ addElement.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <ng-container *ngIf="f.group.errors">
+                                    <mat-error *ngIf="f.group.errors.required && (f.group.touched || submitted)">
+                                        El campo es obligatorio
+                                    </mat-error>
+                                </ng-container>
+                            </div>
+                            <div class="scrollable">
+                                <app-dynamic-tree-view #selectCategory></app-dynamic-tree-view>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+
+                </section>
+
+            </section>
+            <section class="p-row p-seven cont-right">
+                <section class="container-row" style="position: relative;">
+
+                    <mat-accordion>
+                        <mat-expansion-panel [expanded]="toogleProduct" disabled="true">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    <!-- <p class="sub-tittle main-subtitle"></p> -->
+                                    <section class="main-subtitle subtitle-buttton container-expasion-header">
+                                        <span>Detalle de la experiencia</span>
+                                        <div (click)='toogleOption()'>
+                                            <i class="far fa-angle-up"
+                                                [ngClass]="{ 'up-expansion': toogleProduct, 'down-expansion': !toogleProduct }"></i>
+                                        </div>
+                                    </section>
+                                </mat-panel-title>
+                                <div class="subtitle-container-expansion">
+                                </div>
+                            </mat-expansion-panel-header>
+                            <br>
+                            <div *ngFor="let detail of listDetailProduct; let position = index" class="detail-generate">
+                                <i class="fas fa-trash-alt delete" (click)="delete('listDetailProduct', position)"></i>
+                                <section>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="Título" color="blue"
+                                            class="form-control" [(ngModel)]="detail.title"
+                                            [ngModelOptions]="{ standalone: true }" autocomplete="off" />
+                                    </mat-form-field>
+                                </section>
+                                <section>
+                                    <p>Detalle</p>
+                                    <!--  <div [froalaEditor] [(ngModel)]="detail.description" [ngModelOptions]="{ standalone: true }"></div> -->
+                                    <editor [(ngModel)]="detail.description" [ngModelOptions]="{ standalone: true }"
+                                        apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                                        [initialValue]="detail.description" [init]="tinyEditorConfig">
+                                    </editor>
+                                </section>
+                            </div>
+
+                            <div style="width: 100%; display: block; text-align: center;">
+                                <button type='button' class="primary-button save-button button-subtitle"
+                                    (click)="addDetail('listDetailProduct');$event.stopPropagation()">
+                                    <i class="fad fa-plus"></i> Agregar Detalle
+                                </button>
+                            </div>
+
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </section>
+
+
+                <section class="container-general row">
+                    <section class='p-row p-five cont-left'>
+                        <section class="container-row">
+                            <p class="sub-tittle main-subtitle subtitle-container">
+                                Imagen Web
+                            </p>
+                            <br />
+                            <section>
+                                <p class="sub-tittle">
+                                    Principal
+                                </p>
+                                <section class="img-container-one" *ngIf="lisMainAddPicture.length > 0">
+                                    <section class="images" *ngFor="let picture of lisMainAddPicture; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                        lisMainAddPicture[lisMainAddPicture.length - i - 1]
+                      }}" (click)="showWindowMultimedia('lisMainAddPicture', false,0,listImageField.image_web,listImageDimension.image_web)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type="button" class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'lisMainAddPicture')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+
+                                <section class='one-image column' [hidden]="lisMainAddPicture.length > 0"
+                                    *ngIf="lisMainAddPicture.length == 0">
+
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'lisMainAddPicture')"
+                                        [maxSize]='listImageField.image_web'
+                                        [maxDimension]='listImageDimension.image_web'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisMainAddPicture', false,null,listImageField.image_web,listImageDimension.image_web)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.lisMainAddPicture" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.lisMainAddPicture,"lisMainAddPicture","lisMainAddPicture");$event.stopPropagation()'>
+                                </div>
+                            </section>
+                            <br>
+                            <br>
+                            <section>
+                                <p class="sub-tittle">
+                                    Logo
+                                </p>
+
+                                <section class="img-container-one" *ngIf="lisMainLogoAddPicture.length > 0">
+                                    <section class="images"
+                                        *ngFor="let picture of lisMainLogoAddPicture; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                        lisMainLogoAddPicture[
+                          lisMainLogoAddPicture.length - i - 1
+                        ]
+                      }}" (click)="showWindowMultimedia('lisMainLogoAddPicture', false,0,listImageField.image_web_logo,listImageDimension.image_web_logo)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type='button' class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'lisMainLogoAddPicture')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+
+                                <section class='one-image column' [hidden]="lisMainLogoAddPicture.length > 0"
+                                    *ngIf="lisMainLogoAddPicture.length == 0">
+
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'lisMainLogoAddPicture')"
+                                        [maxSize]='listImageField.image_web_logo'
+                                        [maxDimension]='listImageDimension.image_web_logo'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisMainLogoAddPicture', false,null,listImageField.image_web_logo,listImageDimension.image_web_logo)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.lisMainLogoAddPicture" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.lisMainLogoAddPicture,"lisMainLogoAddPicture","lisMainLogoAddPicture");$event.stopPropagation()'>
+                                </div>
+                            </section>
+                        </section>
+                    </section>
+
+                    <section class='p-row p-five cont-right'>
+                        <section class="container-row">
+                            <p class="sub-tittle main-subtitle subtitle-container">
+                                Imagen App
+                            </p>
+                            <br />
+                            <section>
+                                <p class="sub-tittle">
+                                    Principal
+                                </p>
+
+                                <section class="img-container-one" *ngIf="lisMainAddPictureMobile.length > 0">
+                                    <section class="images"
+                                        *ngFor="let picture of lisMainAddPictureMobile; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                        lisMainAddPictureMobile[
+                          lisMainAddPictureMobile.length - i - 1
+                        ]
+                      }}" (click)="showWindowMultimedia('lisMainAddPictureMobile', false,0,listImageField.image_app,listImageDimension.image_app)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type="button" class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'lisMainAddPictureMobile')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+
+                                <section class='one-image column' [hidden]="lisMainAddPictureMobile.length > 0"
+                                    *ngIf="lisMainAddPictureMobile.length == 0">
+
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'lisMainAddPictureMobile')"
+                                        [maxSize]='listImageField.image_app'
+                                        [maxDimension]='listImageDimension.image_app'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisMainAddPictureMobile', false,null,listImageField.image_app,listImageDimension.image_app)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.lisMainAddPictureMobile" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.lisMainAddPictureMobile,"lisMainAddPictureMobile","lisMainAddPictureMobile");$event.stopPropagation()'>
+                                </div>
+
+                            </section>
+                            <br>
+                            <br>
+                            <section>
+                                <p class="sub-tittle">
+                                    Logo
+                                </p>
+                                <section class="img-container-one" *ngIf="lisMainLogoAddPictureMobile.length > 0">
+                                    <section class="images" *ngFor="
+                let picture of lisMainLogoAddPictureMobile;
+                let i = index
+              ">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                  lisMainLogoAddPictureMobile[
+                    lisMainLogoAddPictureMobile.length - i - 1
+                  ]
+                }}" (click)="showWindowMultimedia('lisMainLogoAddPictureMobile', false,0,listImageField.image_app_logo,listImageDimension.image_app_logo)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type='button' class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'lisMainLogoAddPictureMobile')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+
+                                    </section>
+                                </section>
+                                <section class='one-image column' [hidden]="lisMainLogoAddPictureMobile.length > 0"
+                                    *ngIf="lisMainLogoAddPictureMobile.length == 0">
+                                    <app-uploader
+                                        (selectImage)="selectImageMainWeb($event,'lisMainLogoAddPictureMobile')"
+                                        [maxSize]='listImageField.image_app_logo'
+                                        [maxDimension]='listImageDimension.image_app_logo'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisMainLogoAddPictureMobile', false,null,listImageField.image_app_logo,listImageDimension.image_app_logo)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.lisMainLogoAddPictureMobile"
+                                        [ngStyle]='{"width": "100%"}' [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.lisMainLogoAddPictureMobile,"lisMainLogoAddPictureMobile","lisMainLogoAddPictureMobile");$event.stopPropagation()'>
+                                </div>
+                            </section>
+                        </section>
+                    </section>
+
+                </section>
+                <section class="container-general row">
+                    <section class='p-row p-five cont-left'>
+                        <section class="container-row">
+                            <p class="sub-tittle main-subtitle subtitle-container">
+                                Banner Web
+                            </p>
+                            <br />
+
+                            <section>
+                                <p class="sub-tittle">
+                                    Principal
+                                </p>
+
+                                <section class="img-container-one" *ngIf="lisBannerAddPicture.length > 0">
+                                    <section class="images" *ngFor="let picture of lisBannerAddPicture; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                        lisBannerAddPicture[lisBannerAddPicture.length - i - 1]
+                      }}" (click)="showWindowMultimedia('lisBannerAddPicture', false,0,listImageField.banner_web,listImageDimension.banner_web)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type="button" class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'lisBannerAddPicture')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <section class='one-image column' [hidden]="lisBannerAddPicture.length > 0"
+                                    *ngIf="lisBannerAddPicture.length == 0">
+
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'lisBannerAddPicture')"
+                                        [maxSize]='listImageField.banner_web'
+                                        [maxDimension]='listImageDimension.banner_web'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisBannerAddPicture', false,null,listImageField.banner_web,listImageDimension.banner_web)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.lisBannerAddPicture" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.lisBannerAddPicture,"lisBannerAddPicture","lisBannerAddPicture");$event.stopPropagation()'>
+                                </div>
+                            </section>
+                            <br>
+                            <br>
+
+                            <section>
+                                <p class="sub-tittle">Logo</p>
+                                <section class="img-container-one" *ngIf="lisBannerLogoAddPicture.length > 0">
+                                    <section class="images"
+                                        *ngFor="let picture of lisBannerLogoAddPicture; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                        lisBannerLogoAddPicture[
+                          lisBannerLogoAddPicture.length - i - 1
+                        ]
+                      }}" (click)="showWindowMultimedia('lisBannerLogoAddPicture', false,0,listImageField.lisBannerLogoAddPicture,listImageDimension.lisBannerLogoAddPicture)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type="button" class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'lisBannerLogoAddPicture')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <section class='one-image column' [hidden]="lisBannerLogoAddPicture.length > 0"
+                                    *ngIf="lisBannerLogoAddPicture.length == 0">
+
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'lisBannerLogoAddPicture')"
+                                        [maxSize]='listImageField.banner_logo_web'
+                                        [maxDimension]='listImageDimension.banner_logo_web'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisBannerLogoAddPicture', false,null,listImageField.banner_logo_web,listImageDimension.banner_logo_web)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.lisBannerLogoAddPicture" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.lisBannerLogoAddPicture,"lisBannerLogoAddPicture","lisBannerLogoAddPicture");$event.stopPropagation()'>
+                                </div>
+                            </section>
+
+                        </section>
+                    </section>
+
+                    <section class='p-row p-five cont-right'>
+                        <section class="container-row">
+                            <p class="sub-tittle main-subtitle subtitle-container">
+                                Banner App
+                            </p>
+                            <br />
+
+                            <section>
+                                <p class="sub-tittle">
+                                    Principal
+                                </p>
+                                <section class="img-container-one" *ngIf="lisBannerAddPictureMobile.length > 0">
+                                    <section class="images" *ngFor="
+                      let picture of lisBannerAddPictureMobile;
+                      let i = index
+                    ">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                        lisBannerAddPictureMobile[
+                          lisBannerAddPictureMobile.length - i - 1
+                        ]
+                      }}" (click)="showWindowMultimedia('lisBannerAddPictureMobile', false,0,listImageField.banner_app,listImageDimension.banner_app)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type="button" class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'lisBannerAddPictureMobile')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <section class='one-image column' [hidden]="lisBannerAddPictureMobile.length > 0"
+                                    *ngIf="lisBannerAddPictureMobile.length == 0">
+
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'lisBannerAddPictureMobile')"
+                                        [maxSize]='listImageField.banner_app'
+                                        [maxDimension]='listImageDimension.banner_app'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisBannerAddPictureMobile', false,null,listImageField.banner_app,listImageDimension.banner_app)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.lisBannerAddPictureMobile" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.lisBannerAddPictureMobile,"lisBannerAddPictureMobile","lisBannerAddPictureMobile");$event.stopPropagation()'>
+                                </div>
+                            </section>
+                            <br>
+                            <br>
+                            <section>
+                                <p class="sub-tittle">
+                                    Logo
+                                </p>
+                                <section class="img-container-one" *ngIf="lisBannerLogoAddPictureMobile.length > 0">
+                                    <section class="images" *ngFor="
+                      let picture of lisBannerLogoAddPictureMobile;
+                      let i = index
+                    ">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                        lisBannerLogoAddPictureMobile[
+                          lisBannerLogoAddPictureMobile.length - i - 1
+                        ]
+                      }}" (click)="showWindowMultimedia('lisBannerLogoAddPictureMobile', false,0,listImageField.banner_logo_app,listImageDimension.banner_logo_app)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type="button" class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'lisBannerLogoAddPictureMobile')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <section class='one-image column' [hidden]="lisBannerLogoAddPictureMobile.length > 0"
+                                    *ngIf="lisBannerLogoAddPictureMobile.length == 0">
+
+                                    <app-uploader
+                                        (selectImage)="selectImageMainWeb($event,'lisBannerLogoAddPictureMobile')"
+                                        [maxSize]='listImageField.banner_logo_app'
+                                        [maxDimension]='listImageDimension.banner_logo_app'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('lisBannerLogoAddPictureMobile', false, null,listImageField.banner_logo_app,listImageDimension.banner_logo_app)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.lisBannerLogoAddPictureMobile"
+                                        [ngStyle]='{"width": "100%"}' [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.lisBannerLogoAddPictureMobile,"lisBannerLogoAddPictureMobile","lisBannerLogoAddPictureMobile");$event.stopPropagation()'>
+                                </div>
+                            </section>
+
+                        </section>
+                    </section>
+                </section>
+
+                <section class="container-row" style="position: relative;">
+                    <mat-accordion>
+                        <mat-expansion-panel [expanded]="toggleMultimediaSection" disabled="true">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    <section class="main-subtitle subtitle-buttton container-expasion-header">
+                                        <span>Galería Multimedia</span>
+                                        <div (click)='toggleMultimedia()'>
+                                            <i class="far fa-angle-up"
+                                                [ngClass]="{ 'up-expansion': toggleMultimediaSection, 'down-expansion': !toggleMultimediaSection }"></i>
+                                        </div>
+                                    </section>
+                                </mat-panel-title>
+                                <div class="subtitle-container-expansion">
+                                </div>
+                            </mat-expansion-panel-header>
+                            <br />
+
+                            <section class="img-container-only-one">
+                                <section class="images" *ngFor="let picture of lisAddPicture; let i = index">
+
+                                    <section class="icon-change-level">
+                                        <i class="fas fa-arrow-left" (click)='upLabel(i,"lisAddPicture")'></i>
+                                        <i class="fas fa-arrow-right" (click)='downLabel(i,"lisAddPicture")'></i>
+                                    </section>
+
+                                    <section class="icon-open-image">
+                                        <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                    </section>
+
+                                    <img src="{{ url_attachment }}{{picture}}" width="250" alt=""
+                                        (click)="showWindowMultimedia('lisAddPicture', true,i,listImageField.multimedia_gallery,listImageDimension.multimedia_gallery)" />
+
+                                    <section class="icon-change-number">
+                                        <input type='number'
+                                            (blur)="changePositionBlur(i,infoChangePosition[i],picture,$event,'lisAddPicture','infoChangePosition')"
+                                            (keypress)="changePosition(i,infoChangePosition[i],picture,$event,'lisAddPicture','infoChangePosition');$event.stopPropagation()"
+                                            [(ngModel)]='infoChangePosition[i]' [ngModelOptions]="{ standalone: true }">
+                                    </section>
+                                    <section class="icon-delete">
+                                        <button type="button" class="primary-button delete-button"
+                                            (click)="deleteImageBase(i, 'lisAddPicture')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </section>
+                                </section>
+
+                                <section class="images center">
+                                    <button type="button" class="primary-button save-button button-subtitle"
+                                        (click)="showWindowMultimedia('lisAddPicture', true,null, listImageField.multimedia_gallery,listImageDimension.multimedia_gallery)">
+                                        Añadir otra Imagen
+                                    </button>
+                                </section>
+                                <!--    <section class="images" *ngIf="lisAddPicture.length % 2" style="width: 250px;"></section> -->
+                            </section>
+                            <section class="img-container-mobile">
+                                <div class="arrow">
+                                    <i class="fas fa-chevron-left"></i>
+                                </div>
+                                <div class="image">
+                                    <p class="delete-item" (click)="deleteImage(imagePositionMobile, 'lisAddPicture')">
+                                        Eliminar imagen
+                                    </p>
+                                    <img src="{{ imageShowSlider }}" alt="" width="250" />
+                                </div>
+                                <div class="arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </section>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </section>
+
+                <section class="container-row">
+                    <form [formGroup]="videoForm">
+                        <p class="sub-tittle main-subtitle subtitle-buttton subtitle-container">
+                            Galería de videos
+                            <button type="button" (click)="addVideo()"
+                                class="primary-button save-button button-subtitle">
+                                <i class="fas fa-plus"></i> &nbsp;Agregar
+                            </button>
+                        </p>
+                        <br />
+                        <section>
+                            <div>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="url youtube" class="form-control"
+                                        formControlName="url" autocomplete="off" />
+                                </mat-form-field>
+                                <ng-container *ngIf="g.url.errors">
+                                    <mat-error *ngIf="
+                      g.url.errors.required && (g.url.touched || submitted)
+                    ">
+                                        El campo es obligatorio
+                                    </mat-error>
+                                </ng-container>
+                            </div>
+                        </section>
+                        <section class="img-container-only-one" *ngIf="lisAddGaleryVideos.length > 0">
+                            <section class="images" *ngFor="let video of lisAddGaleryVideos; let i = index">
+
+                                <section class="icon-change-level">
+                                    <i class="fas fa-arrow-left" (click)='upLabel(i,"lisAddGaleryVideos")'></i>
+                                    <i class="fas fa-arrow-right" (click)='downLabel(i,"lisAddGaleryVideos")'></i>
+                                </section>
+                                <iframe width="100%" [src]="
+                    video
+                      | saveVideo
+                  " frameborder="0" allowfullscreen></iframe>
+                                <section class="icon-change-number">
+                                    <input type='number'
+                                        (blur)="changePositionBlur(i,infoChangePositionVideo[i],video,$event,'lisAddGaleryVideos','infoChangePositionVideo')"
+                                        (keypress)="changePosition(i,infoChangePositionVideo[i],video,$event,'lisAddGaleryVideos','infoChangePositionVideo');$event.stopPropagation()"
+                                        [(ngModel)]='infoChangePositionVideo[i]'
+                                        [ngModelOptions]="{ standalone: true }">
+                                </section>
+                                <section class="icon-delete">
+                                    <button type="button" class="primary-button delete-button"
+                                        (click)="deleteImage(i, 'lisAddGaleryVideos')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </section>
+
+                            </section>
+                        </section>
+                        <section></section>
+                    </form>
+                </section>
+                <section class="container-row">
+
+                    <p class="main-subtitle subtitle-buttton subtitle-container">
+                        Activaciones
+                        <button type="button" class="primary-button save-button button-subtitle"
+                            (click)="newAdvantage()">
+                            <i class="fas fa-plus"></i> &nbsp; Agregar Activación
+                        </button>
+                    </p>
+                    <br />
+                    <section class="img-container-only-one">
+                        <ng-container *ngIf="listAdvantage.length > 0">
+                            <section class="images activation"
+                                *ngFor="let activation of listAdvantage; let idx = index">
+                                <app-activation-card
+                                    [data]="{ activation: activation, url_attachment: url_attachment, index: idx }"
+                                    (editData)="openAdvantageModal($event)" (deleteData)="deleteAdvantage($event)"
+                                    (upLabelActive)="upLabelActive($event)" (downLabelActive)="downLabelActive($event)"
+                                    (changePositionActive)="changePositionActive($event)">
+                                </app-activation-card>
+                            </section>
+                        </ng-container>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </form>
+</div>
+<article class="container-modal" *ngIf="showAddDetail">
+    <section class="modal-body modal-complete modal-max-height activation-modal">
+        <header>
+            <strong> Edición de Activación</strong>
+            <div id="close-button" (click)="closeAdvange()">&times;</div>
+        </header>
+        <section class="body">
+            <section class="section-multimedia container-advantage p-row">
+                <section class="p-row p-three" style="box-sizing: border-box; padding: 10px;">
+                    <section class="row">
+                        <!-- <section class="left"> -->
+                        <section class="col-30 left">Activo</section>
+                        <section class="col-70 right">
+                            <span *ngIf="advantageInfo.active">Si</span> &nbsp;
+                            <span *ngIf="!advantageInfo.active">No</span> &nbsp;
+                            <mat-slide-toggle [(ngModel)]="advantageInfo.active">
+                            </mat-slide-toggle>
+                        </section>
+                        <!-- </section> -->
+                    </section>
+                    <section>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Nombre" class="form-control" autocomplete="off"
+                                [(ngModel)]="advantageInfo.title" (ngModelChange)="updateSlug($event)" />
+                        </mat-form-field>
+                    </section>
+                    <section class="row" style='display:none;'>Slug: {{ advantageInfo.slug }}</section>
+
+
+                    <section>
+                        <mat-error *ngIf="!advantageInfo.title && submittedBenefit">
+                            El campo es obligatorio
+                        </mat-error>
+                    </section>
+                    <section>
+                        <section *ngFor="let type of advantageInfo.listPrice" class="price-experience">
+                            <div>
+                                <p class="title">{{ type.value }}</p>
+                            </div>
+                            <div class="visibilityExperiencias">
+                                <section id="slide">
+                                    <span *ngIf="type.active">Si</span> &nbsp;
+                                    <span *ngIf="!type.active">No</span> &nbsp;
+                                    <mat-slide-toggle [(ngModel)]="type.active" [ngModelOptions]="{ standalone: true }">
+                                    </mat-slide-toggle>
+
+                                </section>
+                            </div>
+                            <br><br>
+                            <div>
+                                <mat-form-field>
+                                    <mat-label>Moneda</mat-label>
+                                    <mat-select [(ngModel)]="type.currency" [ngModelOptions]="{ standalone: true }">
+                                        <mat-option *ngFor="let currency of listCurrency" [value]="currency._id">
+                                            {{ currency.value }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+
+                            <div>
+                                <mat-form-field>
+                                    <mat-label>Tipo</mat-label>
+                                    <mat-select [(ngModel)]="type.type_price" [ngModelOptions]="{ standalone: true }">
+                                        <mat-option *ngFor="let type of typePrice" [value]="type.key">
+                                            {{ type.value }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <div *ngIf="type.type_price == 'fixed'">
+                                    <mat-form-field>
+                                        <input matInput type="number" placeholder="Precio" class="form-control"
+                                            autocomplete="off" [(ngModel)]="type.price"
+                                            [ngModelOptions]="{ standalone: true }" />
+                                    </mat-form-field>
+                                </div>
+
+                                <div *ngIf="type.type_price == 'range'" class="display-column">
+                                    <div>
+                                        <mat-form-field>
+                                            <input matInput type="number" placeholder="Mínimo" class="form-control"
+                                                autocomplete="off" [(ngModel)]="type.min"
+                                                [ngModelOptions]="{ standalone: true }" />
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div>
+                                        <mat-form-field>
+                                            <input matInput type="number" placeholder="Máximo" class="form-control"
+                                                autocomplete="off" [(ngModel)]="type.max"
+                                                [ngModelOptions]="{ standalone: true }" />
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="Texto adicional" color="blue"
+                                        class="form-control" [(ngModel)]="type.adicional_text"
+                                        [ngModelOptions]="{ standalone: true }" autocomplete="off" />
+                                </mat-form-field>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+
+                <section class="p-row p-seven" style="box-sizing: border-box; padding: 10px;">
+                    <div class="p-row container-advantage">
+                        <div class="p-row p-five separation-thumbnail">
+                            <p class="title">Miniatura de activación</p>
+
+
+                            <section class="img-container-one" *ngIf="lisNewAdvantage.length > 0">
+                                <section class="images" *ngFor="let picture of lisNewAdvantage; let i = index">
+                                    <section class="icon-open-image">
+                                        <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                    </section>
+
+                                    <img src="{{ url_attachment }}{{
+                    lisNewAdvantage[lisNewAdvantage.length - i - 1]
+                    }}" width="250" alt=""
+                                        (click)="showWindowMultimedia('lisNewAdvantage', false,0,listImageField.activation_thumbnail,listImageDimension.activation_thumbnail)" />
+                                    <section class="icon-delete">
+                                        <button type="button" class="primary-button delete-button"
+                                            (click)="deleteImage(i, 'lisNewAdvantage')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </section>
+                                </section>
+                            </section>
+                            <section class='one-image column thumbnail' [hidden]="lisNewAdvantage.length > 0"
+                                *ngIf="lisNewAdvantage.length == 0">
+
+                                <app-uploader (selectImage)="selectImageMainWeb($event,'lisNewAdvantage')"
+                                    [maxSize]='listImageField.activation_thumbnail'
+                                    [maxDimension]='listImageDimension.activation_thumbnail'>
+                                </app-uploader>
+                                <section>
+                                    <button type='button'
+                                        (click)="showWindowMultimedia('lisNewAdvantage', false,null,listImageField.activation_thumbnail,listImageDimension.activation_thumbnail)"
+                                        class="primary-button save-button button-subtitle button-width">
+                                        Selecciona desde la galeria
+                                    </button>
+                                </section>
+                            </section>
+                            <div>
+                                <input type="text" placeholder="Ingrese un nombre para agregar"
+                                    [(ngModel)]="searchName.lisNewAdvantage" [ngStyle]='{"width": "100%"}'
+                                    [ngModelOptions]="{ standalone: true }"
+                                    (keypress)='addByName($event,searchName.lisNewAdvantage,"lisNewAdvantage","lisNewAdvantage");$event.stopPropagation()'>
+                            </div>
+                        </div>
+                        <div class="p-row p-five separation-thumbnail">
+                            <section>
+                                <p class="title">
+                                    Imagen de activación
+                                </p>
+
+                                <section class="img-container-one" *ngIf="imageMain.length > 0">
+                                    <section class="images" *ngFor="let picture of imageMain; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                      imageMain[imageMain.length - i - 1]
+                      }}" width="250" alt=""
+                                            (click)="showWindowMultimedia('imageMain', false,0,listImageField.activation_image,listImageDimension.activation_image)" />
+                                        <section class="icon-delete">
+                                            <button type="button" class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'imageMain')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <section class='one-image column thumbnail' [hidden]="imageMain.length > 0"
+                                    *ngIf="imageMain.length == 0">
+
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'imageMain')"
+                                        [maxSize]='listImageField.activation_image'
+                                        [maxDimension]='listImageDimension.activation_image'></app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('imageMain', false,null,listImageField.activation_image,listImageDimension.activation_image)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.imageMain" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.imageMain,"imageMain","imageMain");$event.stopPropagation()'>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="p-row container-advantage">
+                        <div class="p-row p-five separation-thumbnail">
+                            <br />
+                            <p class="title">Miniatura de activación app</p>
+                            <section class="img-container-one" *ngIf="lisNewAdvantage_mobile.length > 0">
+                                <section class="images" *ngFor="let picture of lisNewAdvantage_mobile; let i = index">
+                                    <section class="icon-open-image">
+                                        <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                    </section>
+                                    <img src="{{ url_attachment }}{{
+                    lisNewAdvantage_mobile[lisNewAdvantage_mobile.length - i - 1]
+                    }}" (click)="showWindowMultimedia('lisNewAdvantage_mobile', false,0,listImageField.activation_thumbnai_app,listImageDimension.activation_thumbnai_app)"
+                                        width="250" alt="" />
+                                    <section class="icon-delete">
+                                        <button type="button" class="primary-button delete-button"
+                                            (click)="deleteImage(i, 'lisNewAdvantage_mobile')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </section>
+                                </section>
+                            </section>
+                            <section class='one-image column thumbnail' [hidden]="lisNewAdvantage_mobile.length > 0"
+                                *ngIf="lisNewAdvantage_mobile.length == 0">
+
+                                <app-uploader (selectImage)="selectImageMainWeb($event,'lisNewAdvantage_mobile')"
+                                    [maxSize]='listImageField.activation_thumbnai_app'
+                                    [maxDimension]='listImageDimension.activation_thumbnai_app'>
+                                </app-uploader>
+                                <section>
+                                    <button type='button'
+                                        (click)="showWindowMultimedia('lisNewAdvantage_mobile', false,null,listImageField.activation_thumbnai_app,listImageDimension.activation_thumbnai_app)"
+                                        class="primary-button save-button button-subtitle button-width">
+                                        Selecciona desde la galeria
+                                    </button>
+                                </section>
+                            </section>
+                            <div>
+                                <input type="text" placeholder="Ingrese un nombre para agregar"
+                                    [(ngModel)]="searchName.lisNewAdvantage_mobile" [ngStyle]='{"width": "100%"}'
+                                    [ngModelOptions]="{ standalone: true }"
+                                    (keypress)='addByName($event,searchName.lisNewAdvantage_mobile,"lisNewAdvantage_mobile","lisNewAdvantage_mobile");$event.stopPropagation()'>
+                            </div>
+                        </div>
+                        <div class="p-row p-five separation-thumbnail">
+                            <section>
+                                <br />
+                                <p class="title">
+                                    Imagen de activación app
+                                </p>
+
+                                <section class="img-container-one" *ngIf="imageMain_mobile.length > 0">
+                                    <section class="images" *ngFor="let picture of imageMain_mobile; let i = index">
+                                        <section class="icon-open-image">
+                                            <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                        </section>
+                                        <img src="{{ url_attachment }}{{
+                      imageMain_mobile[imageMain_mobile.length - i - 1]
+                      }}" (click)="showWindowMultimedia('imageMain_mobile', false,0,listImageField.activation_image_app,listImageDimension.activation_image_app)"
+                                            width="250" alt="" />
+                                        <section class="icon-delete">
+                                            <button type="button" class="primary-button delete-button"
+                                                (click)="deleteImage(i, 'imageMain_mobile')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </section>
+                                    </section>
+                                </section>
+                                <section class='one-image column thumbnail' [hidden]="imageMain_mobile.length > 0"
+                                    *ngIf="imageMain_mobile.length == 0">
+
+                                    <app-uploader (selectImage)="selectImageMainWeb($event,'imageMain_mobile')"
+                                        [maxSize]='listImageField.activation_image_app'
+                                        [maxDimension]='listImageDimension.activation_image_app'>
+                                    </app-uploader>
+                                    <section>
+                                        <button type='button'
+                                            (click)="showWindowMultimedia('imageMain_mobile', false,null,listImageField.activation_image_app,listImageDimension.activation_image_app)"
+                                            class="primary-button save-button button-subtitle button-width">
+                                            Selecciona desde la galeria
+                                        </button>
+                                    </section>
+                                </section>
+                                <div>
+                                    <input type="text" placeholder="Ingrese un nombre para agregar"
+                                        [(ngModel)]="searchName.imageMain_mobile" [ngStyle]='{"width": "100%"}'
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (keypress)='addByName($event,searchName.imageMain_mobile,"imageMain_mobile","imageMain_mobile");$event.stopPropagation()'>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="section-error">
+                        <mat-error *ngIf="(lisNewAdvantage.length == 0 ||
+              this.lisNewAdvantage_mobile.length == 0 ||
+              this.imageMain.length == 0 ||
+              this.imageMain_mobile.length == 0 ) && submittedBenefit">
+                            Todas imágenes deben ser ingresadas para poder grabar la activación
+                        </mat-error>
+                    </div>
+                    <br />
+                    <p class="title">Detalle de activación</p>
+
+                    <div *ngFor="let detail of listDetailAdvantage; let position = index" class="detail-generate">
+                        <i class="fas fa-trash-alt delete" (click)="deleteDetailAdavnge(position)"></i>
+                        <section>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Título" color="blue" class="form-control"
+                                    [(ngModel)]="detail.title" [ngModelOptions]="{ standalone: true }"
+                                    autocomplete="off" />
+                            </mat-form-field>
+                        </section>
+
+                        <section>
+                            <p>Detalle</p>
+                            <!-- <div [froalaEditor] [(ngModel)]="detail.description" [ngModelOptions]="{ standalone: true }"></div> -->
+                            <editor [(ngModel)]="detail.description" [ngModelOptions]="{ standalone: true }"
+                                apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw"
+                                [initialValue]="detail.description" [init]="tinyEditorConfig">
+                            </editor>
+                        </section>
+                    </div>
+                    <div>
+                        <!-- <div>
+                            <mat-form-field>
+                                <mat-select placeholder="Tipo de detalle" name="type" [(ngModel)]="valueAddDescription"
+                                    [ngModelOptions]="{ standalone: true }">
+                                    <mat-option *ngFor="let typeDetail of listDetailExperience"
+                                        [value]="typeDetail.value">
+                                        {{ typeDetail.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div> -->
+
+                        <button type='button' class="primary-button save-button button-subtitle"
+                            (click)="addDetailAdvantage('listDetailAdvantage')">
+                            <i class="fas fa-layer-plus"></i> <span>Agregar Detalle</span>
+                        </button>
+                    </div>
+                    <div class="section-error">
+                        <mat-error *ngIf="listDetailAdvantage.length == 0 && submittedBenefit">
+                            Mínimo ingresar un detalle
+                        </mat-error>
+                    </div>
+                    <hr>
+
+                </section>
+            </section>
+        </section>
+        <footer>
+            <button type='button' class="primary-button button-subtitle cancel-button" (click)="closeAdvange()">
+                Cancelar
+            </button>
+            <button type='button' class="primary-button save-button button-subtitle save-button-style"
+                (click)="saveAdvantage('create')" *ngIf="createBenefit">
+                Agregar Activación
+            </button>
+            <button type='button' class="primary-button save-button button-subtitle save-button-style action-width"
+                (click)="saveAdvantage('update')" *ngIf="!createBenefit">
+                Actualizar Activación
+            </button>
+        </footer>
+    </section>
+</article>

@@ -1,0 +1,68 @@
+<div class='main-subtitle subtitle-container'>Filtro: {{filterType ? filterType.name : "Todas"}}
+    <ng-container class="cont-left">
+        <button type="button" class="button" *ngIf="filterType.type === 'unread' && dataSource.length > 0" (click)="readAll()">Marcar todas como leídas</button>
+    </ng-container>
+</div>
+<br/>
+<ng-container *ngIf="dataSource">
+    <ng-container *ngFor="let not of dataSource">
+        <app-card-notifications
+        [_id]="not._id"
+        [title]="not.title" 
+        [message]="not.message" 
+        [type]="not.type_notification.name" 
+        [color]="not.type_notification.color" 
+        [date]="not.create_date"
+        [read]="not.read"
+        [archive]="not.archive"
+        [redirection_url]="not.redirection_url"
+        [redirection_external]="not.redirection_external">
+        </app-card-notifications>
+    </ng-container>
+</ng-container>
+<section id="pagination" class="container-table table-footer">
+    <section class="left" *ngIf="dataSource.length > 0">
+        <section [hidden]='!dataSource' *ngIf='dataSource'>
+            <!--<p>Cantidad {{ totalItems }} Items</p>-->
+            <!-- <p>{{ dataSource.length != 0 ? config.pagQuantity * pageNumber - (config.pagQuantity - 1) : 0 }} - {{
+                config.pagQuantity * pageNumber + dataSource.length - config.pagQuantity || 0 }} de {{ totalItems }} items
+            </p> --> 
+            <p>{{ dataSource.length !== 0 ? quantity * pageNumber - (quantity - 1) : 0 }} - 
+                {{ quantity * pageNumber + dataSource.length - quantity || 0 }} 
+                de {{ totalItems || 0 }} items</p>
+        </section>
+        <section [hidden]='dataSource'>
+            <!--<div class="squeletor-items">Cantidad <div></div> Items</div>-->
+            <div class="squeletor-items">
+                <div></div> - <div></div> de <div></div> items
+            </div>
+        </section>
+    </section>
+    <section class="right" *ngIf="dataSource.length > 0">
+        <section>
+            <p (click)="firstPage()"><i class="fas fa-step-backward"></i></p>
+            <p (click)="previousPage()"><i class="fas fa-caret-left"></i></p>
+            <section *ngIf='dataSource'>
+                <div class="page-number">
+                    Página
+                    <input type="number" [value]="pageNumber" (keydown)="changePageManual($event)" />
+                    de {{ quantityPage }}
+                </div>
+            </section>
+
+            <section *ngIf='!dataSource'>
+                <div class="page-number">
+                    Página
+                    <div class="squeletor-number"></div>
+                    de <div class="squeletor-number"></div>
+                </div>
+            </section>
+
+            <p (click)="nextPage()"><i class="fas fa-caret-right"></i></p>
+            <p (click)="lastPage()"><i class="fas fa-step-forward"></i></p>
+        </section>
+    </section>
+    <section *ngIf="dataSource.length == 0">
+        No hay notificaciones
+    </section>
+</section>

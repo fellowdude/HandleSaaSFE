@@ -1,0 +1,101 @@
+<app-upload-excel #uploadExcel (resultInfo)="resultInfo($event)" (jsonLocalInfo)="jsonLocalInfo($event)">
+</app-upload-excel>
+<app-massive-cards #cardUploading></app-massive-cards>
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+  <div class="container">
+    <div class="title">Listado de Códigos de Socio</div>
+    <div class="buttons-container" *ngIf='addCardAccess'>
+      <button type="button" class="primary-button" (click)="newCards()">
+        <i class="fas fa-plus-circle"></i> Nuevos códigos
+      </button>
+      <button type="button" class="primary-button" (click)="openCreateModal()">
+        <i class="fas fa-plus-circle"></i> Agregar código
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <section class="container" [hidden]='!listCardAccess'>
+    <app-grid #gridList> </app-grid>
+  </section>
+  <app-dialog-confirm></app-dialog-confirm>
+</div>
+
+<article class="container-modal" *ngIf="showSummary">
+  <section class="modal-body modal-big">
+    <header class='card-title'>
+      Nuevos códigos de socio
+    </header>
+    <section class="body row">
+      <table>
+        <thead>
+          <tr>
+            <th>Códigos de Socio</th>
+            <th>Estado</th>
+            <th>Mensaje de error</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let card of listResultAddCard">
+            <td>{{ card.number_card }}</td>
+            <td>
+              <label *ngIf="card.save" [ngClass]="{ 'valid-true': card.save }">Ha sido agregado</label>
+              <label *ngIf="!card.save" [ngClass]="{ 'valid-false': !card.save }">No pudo ser agregado</label>
+            </td>
+            <td>{{ card.error }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <footer>
+      <button type="button" class="primary-button" (click)="closeSummary()">
+        Continuar
+      </button>
+    </footer>
+  </section>
+</article>
+
+<article class="container-modal" *ngIf="showAssociateCode">
+  <section class="modal-body modal-small">
+    <header class='card-title'>
+      Nuevo código de socio
+      <div id="close-button" (click)="closeAssociateCodeModal()">&times;</div>
+    </header>
+    <section class="body column">
+      <div>
+        <mat-form-field class="example-full-width">
+          <input [(ngModel)]="associateCode" autocomplete="off" type="text" placeholder="Ingrese código de socio" matInput />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-select placeholder="Tipo de documento" name="type_document" [(ngModel)]="modelInfo" (ngModelChange)='selectTypeDocument(modelInfo)'>
+            <mat-option *ngFor="let documentType of listTypeDocumentSearch"  [value]='documentType._id'>
+              {{ documentType.value }}
+            </mat-option>
+          </mat-select>
+  
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="example-full-width">
+          <input [(ngModel)]="document.number" autocomplete="off" type="text" placeholder="Número de documento" matInput />
+        </mat-form-field>
+      </div>
+      
+     
+     
+    </section>
+    <footer>
+      <button class="primary-button button-subtitle cancel-button" (click)="closeAssociateCodeModal()">
+        Cancelar
+      </button>
+      <button type="button" class="primary-button save-button button-subtitle save-button-style" (click)="createCode()">
+        Crear
+      </button>
+    </footer>
+  </section>
+</article>

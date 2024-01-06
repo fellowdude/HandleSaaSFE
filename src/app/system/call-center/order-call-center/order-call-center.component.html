@@ -1,0 +1,665 @@
+<app-dialog-confirm #dialogFinishCreate (agreeAnswerModal)="acceptModal($event)"></app-dialog-confirm>
+<app-dialog-confirm #dialogExistProduct (agreeAnswerModal)="acceptModalExist()"></app-dialog-confirm>
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+    <div class="container">
+        <div class="title">Nuevas Ordenes</div>
+    </div>
+</div>
+
+<div class="content row">
+
+    <section class="take-info">
+        <section class="container">
+            <mat-accordion>
+                <mat-expansion-panel [expanded]="step === 1" (opened)="step = 1">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <p class="main-subtitle "> Datos de Cliente</p>
+                        </mat-panel-title>
+
+                    </mat-expansion-panel-header>
+
+                    <ng-container *ngIf='!clientInfoUser'>
+                        <section id="search-client">
+                            <p class='title-order-section'>Busca el cliente para generar la venta</p>
+                            <br>
+                            <mat-tab-group>
+                                <mat-tab label="DNI">
+                                    <br>
+                                    <form [formGroup]="searchUserForm">
+                                        <section>
+                                            <mat-form-field>
+                                                <mat-select placeholder="Tipo de documento"
+                                                    formControlName="type_document" name="type_document">
+                                                    <mat-option *ngFor="let documentType of listTypeDocumentSearch"
+                                                        [value]="documentType._id">
+                                                        {{ documentType.value }}
+                                                    </mat-option>
+                                                </mat-select>
+
+                                            </mat-form-field>
+                                            <ng-container *ngIf="su.document.errors">
+                                                <mat-error
+                                                    *ngIf="su.document.errors.required && (su.document.touched || submittedSearchUser)">
+                                                    El campo es obligatorio
+                                                </mat-error>
+                                            </ng-container>
+                                        </section>
+                                        <section>
+                                            <mat-form-field>
+                                                <input matInput type="text" placeholder="Número de documento"
+                                                    class="form-control" formControlName="document"
+                                                    autocomplete="off" />
+                                            </mat-form-field>
+                                            <ng-container *ngIf="su.document.errors">
+                                                <mat-error
+                                                    *ngIf="su.document.errors.required && (su.document.touched || submittedSearchUser)">
+                                                    El campo es obligatorio
+                                                </mat-error>
+                                            </ng-container>
+                                        </section>
+                                    </form>
+                                    <section class="center-button">
+                                        <button type='button' class="primary-button button-subtitle cancel-button"
+                                            (click)='searchClient()'>Buscar Cliente</button>
+                                    </section>
+                                </mat-tab>
+                                <mat-tab label="Nombres">
+                                    <br>
+                                    <form [formGroup]="searchUserNameForm">
+                                        <section>
+                                            <mat-form-field>
+                                                <input matInput type="text" placeholder="Nombre de cliente"
+                                                    class="form-control" formControlName="name_client"
+                                                    autocomplete="off" />
+                                            </mat-form-field>
+                                            <ng-container *ngIf="sun.name_client.errors">
+                                                <mat-error
+                                                    *ngIf="sun.name_client.errors.required && (sun.name_client.touched || submittedSearchUserName)">
+                                                    El campo es obligatorio
+                                                </mat-error>
+                                            </ng-container>
+                                        </section>
+                                    </form>
+                                    <section class="center-button">
+
+                                        <button type='button' class="primary-button button-subtitle cancel-button"
+                                            (click)='searchClientName()'>Buscar Cliente</button>
+                                    </section>
+                                </mat-tab>
+                                <mat-tab label="Código de socio">
+                                    <br>
+                                    <form [formGroup]="searchUserCodeForm">
+                                        <section>
+                                            <mat-form-field>
+                                                <input matInput type="text" placeholder="Código de socio"
+                                                    class="form-control" formControlName="code_client"
+                                                    autocomplete="off" />
+                                            </mat-form-field>
+                                            <ng-container *ngIf="suc.code_client.errors">
+                                                <mat-error
+                                                    *ngIf="suc.code_client.errors.required && (suc.code_client.touched || submittedSearchUserCode)">
+                                                    El campo es obligatorio
+                                                </mat-error>
+                                            </ng-container>
+                                        </section>
+                                    </form>
+                                    <section class="center-button">
+                                        <button type='button' class="primary-button button-subtitle cancel-button"
+                                            (click)='searchClientCode()'>Buscar Cliente</button>
+                                    </section>
+                                </mat-tab>
+                            </mat-tab-group>
+
+
+                        </section>
+                        <section id="new-client" class="center-button">
+                            <button type='button' class="primary-button button-subtitle cancel-button"
+                                (click)='createNewClient()'>Nuevo Cliente</button>
+                        </section>
+                    </ng-container>
+
+
+
+                    <ng-container *ngIf='clientInfoUser'>
+                        <section *ngIf='clientInfoUser.additionals'>
+
+                            <br>
+
+
+                            <p>
+                                <strong>Nombre</strong>
+                            </p>
+                            <p>
+                                {{clientInfoUser.additionals.name}}
+                            </p>
+                            <br>
+
+                            <p class="title-info">
+                                <strong>Apellidos</strong>
+
+                            </p>
+                            <p>
+                                {{clientInfoUser.additionals.last_name_mother}}
+                                {{clientInfoUser.additionals.last_name_father}}
+                            </p>
+
+                            <br>
+                            <p class="title-info">
+                                <strong> Documento</strong>
+
+                            </p>
+                            <p>
+                                {{clientInfoUser.additionals.number_document}}
+                            </p>
+
+                            <br>
+                            <p class="title-info">
+                                <strong>Correo</strong>
+
+                            </p>
+                            <p>
+                                {{clientInfoUser.email}}
+                            </p>
+
+
+                            <br>
+                        </section>
+                        <section id="clean-option" class="center-button">
+                            <button type='button' class="primary-button button-subtitle cancel-button"
+                                (click)='cleanClient()'>Limpiar</button>
+                        </section>
+                    </ng-container>
+
+
+                </mat-expansion-panel>
+                <mat-expansion-panel [expanded]="step === 2" (opened)="step = 2" *ngIf='clientInfoUser'>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <p class="main-subtitle "> Dirección de envio</p>
+                        </mat-panel-title>
+                        <mat-panel-description>
+
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <section class="card-info" *ngIf='clientInfoUser'>
+                        <section class="card-container">
+
+                            <ng-container *ngIf='clientInfoUser'>
+                                <ng-container *ngIf='clientInfoAddress'>
+
+                                    <br>
+                                    <p class="title-info">Dirección</p>
+                                    <p>
+                                        {{clientInfoAddress.address}}
+                                    </p>
+                                    <p>
+                                        {{clientInfoAddress.department.name}} {{clientInfoAddress.province.name}}
+                                        {{clientInfoAddress.district.name}}
+                                    </p>
+
+                                    <br>
+
+                                    <p class="title-info">Referencia</p>
+                                    <p>{{clientInfoAddress.reference}}</p>
+
+                                    <br>
+
+                                    <p class="title-info">Número de contacto</p>
+                                    <p>{{clientInfoAddress.cellphone}}</p>
+
+
+                                    <section id="clean-option" class="center-button">
+                                        <button type='button' class="primary-button button-subtitle cancel-button"
+                                            (click)='cleanAddress()'>Limpiar</button>
+                                    </section>
+                                </ng-container>
+                                <ng-container *ngIf='!clientInfoAddress'>
+
+                                    <ng-container *ngIf='listAddress.length > 0'>
+                                        <br>
+                                        <p class='title-order-section'>Selecciona una dirección</p>
+
+                                        <section class="container-address">
+                                            <section id='address-list' *ngFor='let address of listAddress'
+                                                (click)='setAddressSelect(address)'>
+                                                <section>
+                                                    {{address.address}}
+                                                </section>
+                                                <section>
+                                                    {{address.department.name}} {{address.province.name}}
+                                                    {{address.district.name}}
+                                                </section>
+                                                <section class="additional">
+                                                    <strong>referencia</strong> {{address.reference}}
+                                                </section>
+                                                <section class="additional">
+                                                    <strong>Contacto</strong> {{address.cellphone}}
+
+                                                </section>
+                                            </section>
+                                        </section>
+
+                                    </ng-container>
+                                    <ng-container *ngIf='listAddress.length == 0'>
+                                        <section class="address-empty">
+                                            <i class="fas fa-map-marker-alt-slash"></i>
+                                            <p>
+                                                El usuario no cuenta con direcciones
+                                            </p>
+                                        </section>
+                                    </ng-container>
+                                    <section id="new-client" *ngIf='listAddress.length < 5' class="center-button">
+                                        <button type='button' class="primary-button button-subtitle cancel-button"
+                                            (click)='createNewAddress()'>Nueva
+                                            Dirección</button>
+                                    </section>
+                                </ng-container>
+
+
+                            </ng-container>
+
+                        </section>
+                    </section>
+                </mat-expansion-panel>
+
+                <mat-expansion-panel [expanded]="step === 3" (opened)="step = 3" *ngIf='clientInfoUser'>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <p class="main-subtitle "> Datos de facturación</p>
+                        </mat-panel-title>
+                        <mat-panel-description>
+
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <section class="card-info" *ngIf='clientInfoUser'>
+                        <section class="card-container">
+
+                            <br>
+                            <section>
+                                <mat-radio-group [(ngModel)]='invoiceSend'>
+                                    <mat-radio-button [value]=false>Boleta</mat-radio-button>
+                                    <mat-radio-button [value]=true>Factura</mat-radio-button>
+                                </mat-radio-group>
+                            </section>
+                            <br>
+                            <form [formGroup]="searchUserInnvoceForm" *ngIf='invoiceSend'>
+                                <section>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="RUC" class="form-control"
+                                            formControlName="invoice_ruc" autocomplete="off" />
+                                    </mat-form-field>
+                                    <ng-container *ngIf="sui.invoice_ruc.errors">
+                                        <mat-error *ngIf="sui.invoice_ruc.errors.required && (sui.invoice_ruc.touched)">
+                                            El campo es obligatorio
+                                        </mat-error>
+                                    </ng-container>
+                                </section>
+                                <section>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="Razón social" class="form-control"
+                                            formControlName="invoice_business_name" autocomplete="off" />
+                                    </mat-form-field>
+                                    <ng-container *ngIf="sui.invoice_business_name.errors">
+                                        <mat-error
+                                            *ngIf="sui.invoice_business_name.errors.required && (sui.invoice_business_name.touched)">
+                                            El campo es obligatorio
+                                        </mat-error>
+                                    </ng-container>
+                                </section>
+
+                                <section>
+                                    <mat-form-field>
+                                        <input matInput type="text" placeholder="Dirección Fiscal" class="form-control"
+                                            formControlName="invoice_address" autocomplete="off" />
+                                    </mat-form-field>
+                                    <ng-container *ngIf="sui.invoice_address.errors">
+                                        <mat-error
+                                            *ngIf="sui.invoice_address.errors.required && (sui.invoice_address.touched)">
+                                            El campo es obligatorio
+                                        </mat-error>
+                                    </ng-container>
+                                </section>
+                                <section>
+                                    <mat-form-field>
+                                        <mat-select placeholder="Departamento" formControlName="invoice_department"
+                                            name="department">
+                                            <mat-option *ngFor="let department of listDepartmentInnvoce"
+                                                [value]="department._id">
+                                                {{ department.name }}
+                                            </mat-option>
+                                        </mat-select>
+
+                                    </mat-form-field>
+                                    <ng-container *ngIf='sui.invoice_department.errors'>
+                                        <mat-error
+                                            *ngIf="sui.invoice_department.errors.required && (sui.invoice_department.touched)">
+                                            El campo es obligatorio
+                                        </mat-error>
+                                    </ng-container>
+                                </section>
+                                <section class="col-100">
+                                    <mat-form-field>
+                                        <mat-select placeholder="Provincia" formControlName="invoice_province"
+                                            name="province">
+                                            <mat-option *ngFor="let province of listProvinceInnvoce"
+                                                [value]="province._id">
+                                                {{ province.name }}
+                                            </mat-option>
+                                        </mat-select>
+
+                                    </mat-form-field>
+                                    <ng-container *ngIf='sui.invoice_province.errors'>
+                                        <mat-error
+                                            *ngIf="sui.invoice_province.errors.required && (sui.invoice_province.touched)">
+                                            El campo es obligatorio
+                                        </mat-error>
+                                    </ng-container>
+                                </section>
+                                <section class="col-100">
+                                    <mat-form-field>
+                                        <mat-select placeholder="Distrito" formControlName="invoice_district"
+                                            name="district">
+                                            <mat-option *ngFor="let district of listDistrictInnvoce"
+                                                [value]="district._id">
+                                                {{ district.name }}
+                                            </mat-option>
+                                        </mat-select>
+
+                                    </mat-form-field>
+                                    <ng-container *ngIf='sui.invoice_district.errors'>
+                                        <mat-error
+                                            *ngIf="sui.invoice_district.errors.required && (sui.invoice_district.touched)">
+                                            El campo es obligatorio
+                                        </mat-error>
+                                    </ng-container>
+                                </section>
+                            </form>
+                        </section>
+                    </section>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </section>
+        <section class="container" *ngIf='clientInfoUser'>
+            <section class='product-info'>
+                <header class="row" (click)='addProducts()'>
+                    <p class="main-subtitle one-row">Lista de productos</p>
+                    <i class="fas fa-plus-square"></i>
+                </header>
+
+                <section>
+                    <table>
+                        <thead>
+                            <tr>
+
+                                <th [ngStyle]='{"width":"20px"}'>#</th>
+                                <th [ngStyle]='{"width":"60px"}'>Cod.</th>
+                                <th>Producto</th>
+                                <th [ngStyle]='{"width":"65px"}'>Precio UND</th>
+                                <th [ngStyle]='{"width":"60px"}'>Cantidad</th>
+                                <th [ngStyle]='{"width":"65px"}'>Descuento</th>
+                                <th [ngStyle]='{"width":"31px"}'>Activar oferta</th>
+                                <th [ngStyle]='{"width":"70px"}'>Total</th>
+                                <th [ngStyle]='{"width":"20px"}'></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor='let product of productList; let position = index '>
+
+                                <td [ngStyle]='{"width":"20px"}'>
+                                    {{position + 1}}
+                                </td>
+                                <td [ngStyle]='{"width":"60px"}'>
+                                    {{product.SKU}}
+                                </td>
+                                <td>
+                                    {{product.name}}
+                                </td>
+                                <td [ngStyle]='{"width":"65px","text-align":"right"}'>
+                                    {{product.special_price | number:'1.2-2'}}
+                                </td>
+                                <td [ngStyle]='{"width":"60px","text-align":"right"}'>
+                                    <i class='fal fa-minus-circle' [ngStyle]='{"font-size":"15px"}'
+                                        (click)='minusQuantity(position)'></i>
+                                    <span>
+                                        {{product.quantity_seller}}
+                                    </span>
+                                    <i class='fal fa-plus-circle' [ngStyle]='{"font-size":"15px"}'
+                                        (click)='addQuantity(position)'></i>
+                                    <!--   <input matInput type="number" autocomplete="off" [(ngModel)]='product.quantity_seller'
+                                        (ngModelChange)='calcTotalProduct()'> -->
+                                </td>
+                                <td [ngStyle]='{"width":"65px","text-align":"right"}'>
+                                    {{product.discount| number:'1.2-2' }}
+                                </td>
+                                <td [ngStyle]='{"width":"31px"}' >
+                                    <section *ngIf='product.optionBines' class="order-condition">
+                                        <mat-checkbox class="check-user" [(ngModel)]="product.active_offert" (ngModelChange)='changePriceProduct(product)'>
+                                        </mat-checkbox>
+                                        <i class="fas fa-exclamation-circle" matTooltip="Mostrar condición" (click)='openBinesCondition()'></i>
+                                    </section>
+                                   
+                                </td>
+                                <td [ngStyle]='{"width":"70px","text-align":"right"}'>
+                                    {{product.call_center_total | number:'1.2-2'}}
+                                </td>
+                                <td [ngStyle]='{"width":"20px"}'>
+                                    <i class="fas fa-trash-alt delete-icon" (click)='deleteProduct(position)'></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+        </section>
+    </section>
+
+    <section class="summary-info" *ngIf='clientInfoUser'>
+        <section class="container-summary">
+            <p class="main-subtitle "> Resumen de compra</p>
+            <hr>
+            <section>
+                <section class="row">
+                    <p class="title-info one-row">Subtotal</p>
+                    <p>{{totalSell | number:'1.2-2'}}</p>
+                </section>
+                <section class="row">
+                    <p class="title-info one-row">Costo de envio</p>
+                    <p>{{totalDelivery | number:'1.2-2'}}
+                    <p>
+                </section>
+                <section class="row">
+                    <p class="title-info one-row">Descuento</p>
+                    <p>{{totalDiscount | number:'1.2-2'}}</p>
+                </section>
+                <section class="row">
+                    <p class="title-info one-row">Total</p>
+                    <p>{{totalCharge | number:'1.2-2'}}</p>
+                </section>
+            </section>
+            <br>
+            <section>
+                <p class="title-section">Datos del cliente</p>
+                <section>
+                    <ng-container *ngIf='clientInfoUser'>
+                        <section *ngIf='clientInfoUser.additionals'>
+
+                            <br>
+                            <p>
+                                <strong>Cliente</strong>
+                            </p>
+                            <p>
+                                {{clientInfoUser.additionals.name}} {{clientInfoUser.additionals.last_name_mother}}
+                                {{clientInfoUser.additionals.last_name_father}}
+                            </p>
+                            <br>
+
+                            <p class="title-info">
+                                <strong> Documento</strong>
+
+                            </p>
+                            <p>
+                                {{clientInfoUser.additionals.number_document}}
+                            </p>
+
+                            <br>
+                            <p class="title-info">
+                                <strong>Correo</strong>
+
+                            </p>
+                            <p>
+                                {{clientInfoUser.email}}
+                            </p>
+
+
+                            <br>
+                        </section>
+                    </ng-container>
+
+                    <ng-container *ngIf='!clientInfoUser'>
+                        <section class="address-empty">
+                            <i class="far fa-user-slash"></i>
+                            <p>
+                                Aun no se ha seleccionado un cliente
+                            </p>
+                        </section>
+                    </ng-container>
+                </section>
+            </section>
+            <section>
+                <p class="title-section">Datos de dirección de entrega</p>
+                <section>
+
+
+                    <ng-container *ngIf='clientInfoAddress'>
+
+                        <br>
+                        <p class="title-info">Dirección</p>
+                        <p>
+                            {{clientInfoAddress.address}}
+                        </p>
+                        <p>
+                            {{clientInfoAddress.department.name}} {{clientInfoAddress.province.name}}
+                            {{clientInfoAddress.district.name}}
+                        </p>
+
+                        <br>
+
+                        <p class="title-info">Referencia</p>
+                        <p>{{clientInfoAddress.reference}}</p>
+
+                        <br>
+
+                        <p class="title-info">Número de contacto</p>
+                        <p>{{clientInfoAddress.cellphone}}</p>
+
+                    </ng-container>
+                    <ng-container *ngIf='!clientInfoAddress'>
+                        <section class="address-empty">
+                            <i class="fas fa-map-marker-alt-slash"></i>
+                            <p>
+                                Aun no se ha seleccionado una dirección
+                            </p>
+                        </section>
+                    </ng-container>
+
+                </section>
+            </section>
+            <section>
+                <br>
+                <p class="title-section">Datos de facturación</p>
+                <section>
+                    <br>
+                    <p>
+                        <span><strong>Tipo de Documento</strong></span> &nbsp;&nbsp; <span
+                            *ngIf='!invoiceSend'>BOLETA</span> <span *ngIf='invoiceSend'>FACTURA</span>
+                    </p>
+                </section>
+                <section *ngIf='invoiceSend'>
+                    <br>
+                    <p class="title-info">RUC</p>
+                    <p>
+                        {{sui.invoice_ruc.value}}
+                    </p>
+
+                    <br>
+                    <p class="title-info">Razón social</p>
+                    <p>
+                        {{sui.invoice_business_name.value}}
+                    </p>
+
+                    <br>
+                    <p class="title-info">Dirección fiscal</p>
+                    <p>
+                        {{sui.invoice_address.value}}
+                    </p>
+                    <p class="row">
+                        {{sui.invoice_department_name.value}} {{sui.invoice_province_name.value}}
+                        {{sui.invoice_district_name.value}}
+                    </p>
+                </section>
+            </section>
+            <section class="button-accept center-button">
+                <button class="primary-button save-button button-subtitle save-button-style" type="button"
+                    (click)='createOrder()'> Confirmar
+                    Venta </button>
+            </section>
+        </section>
+    </section>
+
+
+
+</div>
+
+
+
+
+
+<app-crud-client #crudClient (sendAnswer)='answerAddClient($event)'></app-crud-client>
+<app-list-customer #customerList (userInfoSend)='userInfoSend($event)'></app-list-customer>
+<app-crud-address-client #addressClient (sendAnswer)='addressAddClient($event)'></app-crud-address-client>
+<app-modal-search-product #productSearch [clientId]='customerId' (listProductSelect)='listProductSelect($event)'>
+</app-modal-search-product>
+
+<article class="container-modal" *ngIf='openModalNoExistUser'>
+    <section class="modal-body">
+        <header>
+            <strong>Nuevo Cliente</strong>
+        </header>
+        <section class="body">
+            <section>
+                El Cliente no existe
+            </section>
+            <section>
+                ¿Desea crear un nuevo cliente?
+            </section>
+        </section>
+        <footer class="row center-button">
+            <button class="primary-button button-subtitle cancel-button" (click)="closeNoExistUser()">
+                No Gracias
+            </button>
+            <button class="primary-button button-subtitle save-button-style"
+                (click)="createNewClient(true);closeNoExistUser()">
+                Crear un nuevo cliente
+            </button>
+
+        </footer>
+    </section>
+</article>
+
+<section>
+    <article class='container-modal' *ngIf='showBinesCondition'>
+        <section class='modal-body modal-small'>
+        
+            <section class='body'>
+                La {{entityBines.origin }} <strong>{{entityBines.entity_name}}</strong> , necesita taner bines especificos para aceptar los descuentos, al momento de realizar el pago en la pasarela.
+            </section>
+            <footer>
+                <button class='primary-button button-subtitle cancel-button' (click)='closeBinesCondition()'>Aceptar</button>
+            </footer>
+        </section>
+    </article>
+</section>

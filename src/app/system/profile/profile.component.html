@@ -1,0 +1,184 @@
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+  <div class="container">
+    <div class="return-button"><i (click)="returnBack()" class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title">Mi perfil de Usuario</div>
+    <div class="buttons-container">
+
+    </div>
+  </div>
+</div>
+<div class="content">
+  <section class="container-partition">
+    <section class="p-row p-five cont-left">
+      <form [formGroup]="profileForm">
+        <section class="container-row">
+          <p class="main-subtitle">Datos</p>
+          <hr>
+          <ul class="info-list">
+            <li>
+              <p>Nombre:</p>
+              <div>
+                <mat-form-field>
+                  <input matInput type="text" class="form-control" formControlName="name" autocomplete="off" />
+                </mat-form-field>
+
+                <ng-container *ngIf="f.name.errors">
+                  <mat-error *ngIf="
+                    f.name.errors.required &&
+                    (f.name.touched || submittedPassword)
+                  ">
+                    El campo es obligatorio
+                  </mat-error>
+                </ng-container>
+              </div>
+            </li>
+            <li>
+              <p>Apellido Paterno:</p>
+              <div>
+                <mat-form-field>
+                  <input matInput type="text" class="form-control" formControlName="last_name_father"
+                    autocomplete="off" />
+                </mat-form-field>
+
+                <ng-container *ngIf="f.last_name_father.errors">
+                  <mat-error *ngIf="
+                    f.last_name_father.errors.required &&
+                    (f.last_name_father.touched || submittedPassword)
+                  ">
+                    El campo es obligatorio
+                  </mat-error>
+                </ng-container>
+              </div>
+            </li>
+            <li>
+              <p>Apellido Materno:</p>
+              <div>
+                <mat-form-field>
+                  <input matInput type="text" class="form-control" formControlName="last_name_mother"
+                    autocomplete="off" />
+                </mat-form-field>
+
+                <ng-container *ngIf="f.last_name_mother.errors">
+                  <mat-error *ngIf="
+                    f.last_name_mother.errors.required &&
+                    (f.last_name_mother.touched || submittedPassword)
+                  ">
+                    El campo es obligatorio
+                  </mat-error>
+                </ng-container>
+              </div>
+            </li>
+
+            <li>
+              <p>DNI:</p>
+              <div>
+                <mat-form-field>
+                  <input matInput type="text" class="form-control" formControlName="dni" autocomplete="off" />
+                </mat-form-field>
+
+                <ng-container *ngIf="f.dni.errors">
+                  <mat-error *ngIf="
+                    f.dni.errors.required &&
+                    (f.dni.touched || submittedPassword)
+                  ">
+                    El campo es obligatorio
+                  </mat-error>
+                </ng-container>
+              </div>
+            </li>
+
+            <li>
+              <p>Teléfono:</p>
+              <div>
+                <mat-form-field>
+                  <input matInput type="text" class="form-control" formControlName="phone" autocomplete="off" />
+                </mat-form-field>
+
+                <ng-container *ngIf="f.phone.errors">
+                  <mat-error *ngIf="
+                    f.phone.errors.required &&
+                    (f.phone.touched || submittedPassword)
+                  ">
+                    El campo es obligatorio
+                  </mat-error>
+                </ng-container>
+              </div>
+            </li>
+            <li>
+              <p>Email:</p>
+              <p class="only-text">{{ f.email.value }}</p>
+            </li>
+            <!-- <li>
+            <p>Rol:</p>
+            <p>{{ f.role.value }}</p>
+          </li> -->
+          </ul>
+          <section class='center'>
+            <button (click)='saveProfile()' class='primary-button save-button button-subtitle'
+              style="min-width: 200px;">
+              <i class="fas fa-save"></i> &nbsp;Actualizar</button>
+          </section>
+        </section>
+      </form>
+    </section>
+    <section class="p-row p-five cont-right">
+      <form [formGroup]="passwordForm">
+        <section class="container-row">
+          <p class="main-subtitle">Cambiar Contraseña</p>
+          <hr>
+          <div>
+            <mat-form-field>
+              <input matInput type="password" placeholder="Contraseña anterior" class="form-control"
+                formControlName="old_password" autocomplete="off" />
+            </mat-form-field>
+
+            <ng-container *ngIf="g.old_password.errors">
+              <mat-error *ngIf="
+                g.old_password.errors.required &&
+                (g.old_password.touched || submittedPassword)
+              ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="password" placeholder="Repite la Nueva Contraseña" class="form-control"
+                formControlName="valid_password" autocomplete="off" />
+            </mat-form-field>
+
+            <ng-container *ngIf="g.valid_password.errors">
+              <mat-error *ngIf="
+                g.valid_password.errors.required &&
+                (g.valid_password.touched || submittedPassword)
+              ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="password" placeholder="Nueva Contraseña" class="form-control"
+                formControlName="password" autocomplete="off" />
+            </mat-form-field>
+
+            <ng-container *ngIf="g.password.errors">
+              <mat-error *ngIf="
+                g.password.errors.required &&
+                (g.password.touched || submittedPassword)
+              ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <section class="center">
+            <button type="button" class="primary-button save-button button-subtitle" style="min-width: 200px;"
+              (click)="changePassword()"><i class="fas fa-user-lock"></i> &nbsp;
+              Cambiar contraseña
+            </button>
+          </section>
+        </section>
+      </form>
+    </section>
+  </section>
+</div>

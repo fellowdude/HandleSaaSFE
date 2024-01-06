@@ -1,0 +1,40 @@
+.modal-body{
+    max-width: 88vw;
+}
+
+header{
+    .info-header{
+        display: flex;
+        align-items: center;
+        .title{
+            flex: auto;
+        }
+        .buttons{
+            width: 273px;
+            button{
+                &:nth-child(1){
+                    width: 100px;
+                }
+                &:nth-child(2){
+                    width: 170px;
+                }
+            }
+        }
+    }
+   
+}
+
+.total-products{
+    font-size: 15px;
+    font-weight: 100;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    .process-message{
+        background: #c7fffa;
+        color: #009688;
+        padding: 4px 20px;
+        box-sizing: border-box;
+        margin-left: 15px;
+    }
+}

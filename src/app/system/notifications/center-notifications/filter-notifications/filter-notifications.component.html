@@ -1,0 +1,11 @@
+<p class='main-subtitle subtitle-container'>Notificaciones</p>
+<ul class="options-sidenav">
+    <li *ngFor="let filter of typesOfFilters" (click)="applyFilter(filter)" 
+    [ngStyle]="{'backgroundColor': filter.check ? 'lightgrey' : 'white',
+                'borderRadius': filter.check ? '0 10px 10px 0' : '0',
+                'textDecoration': filter.check ? 'none' : 'none'}">
+        <div class="section-info">
+            <p class="title-section label">{{filter.name}}</p>
+        </div>
+    </li>
+</ul>

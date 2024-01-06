@@ -1,0 +1,21 @@
+.modal-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.mat-dialog-title {
+    font-size: 18px !important;
+}
+
+.mat-dialog-content {
+    padding: -100px !important;
+    margin: -100px !important;
+    height: 80% !important;
+}
+.buttons-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

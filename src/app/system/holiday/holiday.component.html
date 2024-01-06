@@ -1,0 +1,71 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed  }">
+  <div class="container">
+    <div class="title">Calendario de Feriados</div>
+    <div class="buttons-container">
+
+    </div>
+  </div>
+</div>
+
+
+<section>
+  <article class='container-modal modal-small' *ngIf='showModalHoliday'>
+    <section class='modal-body modal-small'>
+      <header>
+        <strong> <span *ngIf='!calendarSelect.id_holiday'>Agregar</span> <span
+            *ngIf='calendarSelect.id_holiday'>Actualizar</span> Feriado</strong>
+        <div id="close-button" (click)="closeModalHoliday()">&times;</div>
+      </header>
+      <section class='body modal-holiday'>
+        <section class='section-day'>
+          <p>{{calendarSelect.daySelect}}</p>
+          <p>{{calendarSelect.letterMonth}} {{calendarSelect.year}}</p>
+        </section>
+        <section class='section-reason'>
+          <mat-form-field>
+            <textarea matInput placeholder="Razón de Feriado" cdkTextareaAutosize cdkAutosizeMinRows="2"
+              cdkAutosizeMaxRows="7" class="form-control" [(ngModel)]="calendarSelect.reason"></textarea>
+          </mat-form-field>
+        </section>
+      </section>
+      <footer>
+        <button [ngClass]="[calendarSelect.id_holiday ? 'button-option button-cancel' : 'primary-button button-subtitle cancel-button']" (click)='closeModalHoliday()'>Cancelar</button>
+        <button class='primary-button save-button button-subtitle save-button-style' (click)='saveHoliday()' *ngIf='!calendarSelect.id_holiday'>Agregar</button>
+        <button class='button-option button-confirm' (click)='saveHoliday()'
+          *ngIf='calendarSelect.id_holiday'>Actualizar</button>
+        <button class='button-option button-confirm' (click)='deleteHoliday()' *ngIf='calendarSelect.id_holiday'>Quitar
+          Feriado</button>
+      </footer>
+    </section>
+  </article>
+</section>
+<div class="content">
+  <section class='container'>
+    <section class=' holiday-header'>
+      <i class="fas fa-chevron-left" (click)='previousMonth()'></i>
+      <span>{{calendarSelect.letterMonth}} {{calendarSelect.year}}</span>
+      <i class="fas fa-chevron-right" (click)='nextMonth()'></i>
+    </section>
+    <section class='calendar-container'>
+      <section class='section-calendar header-calendar'>
+        <section class='day-calendar'> Domingo </section>
+        <section class='day-calendar'> Lunes </section>
+        <section class='day-calendar'> Martes </section>
+        <section class='day-calendar'> Miércoles </section>
+        <section class='day-calendar'> Jueves </section>
+        <section class='day-calendar'> Viernes </section>
+        <section class='day-calendar'> Sábado </section>
+      </section>
+      <section *ngFor='let calendar of listCalendar' class='section-calendar body-calendar'>
+        <section *ngFor='let data of calendar' class='day-calendar' [ngClass]='{"holiday-calendar": data.holiday}'
+          (click)='openModalHoliday(data)'>
+          <p id='day-title'>{{data.day}}</p>
+        </section>
+      </section>
+    </section>
+
+  </section>
+
+</div>

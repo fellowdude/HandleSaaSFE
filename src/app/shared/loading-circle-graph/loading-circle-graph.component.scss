@@ -1,0 +1,22 @@
+.circle-container{
+    display: flex;
+    justify-content: center;
+    padding: 60px 0px;
+    box-sizing: border-box;
+}
+.circle{
+    width: 150px;
+    height:150px;
+    border-radius: 100%;
+    border:22px solid #DEDEDE
+}
+
+.rectangule-container{
+    .rectangule{
+        width: 30%;
+        height: 20px;
+        background: #DEDEDE;
+        margin: 0px 5px;
+        margin-bottom:10px;
+    }
+}

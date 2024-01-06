@@ -1,0 +1,277 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+  <div class="container">
+    <div class="title">Listado de Solicitudes</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" [ngClass]="{ 'select-option': entity == 'PRODUCT' }"
+        (click)="changeOption('PRODUCT')">Productos</button>
+      <button type="button" class="primary-button" [ngClass]="{ 'select-option':  entity == 'BRAND' }"
+        (click)="changeOption('BRAND')">Marcas</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <section class="container">
+    <!-- <section class="p-row p-ten "> -->
+    <!-- <section class="container-row"> -->
+    <section class="section-button">
+      <span>Pendientes</span>
+      <mat-slide-toggle [(ngModel)]="showFinished">
+        Terminados
+      </mat-slide-toggle>
+    </section>
+
+    <section>
+      <section class="functionality-row" *ngIf='entity == "PRODUCT"'>
+        <section class="container-table table-min-height">
+          <table id="table-main">
+            <thead>
+              <tr>
+                <td>Producto</td>
+                <td>SKU</td>
+                <td>Seller</td>
+                <td>Solicitante</td>
+                <td>Tipo de solicitud</td>
+                <td *ngIf="!showFinished">Fecha de creación</td>
+                <td *ngIf="showFinished">Fecha de respuesta</td>
+                <td *ngIf="!showFinished">Aprobaciones</td>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="!showFinished">
+                <tr *ngFor="let product of listProductRequest" (click)="
+                        redirectProduct(product._id); $event.stopPropagation()
+                      ">
+                  <td class="table-center">{{ product.name }}</td>
+                  <td class="table-center">{{ product.SKU }}</td>
+                  <td class="table-center">
+                    {{ product.supplier.name }}
+                  </td>
+                  <td class="table-center">
+                    {{ product.request.create_by.additionals.name }}
+                    {{
+                    product.request.create_by.additionals
+                    .last_name_father
+                    }}
+                    {{
+                    product.request.create_by.additionals
+                    .last_name_mother
+                    }}
+                  </td>
+                  <td class="table-center">
+                    <ng-container *ngIf="product.request">
+                      <span *ngIf="product.request.type == 'C'">Creación</span>
+                      <span *ngIf="product.request.type == 'U'">Actualizar</span>
+                      <span *ngIf="product.request.type == 'D'">Eliminar</span>
+                    </ng-container>
+                  </td>
+                  <td class="table-center">
+                    {{ product.request.create_date | date: "dd-MM-yyyy" }}
+                  </td>
+                  <td class="table-center" *ngIf="product.request.approvals.length == 0">
+                    {{ product.request.approvals.length }}
+                  </td>
+                  <td class="table-center" *ngIf="product.request.approvals.length > 0" (click)="
+                          openDetailHistory(product.request);
+                          $event.stopPropagation()
+                        ">
+                    <i class="fas fa-eye"></i>
+                  </td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="showFinished">
+                <tr *ngFor="let product of listHistoryRequest" (click)="
+                        openDetailHistory(product.history);
+                        $event.stopPropagation()
+                      ">
+                  <td class="table-center">{{ product.name }}</td>
+                  <td class="table-center">{{ product.SKU }}</td>
+                  <td class="table-center">
+                    {{ product.supplier.name }}
+                  </td>
+                  <td class="table-center">
+                    {{ product.history.create_by.additionals.name }}
+                    {{
+                    product.history.create_by.additionals
+                    .last_name_father
+                    }}
+                    {{
+                    product.history.create_by.additionals
+                    .last_name_mother
+                    }}
+                  </td>
+                  <td class="table-center">
+                    <ng-container *ngIf="product.history">
+                      <span *ngIf="product.history.type == 'C'">Creación</span>
+                      <span *ngIf="product.history.type == 'U'">Actualizar</span>
+                      <span *ngIf="product.history.type == 'D'">Eliminar</span>
+                    </ng-container>
+                  </td>
+                  <td class="table-center">
+                    {{ product.history.finish_date | date: "dd-MM-yyyy" }}
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </section>
+      </section>
+
+      <section class="functionality-row" *ngIf='entity == "BRAND"'>
+        <section class="container-table table-min-height">
+          <table id="table-main">
+            <thead>
+              <tr>
+                <td>Marca</td>
+                <td>Tipo de solicitud</td>
+                <td *ngIf="!showFinished">Fecha de creación</td>
+                <td *ngIf="showFinished">Fecha de respuesta</td>
+                <td *ngIf="!showFinished">Aprobaciones</td>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="!showFinished">
+                <tr *ngFor="let brand of listBrandRequest" (click)="
+                        redirectbrand(brand._id); $event.stopPropagation()
+                      ">
+                  <td class="table-center">{{ brand.name }}</td>
+                  <td class="table-center">
+                    <ng-container *ngIf="brand.request">
+                      <span *ngIf="brand.request.type == 'C'">Creación</span>
+                      <span *ngIf="brand.request.type == 'U'">Actualizar</span>
+                      <span *ngIf="brand.request.type == 'D'">Eliminar</span>
+                    </ng-container>
+                  </td>
+                  <td class="table-center">
+                    {{ brand.create_date | date: "dd-MM-yyyy" }}
+                  </td>
+                  <td class="table-center" *ngIf="brand.request.approvals.length == 0">
+                    {{ brand.request.approvals.length }}
+                  </td>
+                  <td class="table-center" *ngIf="brand.request.approvals.length > 0" (click)="
+                          openDetailHistory(brand.request);
+                          $event.stopPropagation()
+                        ">
+                    <i class="fas fa-eye"></i>
+                  </td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="showFinished">
+                <tr *ngFor="let brand of listHistoryBrandRequest" (click)="
+                        openDetailHistory(brand.history);
+                        $event.stopPropagation()
+                      ">
+                  <td class="table-center">{{ brand.name }}</td>
+                  <td class="table-center">
+                    <ng-container *ngIf="brand.history">
+                      <span *ngIf="brand.history.type == 'C'">Creación</span>
+                      <span *ngIf="brand.history.type == 'U'">Actualizar</span>
+                      <span *ngIf="brand.history.type == 'D'">Eliminar</span>
+                    </ng-container>
+                  </td>
+                  <td class="table-center">
+                    {{ brand.history.finish_date | date: "dd-MM-yyyy" }}
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </section>
+      </section>
+
+    </section>
+    <!--  <mat-tab-group mat-align-tabs="start">
+      <mat-tab label="Productos">
+
+      </mat-tab>
+
+      <mat-tab label="Marcas">
+       
+      </mat-tab>
+    </mat-tab-group> -->
+    <!-- </section> -->
+    <!-- </section> -->
+  </section>
+
+  <section>
+    <article class="container-modal" *ngIf="showDetailApprove">
+      <section class="modal-body modal-complete">
+        <header>
+          <strong>Detalle de Aprobaciones</strong>
+          <div id="close-button" (click)="closeDetailHistory()">&times;</div>
+        </header>
+        <section class="body">
+          <section class="block-center">
+            <section class="row col-50">
+              <section class="col-50 left">
+                Fecha de Creación
+              </section>
+              <section class="col-50 left">
+                {{ detailApproveData.create_date | date: "dd-MM-yyyy" }}
+              </section>
+            </section>
+            <section class="row col-50">
+              <section class="col-50 left">
+                Estado
+              </section>
+              <section class="col-50 left">
+                <span *ngIf="detailApproveData.state == 'A'">Aprobado</span>
+                <span *ngIf="detailApproveData.state == 'R'">Rechazado</span>
+                <span *ngIf="detailApproveData.state == 'P'">Pendiente</span>
+              </section>
+            </section>
+            <section class="row" *ngIf="detailApproveData.idGroup.name">
+              <section class="col-50">
+                Grupo de aprobación pendiente
+              </section>
+              <section class="col-50">
+                {{ detailApproveData.idGroup.name }}
+              </section>
+            </section>
+          </section>
+
+          <p class="title">Respuesta a solicitud</p>
+
+          <table>
+            <thead>
+              <tr>
+                <td>USUARIO</td>
+                <td>RESPUESTA</td>
+                <td>MOTIVO DE NEGACIÓN</td>
+                <td>FECHA</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let answer of detailApproveData.approvals">
+                <td *ngIf="answer.idUser.additionals">
+                  {{ answer.idUser.additionals.name }}
+                  {{ answer.idUser.additionals.last_name_father }}
+                  {{ answer.idUser.additionals.last_name_mother }}
+                </td>
+                <td *ngIf="!answer.idUser.additionals"></td>
+                <td>
+                  <span *ngIf="answer.answer == 'approve'">Aprobado</span>
+                  <span *ngIf="answer.answer == 'deny'">Rechazado</span>
+                </td>
+                <td *ngIf="answer.create_date">
+                  {{ answer.create_date | date: "dd-MM-yyyy" }}
+                </td>
+                <td>{{ answer.messageDeny }}</td>
+                <td *ngIf="answer.dateApprove">
+                  {{ answer.dateApprove | date: "dd-MM-yyyy" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <footer>
+          <button class="primary-button button-subtitle cancel-button" (click)="closeDetailHistory()">
+            Cerrar
+          </button>
+        </footer>
+      </section>
+    </article>
+  </section>
+</div>

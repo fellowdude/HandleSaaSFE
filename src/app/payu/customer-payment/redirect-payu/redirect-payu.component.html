@@ -1,0 +1,36 @@
+<div class="fake-header">
+</div>
+<div class="header">
+</div>
+
+<div class="content">
+  <section class="container">
+
+    <form ngNoForm [action]="url" method="POST" #paymentFormNative (ngSubmit)="autoSubmit()">
+
+      <ng-container *ngIf="payment.iin">
+        <input name="iin" type="hidden" [value]='payment.iin' />
+      </ng-container>
+
+      <input name="merchantId" [value]='payment.merchantId' type="hidden" />
+      <input name="accountId" [value]='payment.accountId' type="hidden" />
+      <input name="description" [value]='payment.description' type="hidden" />
+      <input name="referenceCode" [value]='payment.referenceCode' type="hidden" />
+      <input name="amount" [value]='payment.amount' type="hidden" />
+      <!-- <input name="tax" [value]='payment.tax' type="hidden" />
+      <input name="taxReturnBase" [value]='payment.taxReturnBase' type="hidden" /> -->
+      <input name="currency" [value]='payment.currency' type="hidden" />
+      <input name="signature" [value]='payment.signature' type="hidden" />
+      <input name="test" [value]='payment.test' type="hidden" />
+      <input name="buyerEmail" [value]='payment.buyerEmail' type="hidden" />
+      <input name="responseUrl" [value]='payment.responseUrl' type="hidden" />
+      <input name="extra1" [value]='payment.extra1' type="hidden" />
+      <input name="extra2" [value]='payment.extra2' type="hidden" />
+      <input name="extra3" [value]='payment.extra3' type="hidden" />
+      <input name="confirmationUrl" [value]='payment.confirmationUrl' type="hidden" />
+
+      <button type="submit" style="display: none;">Enviar</button>
+    </form>
+
+  </section>
+</div>

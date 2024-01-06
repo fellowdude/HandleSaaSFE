@@ -1,0 +1,106 @@
+@import "../../../../variables.scss";
+:host {
+  z-index: 10000;
+  position: fixed;
+  .aside-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    &.active {
+      display: block;
+    }
+  }
+  aside {
+    overflow-y: auto;
+    position: fixed;
+    width: 100%;
+    max-width: 255px;
+    height: 100vh;
+    background-color: white;
+    @include shadow();
+    .custom-chevron {
+      transition: all 0.5s;
+      position: absolute;
+      right: 30px;
+      margin-top: 15px;
+    }
+    .brand-sidenav {
+      font-weight: bold;
+      height: 64px;
+      width: 100%;
+      text-align: center;
+      line-height: 64px;
+      background: #f15933;
+      color: white;
+    }
+    .brand-client {
+      padding-top: 10px;
+      img {
+        width: 100%;
+        height: 40px;
+        object-fit: contain;
+      }
+    }
+    .options-sidenav {
+      padding: 0;
+      margin: 0;
+      li {
+        max-height: 44px;
+        overflow: hidden;
+        transition: all 0.3s;
+        padding: 0;
+        &.expand {
+          max-height: 100vh;
+          transition: all 0.3s;
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+        .menu-header {
+          display: block;
+          color: rgba(0, 0, 0, 0.87);
+          height: 44px;
+          line-height: 44px;
+          padding: 0 21px;
+          max-width: 200px;
+          border-top-right-radius: 44px;
+          border-bottom-right-radius: 44px;
+          cursor: pointer;
+          &:hover {
+            background-color: #efefef;
+            background-clip: padding-box;
+          }
+        }
+        .submenu-wrapper {
+          .sm {
+            font-size: 10px;
+          }
+
+          margin: 0;
+          padding: 0;
+          li {
+            padding-left: 21px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-right: 5px;
+            max-width: 240px;
+            border-top-right-radius: 44px;
+            border-bottom-right-radius: 44px;
+            /* padding-top: 12px; */
+            box-sizing: border-box;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+
+            cursor: pointer;
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.95);
+              background-clip: padding-box;
+            }
+          }
+        }
+      }
+    }
+  }
+}

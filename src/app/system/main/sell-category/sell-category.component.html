@@ -1,0 +1,26 @@
+<section class="container-component">
+
+    <section [ngStyle]='{"background": "white"}'>
+        <br>
+        <ng-container *ngIf="totalOrder == 0">
+            <p class="total">Gráfica no disponible.</p>
+        </ng-container>
+        <ng-container *ngIf="totalOrder > 0">
+            <div #containerRef class="chart-wrapper">
+
+                <ngx-charts-advanced-pie-chart *ngIf="donutData" [view]="[containerRef.offsetWidth * 3.2, 300]"
+                    [scheme]="donutScheme" [results]="donutData" [gradient]="false" (select)="onSelect($event)"
+                    (activate)="onActivate($event)" (deactivate)="onDeactivate($event)">
+                </ngx-charts-advanced-pie-chart>
+
+                <div class="legend" *ngIf="donutData">
+                    <div *ngFor="let data of donutData; let idx= index;" class="legend-item">
+                        <span class="color" [style.background-color]="donutScheme.domain[idx]"></span>
+                        <span class="description"> {{data.name}}</span>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </section>
+    <app-loading-circle-graph class="loading" *ngIf='showLoading'></app-loading-circle-graph>
+</section>

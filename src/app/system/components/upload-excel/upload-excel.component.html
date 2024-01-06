@@ -1,0 +1,106 @@
+<article class="container-modal" *ngIf="openUploadFile">
+  <section class="modal-body modal-small">
+    <header>
+      <strong>{{ config.title }}</strong>
+      <div id="close-button" (click)="close()">&times;</div>
+    </header>
+    <section class="body row" style="flex-wrap: wrap;">
+      <div class="col-100">
+        <ng-container
+          *ngIf="config.title == 'Carga Masiva Productos' || config.title == 'Carga Masiva Productos con SKU'">
+          <form [formGroup]="uploadForm" class="col-80" style="margin:auto">
+            <ng-container *ngIf="supplierList">
+              <mat-form-field>
+                <mat-select placeholder="Elegir seller" formControlName="supplier">
+                  <mat-option *ngFor="let type of supplierList" [value]="type">
+                    {{ type.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </ng-container>
+            <mat-form-field>
+              <mat-select placeholder="Elegir grupo de categría" formControlName="group">
+                <mat-option *ngFor="let type of groupList" [value]="type._id">
+                  {{ type.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </form>
+        </ng-container>
+        <ng-container *ngIf="config.title == 'Exportar clientes'">
+          <form [formGroup]="dateForm" class="col-80" style="margin:auto">
+            <mat-form-field>
+              <input matInput [readonly]="true" [matDatepicker]="dp3"
+                [max]="dateForm.controls.end_date_offer.value || today" placeholder="Desde" class="form-control"
+                formControlName="initial_date_offer" [attr.disabled]="true" />
+              <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+              <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+            </mat-form-field>
+
+            <br>
+
+            <mat-form-field>
+              <input matInput [readonly]="true" [matDatepicker]="dp4" [min]="dateForm.controls.initial_date_offer.value"
+                [max]="today" placeholder="Hasta" class="form-control" formControlName="end_date_offer"
+                [attr.disabled]="true" />
+              <mat-datepicker-toggle matSuffix [for]="dp4"></mat-datepicker-toggle>
+              <mat-datepicker #dp4 disabled="false"></mat-datepicker>
+            </mat-form-field>
+            <ng-container *ngIf="
+              dateForm.errors &&
+              ((dateForm.controls.initial_date_offer.touched &&
+                dateForm.controls.end_date_offer.touched) ||
+                submitted)
+            ">
+              <mat-error>
+                {{ dateForm.errors?.notValid }}
+              </mat-error>
+            </ng-container>
+          </form>
+        </ng-container>
+      </div>
+
+      <ng-container *ngIf='config.select'>
+        <ng-container *ngIf='config.select.listSelect'>
+          <div class="col-100" *ngIf='config.select.listSelect.length > 0'>
+            <mat-form-field>
+              <mat-select placeholder="Seller" [(ngModel)]='supplierSelect'>
+                <mat-option *ngFor="let select of config.select.listSelect" [value]="select[config.select.field]">
+                  {{ select[config.select.value] }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <br>
+            <br>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <br>
+      <section class="primary-button save-button button-subtitle" [ngClass]="[config.urlService ? 'col-50' : 'col-100']"
+        *ngIf="config.apiDownload" (click)="downloadFileTemplate()">
+        <i class="fas fa-file-download"></i>
+        <ng-container *ngIf="config.buttonLabelDownload"> {{config.buttonLabelDownload}}</ng-container>
+        <ng-container *ngIf="!config.buttonLabelDownload"> Descarga plantilla</ng-container>
+
+      </section>
+      <section class="primary-button save-button button-subtitle" class="col-50" *ngIf="config.urlDownload">
+        <a href="{{ config.urlDownload }}">
+          <i class="fas fa-file-download"></i>
+          Descarga plantilla
+        </a>
+      </section>
+      <section (click)="openUploadFiles()" class="drop-zone container-drop primary-button save-button button-subtitle"
+        *ngIf="config.urlService" [ngClass]="[config.urlDownload || config.apiDownload ? 'col-50' : 'col-100']">
+        <input type="file" #fileUpload id="fileUpload" name="fileUpload"
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display: none;" />
+        <i class="fas fa-file-upload"></i>
+        Subir archivo
+      </section>
+    </section>
+
+    <section *ngIf="errorFile" id="section-error" class="center">
+      {{ errorFile }}
+    </section>
+  </section>
+</article>

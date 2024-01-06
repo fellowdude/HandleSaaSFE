@@ -1,0 +1,408 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+    <div class="container">
+        <div class="return-button"><i (click)="returnListEmail()" class="fas fa-chevron-left"></i></div> &nbsp;
+        <div class="title" *ngIf="!idEmailForm">Nuevo formulario de email</div>
+        <div class="title" *ngIf="idEmailForm">Edición de formulario de email</div>
+        <div class="buttons-container">
+            <button type="button" class="primary-button " *ngIf="idEmailForm" (click)="confirmDeleteItem()">
+        <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+      </button>
+            <button type="button" class="primary-button " (click)="saveEmailForm()">
+        <i class="fas fa-save"></i> &nbsp; Guardar
+      </button>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <form [formGroup]="emailForm">
+        <section class="container-partition">
+            <section class="p-row p-three cont-left">
+                <section class="container-row">
+                    <p class="main-subtitle subtitle-container">Características del formulario</p>
+                    <br>
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Nombre" class="form-control" formControlName="name" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.name.errors">
+                            <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Título" class="form-control" formControlName="title" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.title.errors">
+                            <mat-error *ngIf="
+                  f.title.errors.required && (f.title.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <textarea matInput maxlength="1500" placeholder="Mensaje al pie del formulario" cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="7" class="form-control" formControlName="footer_message"></textarea>
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Texto botón de envio" class="form-control" formControlName="button_text" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.button_text.errors">
+                            <mat-error *ngIf="
+                  f.button_text.errors.required &&
+                  (f.button_text.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+
+                    <section>
+                        <p class="sub-tittle">Imagen Banner</p>
+                        <section class="img-container-one" *ngIf="
+              lisBannerAddPicture.length > 0
+            ">
+                            <section class="images" *ngFor="let picture of lisBannerAddPicture; let i = index">
+                                <section class="icon-open-image">
+                                    <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                </section>
+                                <img src="{{ url_attachment }}{{
+                  lisBannerAddPicture[lisBannerAddPicture.length - i - 1]
+                }}" (click)="showWindowMultimedia('lisBannerAddPicture', false,0)" width="250" alt="" />
+                                <section class="icon-delete">
+                                    <button type="button" class="primary-button delete-button" (click)="deleteImage(i + 1, 'lisBannerAddPicture')">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                                </section>
+                            </section>
+                        </section>
+
+                        <section class="one-image column" [hidden]="lisBannerAddPicture.length > 0" *ngIf="lisBannerAddPicture.length == 0">
+                            <app-uploader (selectImage)="selectImageMainWeb($event,'lisBannerAddPicture')"></app-uploader>
+
+                            <section>
+                                <button type='button' (click)="showWindowMultimedia('lisBannerAddPicture', false)" class="primary-button save-button button-subtitle button-width">
+                  Selecciona desde la galeria
+                </button>
+                            </section>
+                        </section>
+
+                    </section>
+
+                </section>
+
+                <section class="container-row">
+                    <p class="sub-tittle main-subtitle subtitle-container">Campos de Recepción</p>
+                    <br />
+
+                    <div *ngIf="!f.use_personalized_email.value" class="detail-select">
+                        <section>
+                            <mat-form-field>
+                                <mat-select placeholder="Grupo" name="type" class="form-control" formControlName="group_email">
+                                    <mat-option [value]="null">Ninguno</mat-option>
+                                    <mat-option *ngFor="let group of listGroupEmail" [value]="group._id">
+                                        {{ group.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-container>
+                                <mat-error *ngIf="
+                    !f.group_email.value &&
+                    (f.group_email.touched || submitted)
+                  ">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </section>
+                        <button type="button" class="primary-button button-subtitle cancel-button" *ngIf="detailGroupEmail.length > 0" (click)="openListContact()">
+                            <i class="fas fa-users"></i>
+                        </button>
+                    </div>
+
+                    <!-- 
+        <div *ngIf="!f.use_personalized_email.value">
+          <mat-form-field>
+            <input
+              matInput
+              type="text"
+              placeholder="Email destino"
+              class="form-control"
+              formControlName="email"
+              autocomplete="off"
+            />
+          </mat-form-field>
+          <ng-container *ngIf="f.email.errors">
+            <mat-error
+              *ngIf="f.email.errors.required && (f.email.touched || submitted)"
+            >
+              El campo es obligatorio
+            </mat-error>
+            <mat-error
+              *ngIf="f.email.errors.email && (f.email.touched || submitted)"
+            >
+              Debe ingresar un email válido (ejemplo@correo.com)
+            </mat-error>
+          </ng-container>
+        </div> -->
+
+                    <div>
+                        <mat-checkbox class="form-control" formControlName="use_personalized_email" autocomplete="off">Usar email personalizado en pantallas que usen el formulario
+                        </mat-checkbox>
+                    </div>
+
+                    <div>
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Asunto del email" class="form-control" formControlName="subject" autocomplete="off" />
+                        </mat-form-field>
+                        <ng-container *ngIf="f.subject.errors">
+                            <mat-error *ngIf="
+                  f.subject.errors.required && (f.subject.touched || submitted)
+                ">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                </section>
+
+                <section class="container-row">
+                    <p class="sub-tittle main-subtitle subtitle-container">
+                        Servicio para almacenamiento en bd
+                    </p>
+                    <br>
+                    <mat-form-field>
+                        <mat-select placeholder="Tipo" name="type" class="form-control" formControlName="service_save">
+                            <mat-option [value]="null">Ninguno</mat-option>
+                            <mat-option *ngFor="let addElement of listTypeService" [value]="addElement.value">
+                                {{ addElement.value }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </section>
+
+            </section>
+            <section class="p-row p-seven cont-right">
+                <section class="container-row template-section">
+                    <p class="sub-tittle main-subtitle subtitle-container">Plantilla del correo</p>
+
+                    <br />
+                    <section class="template-header">
+                        <div class="option-item left" [ngClass]="{ 'active-section-option': !templateState.activeView }" (click)="changeStateTemplate()">
+                            Plantilla
+                        </div>
+                        <div class="option-item right" [ngClass]="{ 'active-section-option': templateState.activeView }" (click)="changeStateTemplate()">
+                            Previsualiza
+                        </div>
+                    </section>
+
+                    <section *ngIf="!templateState.activeView">
+                        <p>Pegue el HTML de su plantilla</p>
+                        <section class="container-template">
+                            <mat-form-field>
+                                <textarea matInput placeholder="Plantilla" cdkTextareaAutosize cdkAutosizeMinRows="20" cdkAutosizeMaxRows="30" class="form-control" formControlName="template"></textarea>
+                            </mat-form-field>
+                        </section>
+                    </section>
+                    <section *ngIf="templateState.activeView">
+                        <section *ngIf="f.template.value && !htmlTemplate">
+                            <form [formGroup]="templateForm">
+                                <section class="wraper-section">
+                                    <ng-container *ngFor="let email of listRequestedField">
+                                        <div [style.flex-basis.%]="email.size" class="table-section">
+                                            <div *ngIf="email.type == 'text'">
+                                                <mat-form-field>
+                                                    <input matInput type="text" placeholder="{{ email.name }}" class="form-control" formControlName="{{ email.field }}" autocomplete="off" />
+                                                </mat-form-field>
+                                            </div>
+                                            <div *ngIf="email.type == 'text-area'">
+                                                <mat-form-field>
+                                                    <textarea matInput placeholder="{{ email.name }}" cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="7" class="form-control" formControlName="{{ email.field }}"></textarea>
+                                                </mat-form-field>
+                                            </div>
+                                            <div *ngIf="email.type == 'instruction'" class="instruction-section">
+                                                <div [innerHTML]="email.value"></div>
+                                            </div>
+                                            <div *ngIf="email.type == 'list'">
+                                                <mat-form-field>
+                                                    <mat-select placeholder="{{ email.name }}" class="form-control" formControlName="{{ email.field }}">
+                                                        <mat-option *ngFor="let addElement of email.list" [value]="addElement">
+                                                            {{ addElement }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </section>
+                            </form>
+                            <section class="section-button-action">
+                                <button (click)="replaceEmail()">Mostrar Mensaje</button>
+                            </section>
+                        </section>
+                        <section *ngIf="htmlTemplate">
+                            <section [innerHTML]="htmlTemplate | safe: 'html'"></section>
+                            <section class="section-button-action">
+                                <button class="button-cancel" (click)="returnEmail()">
+                  Regresar
+                </button>
+                                <button (click)="sendEmail()">Enviar email</button>
+                            </section>
+                        </section>
+                        <section *ngIf="!f.template.value" class="section-empty">
+                            <p class="center">
+                                Por favor ingrese una plantilla HTML para poder visualizar.
+                            </p>
+                        </section>
+                    </section>
+                    <ng-container>
+                        <mat-error *ngIf="!f.template.value && (f.subject.touched || submitted)
+              ">
+                            El campo es obligatorio
+                        </mat-error>
+                    </ng-container>
+                </section>
+
+                <section class="container-row">
+                    <p class="sub-tittle main-subtitle subtitle-container">Campos solicitados</p>
+                    <br />
+                    <section id="container-add">
+                        <section id="add-body">
+                            <section>
+                                <table class="content-option">
+                                    <thead>
+                                        <tr>
+                                            <td>Campo</td>
+                                            <td>Tipo</td>
+                                            <td>Reemplazar</td>
+                                            <td class="accion-section">Acciones</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="requested-fields" *ngFor="
+                      let field of listRequestedField;
+                      let position = index;" (click)="editOption(position)">
+                                            <td>{{ field.name }}</td>
+                                            <td>{{ field.type }}</td>
+                                            <td>{{ field.replace }}</td>
+                                            <td class="accion-section">
+                                                <!-- <i class="fas fa-edit" (click)="editOption(position)"></i> -->
+                                                <i style="color:#ff5252 " class="fas fa-trash-alt" (click)="deleteOption(position)"></i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </section>
+                        </section>
+                        <footer>
+                            <button class="primary-button save-button" (click)="newField()">
+                            <i class="fas fa-plus"></i> &nbsp; Agregar nuevo campo</button>
+                        </footer>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </form>
+</div>
+<!-- modales -->
+<article class="container-modal" *ngIf="showModalNewSection">
+    <section class="modal-body modal-small">
+        <header>
+            <strong *ngIf="!listTypeField.indexUpdate && listTypeField.indexUpdate != 0">Nuevo Campo</strong>
+            <strong *ngIf="listTypeField.indexUpdate >= 0">Actualizar Campo</strong>
+            <div id="close-button" (click)="closeModal()">&times;</div>
+        </header>
+        <section class="body">
+            <div>
+                <mat-form-field>
+                    <input matInput type="text" placeholder="Título del campo" [(ngModel)]="listTypeField.name" autocomplete="off" />
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field>
+                    <mat-select placeholder="Tipo" name="type" [(ngModel)]="listTypeField.type" (ngModelChange)="changeTypeOption()">
+                        <mat-option *ngFor="let addElement of listOptionAddElement" [value]="addElement.field">
+                            {{ addElement.value }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngIf="listSubType">
+                <mat-form-field>
+                    <mat-select placeholder="Sub Tipo" name="subtype" [(ngModel)]="listTypeField.sub_type">
+                        <mat-option *ngFor="let subType of listSubType" [value]="subType.field">
+                            {{ subType.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngIf="listTypeField.type == 'list'">
+                <div>
+                    <section *ngIf="listTypeField.list" class="list-item-container">
+                        <p *ngFor="let field of listTypeField.list" class="item-list">
+                            {{ field }}
+                        </p>
+                    </section>
+                    <section *ngIf="!listTypeField.addList">
+                        <p *ngIf="!listTypeField.list">Cree un item</p>
+                        <button class="primary-button button-subtitle cancel-button" style="margin-top: 15px;" (click)="newFieldList()">Agregar campo</button>
+                        <!-- <i class="fas fa-plus-square alone button-add-font" (click)="newFieldList()"></i> -->
+                    </section>
+                    <section *ngIf="listTypeField.addList" class="add-item-container">
+                        <input type="text" [(ngModel)]="listTypeField.addValueList" />
+                        <section>
+                            <button class="primary-button button-subtitle cancel-button" (click)="closeAddList()">
+                Cancelar
+              </button>
+                            <button class="primary-button save-button button-subtitle save-button-style" (click)="addFieldList()">
+                Agregar
+              </button>
+                        </section>
+                    </section>
+                </div>
+            </div>
+            <div *ngIf="listTypeField.type == 'instruction'">
+                <!-- <div id="rich-text" class="left" placeholder="¿Cuál es la indicación?" [froalaEditor]
+          [(ngModel)]="listTypeField.value"></div> -->
+                <editor [(ngModel)]="listTypeField.value" [ngModelOptions]="{ standalone: true }" apiKey="e01r0g9fz86l96atfy58mk5l22s7mwv3ryh0f7puo7ej0jyw" [initialValue]="listTypeField.value" [init]="tinyEditorConfig"></editor>
+            </div>
+            <p class="alone" *ngIf="!listTypeField.replaceable && listTypeField.type">
+                Este campo solo se usara para mostrar alguna información en el formulario, más no se utiliza para reemplazar algún campo del email.
+            </p>
+            <div class="rate">
+                <p>Tamaño</p>
+                <div>
+                    <mat-slider thumbLabel [displayWith]="formatLabel" tickInterval="25" min="1" max="100" [(ngModel)]="listTypeField.size"></mat-slider>
+                    <p>{{ listTypeField.size }} %</p>
+                </div>
+            </div>
+            <div *ngIf="listTypeField.type == 'checkbox'">
+                <mat-form-field>
+                    <input matInput type="text" placeholder="Grupo" [(ngModel)]="listTypeField.group_name" autocomplete="off" />
+                </mat-form-field>
+            </div>
+            <div class="left checkbox" *ngIf="listTypeField.replaceable && listTypeField.type">
+                <mat-checkbox [(ngModel)]="listTypeField.required">Es obligatorio</mat-checkbox>
+            </div>
+        </section>
+        <footer>
+            <button class="primary-button button-subtitle cancel-button" (click)="closeModal()">
+        Cancelar
+      </button>
+            <button class="primary-button save-button button-subtitle save-button-style" (click)="createNewSection()" *ngIf="!listTypeField.indexUpdate && listTypeField.indexUpdate != 0">
+        Aceptar
+      </button>
+            <button class="primary-button save-button button-subtitle save-button-style" (click)="updateOption()" *ngIf="listTypeField.indexUpdate >= 0">
+        Aceptar
+      </button>
+        </footer>
+    </section>
+</article>
+<app-list-information #listInformation></app-list-information>
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<app-multimedia-gallery #multimediaList (imageChoose)="dataPictureSave($event)"></app-multimedia-gallery>

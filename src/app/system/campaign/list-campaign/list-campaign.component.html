@@ -1,0 +1,46 @@
+<div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+    <div *ngFor="let node of campaigns" 
+      class='example-box' 
+      [cdkDragFreeDragPosition]="node.position" 
+      (mousedown)="onMouseDown(node)"
+      (mouseup)="onMouseUp()"
+      (cdkDragStarted)="dragStarted()"
+      (cdkDragEnded)="local_moveCard($event)" 
+      cdkDragBoundary=".example-list"
+      cdkDrag
+      [cdkDragDisabled]="!dragAndDropActive"
+    > 
+      <tr class='group-section' [ngClass]="{'active-row': node.secuenceActive, 'subcategory': node.nivel}">
+        <td [ngStyle]='{"padding-left": node.padding}' [ngClass]='{"add-before": node.nivel}' class='campaign-name'
+        (click)='goDetail(node)'>
+          <p>
+            {{node.name}}
+          </p>
+        </td>
+        <ng-container *ngIf="!activeChangeBoolean">
+          <td class="visible-category" (click)='goDetail(node)'>
+            <span *ngIf='node.active' class="status-visible">Activo</span>
+            <span *ngIf='!node.active' class="status-invisible">No Activo</span>
+          </td>
+        </ng-container>
+        
+        <ng-container *ngIf="activeChangeBoolean">
+          <td class="visible-category checkbox">
+            <mat-checkbox class="form-control" [(ngModel)]="node.active"
+              (ngModelChange)="updateVisibilty($event, node)"
+              exclusive>
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <td (click)='goDetail(node)'>
+          <section id='icon-change'>
+            <span>
+              Pos. {{node.position}}
+            </span>
+          </section>
+        </td>
+        <!--<div *cdkDragPlaceholder></div> previene Items will automatically rearrange as an element moves.-->
+      </tr>
+  </div>
+</div>

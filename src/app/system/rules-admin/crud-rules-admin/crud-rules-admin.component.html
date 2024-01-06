@@ -1,0 +1,166 @@
+<h1 class="title" *ngIf="!idRulesAdmin && !isEmbedded">
+  NUEVO ADMINISTRADOR DE REGLAS DE DESCUENTO
+</h1>
+<h1 class="title" *ngIf="idRulesAdmin">
+  EDITAR ADMINISTRADOR DE REGLAS DE DESCUENTO
+</h1>
+<!-- <app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm> -->
+<!-- <section class="container window-buttton">
+  <section *ngIf="!isEmbedded" class="return" (click)="returnAdminRule()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button
+      class="button-option button-danger"
+      (click)="confirmDeleteItem()"
+      *ngIf="!headerFixed && idRulesAdmin && !isEmbedded"
+    >
+      <i class="fas fa-trash-alt"></i><span>Eliminar</span>
+    </button>
+    <button
+      type="button"
+      *ngIf="!isEmbedded"
+      class="primary-button save-button"
+      (click)="saveAdminRule()"
+    >
+      <i class="fas fa-save"></i> &nbsp; Guardar
+    </button>
+  </section>
+  
+</section> -->
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<section class="container window-button header-fixed" *ngIf="headerFixed && !isEmbedded">
+  <section class="return" (click)="returnAdminRule()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+</section>
+
+<form [formGroup]="adminRuleForm">
+  <section class="container-partition">
+    <section class="p-row p-ten cont-left">
+      <section [ngClass]="[isEmbedded ? '' : 'container-row']">
+        <p class="subtitle">
+          <button type="button" class="primary-button save-button" (click)="saveAdminRule()" *ngIf="!isEmbedded">
+            <i class="fas fa-save"></i> &nbsp; Guardar
+          </button>
+          <!-- <button
+            type="button"
+            class="primary-button delete-button"
+            (click)="deleteAdminRule()"
+            *ngIf="isEmbedded"
+          >
+            <i class="fas fa-trash"></i> &nbsp; Eliminar
+          </button> -->
+        </p>
+        <!-- <hr /> -->
+
+        <mat-form-field>
+          <input matInput type="text" maxLenth="50" placeholder="Nombre" class="form-control" formControlName="name"
+            autocomplete="off" [readonly]="readOnly" />
+        </mat-form-field>
+        <ng-container *ngIf="f.name.errors">
+          <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+            El campo es obligatorio
+          </mat-error>
+          <mat-error *ngIf="f.name.errors.maxlength && (f.name.touched || submitted)">
+            La cantidad máxima de caracteres es de 50
+          </mat-error>
+        </ng-container>
+
+        <p class="main-subtitle" style="padding: 0">
+          <span>Reglas</span>
+
+          <button type="button" class="primary-button save-button" (click)="toogleAsideRules(true, true)"
+            *ngIf='!readOnly'>
+            <i class="fas fa-plus"></i>
+            &nbsp; Agregar
+          </button>
+        </p>
+
+        <hr />
+
+        <br />
+        <div *ngFor="let data of dataSourceRdd; let i = index">
+          <div *ngIf="i !== 0" class="options">
+
+            <button [disabled]='readOnly' *ngFor="let operator of ldvDetails" type="button" [ngClass]="[
+                operator._id === data.operatorId
+                  ? 'primary-button back-button'
+                  : 'primary-button back-button-light'
+              ]" (click)="changeOperator(i, operator._id)">
+              &nbsp; {{ operator.value }}
+            </button>
+
+
+          </div>
+
+          <span class="clearable">
+            <span>Nombre: &nbsp; {{ data.name }}</span>
+            <span>Tipo: &nbsp; {{ data.tipo.value }}</span>
+            <ng-container *ngIf='!readOnly'>
+              <i (click)="editDiscountRule(data)" class="clearable__edit fas fa-edit"></i>
+              <i (click)="deleteDiscountRule(data)" class="clearable__clear fas fa-trash-alt"></i>
+            </ng-container>
+
+          </span>
+        </div>
+      </section>
+    </section>
+  </section>
+</form>
+
+<section class="aside-rules">
+  <div class="aside-wrapper" [@asideWrapperAnimation] *ngIf="openAsideRules" (click)="toogleAsideRules(false)"></div>
+  <aside [@asideAnimation] *ngIf="openAsideRules">
+    <section class="header">
+      <div class="container">
+        <div class="title">
+          <span *ngIf="createRule && !editRule">Nueva Regla</span>
+          <span *ngIf="editRule">Editar regla</span>
+          <span *ngIf="!createRule && !editRule">Reglas</span> de descuento
+        </div>
+        <div class="buttons-container">
+          <button type="button" class="primary-button" (click)="toogleCreateRule(true)" *ngIf="!createRule">
+            <i class="fas fa-plus-circle"></i> Nueva Regla
+          </button>
+          <button *ngIf="createRule" type="button" class="primary-button back-button" (click)="toogleCreateRule(false)">
+            <i class="fas fa-chevron-left"></i> &nbsp; Volver
+          </button>
+        </div>
+      </div>
+    </section>
+    <section class="rule-body">
+      <section class="rule-body-container" [ngClass]="{ 'new-rule': createRule, 'select-rule': !createRule }">
+        <section class="rule-list">
+          <section class="container-partition">
+            <section class="p-row p-ten cont-left">
+              <section class="container-row">
+                <mat-form-field style="width: 93%;">
+                  <input matInput type="text" maxLenth="50" placeholder="Buscar regla de descuento por nombre"
+                    autocomplete="off" [(ngModel)]="searchFilter" (ngModelChange)="changeFilter()" />
+                </mat-form-field>
+                <app-search-loader [visibility]="searchLoading ? 'visible' : 'hidden'"></app-search-loader>
+                <p class="error" *ngIf="noRulesFound">
+                  No se han encontrado reglas de descuento
+                </p>
+                <ul class="list" *ngIf="discountRules.length > 0">
+                  <cdk-virtual-scroll-viewport class="virtualHeight" itemSize="20">
+                    <div *cdkVirtualFor="let rdd of discountRules; let i = index">
+                      <li (click)="addDiscountRule(rdd, i)">{{ rdd.name }}</li>
+                    </div>
+                  </cdk-virtual-scroll-viewport>
+                </ul>
+              </section>
+            </section>
+          </section>
+        </section>
+        <section class="rule-add">
+          <ng-container *ngIf="showDrr">
+            <app-crud-discount-rule [isEmbedded]="true" (sideBarOpen)="toogleAsideRules($event)">
+            </app-crud-discount-rule>
+          </ng-container>
+        </section>
+      </section>
+    </section>
+  </aside>
+</section>

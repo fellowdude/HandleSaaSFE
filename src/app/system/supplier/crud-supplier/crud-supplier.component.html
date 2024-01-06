@@ -1,0 +1,783 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+  <div class="container" *ngIf='!isSupplier'>
+    <div class="return-button" (click)='returnSupplier()'><i class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idSupplier">Nuevo Seller</div>
+    <div class="title" *ngIf="idSupplier">Editar Seller</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button " *ngIf="idSupplier" (click)="confirmDeleteItem()">
+        <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+      </button>
+      <button type="button" class="primary-button" (click)="saveSupplier()">
+        <i class="fas fa-save"></i> &nbsp; Guardar
+      </button>
+    </div>
+  </div>
+</div>
+<!-- <h1 class="title" *ngIf="!idSupplier">NUEVO PROVEEDOR</h1>
+<h1 class="title" *ngIf="idSupplier">EDITAR PROVEEDOR</h1>
+<section class="container  window-buttton">
+  <section class="return" (click)="returnSupplier()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button class="button-option button-danger" (click)="confirmDeleteItem()" *ngIf="!headerFixed && idSupplier">
+      <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+    </button>
+    <button class="button-option button-confirm" (click)="saveSupplier()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section>
+<section class="container  window-buttton header-fixed" *ngIf="headerFixed">
+  <section class="return" (click)="returnSupplier()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button class="button-option button-confirm" (click)="saveSupplier()">
+      <i class="fas fa-save"></i> <span>Guardar</span>
+    </button>
+  </section>
+</section> -->
+<!-- <section class="container buttons-list mobile-buttton">
+  <button class="button-option button-confirm" (click)="saveSupplier()">
+    <i class="fas fa-save"></i> <span>Guardar</span>
+  </button>
+  <p class="see-more" (click)="changeStatusMore()">
+    <i class="fas fa-caret-circle-down" [ngClass]="{
+        'icon-rotate-active': showMoreButton,
+        'icon-rotate-none': !showMoreButton
+      }"></i>
+  </p>
+  <section class="more-button" [ngClass]="{
+      'more-button-open': showMoreButton,
+      'more-button-close': !showMoreButton
+    }">
+    <button class="button-option button-danger" (click)="OpenModalDeleteConfirm()">
+      <i class="fas fa-trash-alt"></i> <span>Eliminar</span>
+    </button>
+    <button class="button-option" (click)="saveSupplier(true)">
+      <i class="fas fa-bookmark"></i> <span>Guardar y Editar</span>
+    </button>
+  </section>
+</section> -->
+<div class="content">
+  <form [formGroup]="supplierForm">
+    <section class="container-partition">
+      <section class="p-row p-three cont-left">
+        <section class="container-row">
+          <p class="main-subtitle subtitle-container">Datos del Seller</p>
+          <br>
+          <p class="sub-tittle">Seller</p>
+          <br>
+          <div class="visibility" *ngIf='!isSupplier'>
+            <section>Reportar a ERP</section>
+            <section id="slide">
+              <mat-slide-toggle class="form-control" formControlName="report_erp" [disabled]='idSupplier'><span
+                  *ngIf="f.report_erp.value">Si</span>
+                <span *ngIf="!f.report_erp.value">No</span>
+              </mat-slide-toggle>
+            </section>
+          </div>
+          <br>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" maxlength="50" placeholder="Razón Social" class="form-control"
+                formControlName="name" autocomplete="off" [readonly]='isSupplier' />
+            </mat-form-field>
+            <ng-container *ngIf="f.name.errors">
+              <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="f.name.errors.maxlength && (f.name.touched || submitted)">
+                La cantidad máxima de caracteres es de 50
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" maxlength="50" placeholder="Email" class="form-control"
+                formControlName="email" autocomplete="off" [readonly]='isSupplier' />
+            </mat-form-field>
+            <ng-container *ngIf="f.email.errors">
+              <mat-error *ngIf="
+                                f.email.errors.email &&
+                                (f.email.touched || submitted)
+                            ">
+                Debe ingresar un email válido (correo@ejemplo.com)
+              </mat-error>
+              <mat-error *ngIf="
+                                f.email.errors.maxlength &&
+                                (f.email.touched || submitted)
+                            ">
+                La cantidad máxima de caracteres es de 24
+              </mat-error>
+              <mat-error *ngIf="
+                                f.email.errors.required &&
+                                (f.email.touched || submitted)
+                            ">
+                Este campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Teléfono" class="form-control" formControlName="phone_number"
+                autocomplete="off" (keypress)="validatePhoneInput($event)"
+                (paste)="onPaste($event, 'phone_number', 'supplierForm')" [readonly]='isSupplier' />
+            </mat-form-field>
+            <ng-container *ngIf="f.phone_number.errors">
+              <mat-error *ngIf="
+                                f.phone_number.errors.email &&
+                                (f.phone_number.touched || submitted)
+                            ">
+                Debe ingresar un teléfono válido
+              </mat-error>
+              <mat-error *ngIf="
+                                f.phone_number.errors.maxlength &&
+                                (f.phone_number.touched || submitted)
+                            ">
+                La cantidad máxima de caracteres es de 24
+              </mat-error>
+              <mat-error *ngIf="
+                                f.phone_number.errors.required &&
+                                (f.phone_number.touched || submitted)
+                            ">
+                Este campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput placeholder="RUC" class="form-control" formControlName="ruc" autocomplete="off"
+                type="text" maxlength="11" [readonly]='isSupplier' />
+            </mat-form-field>
+            <ng-container *ngIf="f.ruc.errors">
+              <mat-error *ngIf="f.ruc.errors.required && (f.ruc.touched || submitted)">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="f.ruc.errors.maxlength && (f.ruc.touched || submitted)">
+                El RUC debe de tener 11 dígitos
+              </mat-error>
+              <mat-error *ngIf="f.ruc.errors.minlength">
+                El RUC debe de tener 11 dígitos
+              </mat-error>
+              <mat-error *ngIf="f.ruc.errors.min && (f.ruc.touched || submitted)">
+                El RUC debe de ser positivo
+              </mat-error>
+              <mat-error *ngIf="f.ruc.errors.pattern && (f.ruc.touched || submitted)">
+                Debe ser un número
+              </mat-error>
+            </ng-container>
+          </div>
+          <!-- <div>
+                        <mat-form-field>
+                            <input matInput type="text" maxlength="50" placeholder="Rubro" class="form-control"
+                                formControlName="entry" autocomplete="off" [readonly]='isSupplier'/>
+                        </mat-form-field>
+                        <ng-container *ngIf="f.entry.errors">
+                            <mat-error *ngIf="f.entry.errors.required && (f.entry.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                            <mat-error *ngIf="f.entry.errors.maxlength && (f.entry.touched || submitted)">
+                                La cantidad máxima de caracteres es de 24
+                            </mat-error>
+                        </ng-container>
+                    </div> -->
+          <div>
+            <mat-form-field>
+              <input matInput type="number" placeholder="Porcentaje de comisión" formControlName="commission" min="0"
+                max="100" (keypress)="validateInput($event)" [readonly]='isSupplier' />
+            </mat-form-field>
+            <ng-container *ngIf="f.commission.errors">
+              <mat-error *ngIf="
+                              f.commission.errors.email &&
+                              (f.commission.touched || submitted)
+                            ">
+                Debe ingresar porcentaje de comisión
+              </mat-error>
+              <mat-error *ngIf="
+                              f.commission.errors.max &&
+                              (f.commission.touched || submitted)
+                            ">
+                Debe ingresar porcentaje de comisión menor o igual a 100
+              </mat-error>
+            </ng-container>
+          </div>
+          <p class="main-subtitle">Representante post venta</p>
+          <br>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" maxlength="50" placeholder="Nombre" class="form-control"
+                formControlName="post_sell_representative_name" autocomplete="off" [readonly]='isSupplier' />
+            </mat-form-field>
+            <ng-container *ngIf="f.post_sell_representative_name.errors">
+              <mat-error *ngIf="
+                              f.post_sell_representative_name.errors &&
+                              (f.post_sell_representative_name.touched || submitted)
+                            ">
+                Este campo es obligatorio.
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" maxlength="50" placeholder="Email" class="form-control"
+                formControlName="email_sales" autocomplete="off" [readonly]='isSupplier' />
+            </mat-form-field>
+            <ng-container *ngIf="f.email_sales.errors">
+              <mat-error *ngIf="
+                              f.email_sales.errors.email &&
+                              (f.email_sales.touched || submitted)
+                            ">
+                Debe ingresar un email válido (correo@ejemplo.com)
+              </mat-error>
+              <mat-error *ngIf="
+                              f.email_sales.errors.maxlength &&
+                              (f.email_sales.touched || submitted)
+                            ">
+                La cantidad máxima de caracteres es de 24
+              </mat-error>
+              <mat-error *ngIf="
+                            f.email_sales.errors.required &&
+                            (f.email_sales.touched || submitted)
+                             ">
+                Este campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <br>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Teléfono" class="form-control"
+                formControlName="post_sell_representative" autocomplete="off" (keypress)="validatePhoneInput($event)"
+                (paste)="onPaste($event, 'post_sell_representative', 'supplierForm')" [readonly]='isSupplier' />
+            </mat-form-field>
+            <ng-container *ngIf="f.post_sell_representative.errors">
+              <mat-error *ngIf="
+                            f.post_sell_representative.errors.email &&
+                            (f.post_sell_representative.touched || submitted)
+                          ">
+                Debe ingresar un teléfono válido
+              </mat-error>
+              <mat-error *ngIf="
+                            f.post_sell_representative.errors.maxlength &&
+                            (f.post_sell_representative.touched || submitted)
+                          ">
+                La cantidad máxima de caracteres es de 24
+              </mat-error>
+              <mat-error *ngIf="
+                            f.post_sell_representative.errors.required &&
+                            (f.post_sell_representative.touched || submitted)
+                            ">
+                Este campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <!-- <section class="visibility add-margin-supplier">
+                        <section>Proveedor Delivery</section>
+                        <section id="slide">
+                            <span *ngIf="f.is_distribution_supplier.value">Si</span>
+                            <span *ngIf="!f.is_distribution_supplier.value">No</span>
+                            <mat-slide-toggle formControlName="is_distribution_supplier"></mat-slide-toggle>
+                        </section>
+                    </section> -->
+          <!-- <div *ngIf='f.is_distribution_supplier.value'>
+                        <mat-form-field>
+                            <input matInput type="number" maxlength="6" placeholder="Cantidad máxima de distribución por día" class="form-control" formControlName="max_distribution" autocomplete="off" />
+                        </mat-form-field>
+                    </div>  -->
+
+          <!-- <p class="sub-tittle">Imagen Proveedor</p> -->
+          <!-- <section>
+                        <section class="img-container-one" *ngIf="lisAddPicture.length > 0">
+                            <section class="images" *ngFor="let picture of lisAddPicture; let i = index">
+                                <section class="icon-open-image">
+                                    <app-option-image-menu [imageSearch]='picture'></app-option-image-menu>
+                                </section>
+                                <img src="{{ url_attachment }}{{
+                  lisAddPicture[lisAddPicture.length - i - 1]
+                }}" (click)="showWindowMultimedia('lisAddPicture', 0)" width="250" alt="" />
+                                <section class="icon-delete">
+                                    <button type="button" class="primary-button delete-button"
+                                        (click)="deleteImage(i + 1, 'lisAddPicture')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </section>
+                            </section>
+                        </section>
+                        <section class="one-image column" [hidden]="lisAddPicture.length > 0"
+                            *ngIf="lisAddPicture.length == 0">
+                            <app-uploader (selectImage)="selectImageMainWeb($event,'lisAddPicture')"></app-uploader>
+                            <section>
+                                <button type='button' (click)="showWindowMultimedia('lisAddPicture')"
+                                    class="primary-button save-button button-subtitle button-width">
+                                    Selecciona desde la galeria
+                                </button>
+                            </section>
+                        </section>
+                    </section> -->
+          <!-- 
+          <section [hidden]="lisAddPicture.length > 0">
+          <app-file-upload #uploadimage (infoPictures)="dataPictureSave($event)"></app-file-upload>
+            <section *ngIf="lisAddPicture.length == 0" class="part-section-empty-image"
+              (click)="showWindowMultimedia('marker_position')">
+              <i class="fas fa-file-image"></i>
+              <p>selecciona una imagen</p>
+            </section>
+          </section>
+          <section class="img-container-one" *ngIf="lisAddPicture.length > 0">
+            <section class="images" *ngFor="let picture of lisAddPicture; let i = index">
+              <img src="{{ url_attachment }}{{
+                  lisAddPicture[lisAddPicture.length - i - 1]
+                }}" width="250" alt="" />
+              <button type="button" class="primary-button delete-button" (click)="deleteImage(i + 1)">
+                <i class="fas fa-trash-alt"></i> &nbsp;Eliminar
+              </button>
+            </section>
+          </section>
+ -->
+
+          <br>
+          <div>
+            <mat-form-field>
+              <textarea matInput placeholder="Descripción" maxlength="500" cdkTextareaAutosize cdkAutosizeMinRows="3"
+                cdkAutosizeMaxRows="7" class="form-control" formControlName="description"
+                [readonly]='isSupplier'></textarea>
+            </mat-form-field>
+            <ng-container *ngIf="f.description.errors">
+              <mat-error *ngIf="
+                  f.description.errors.required &&
+                  (f.description.touched || submitted)
+                ">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="
+                  f.description.errors.maxlength &&
+                  (f.description.touched || submitted)
+                ">
+                La cantidad máxima de caracteres es de 1500
+              </mat-error>
+            </ng-container>
+          </div>
+          <br /><br />
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <p class="main-subtitle">Marcas</p>
+                  <hr />
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="scrollable">
+                <section *ngFor="let brand of listBrand" class="brand-section">
+                  <mat-checkbox (change)="updateBrandList($event, brand)" [disabled]='isSupplier'
+                    [checked]="brand.select">
+                    {{ brand.name }}
+                  </mat-checkbox>
+                </section>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+
+          <hr />
+
+          <!-- <mat-accordion>
+                      <mat-expansion-panel [expanded]="true">
+                          <mat-expansion-panel-header>
+                              <mat-panel-title>
+                                  <p class="main-subtitle">Grupos de categorías</p>
+                                  <hr />
+                              </mat-panel-title>
+                          </mat-expansion-panel-header>
+                          <div class="scrollable group-category">
+                              <section *ngFor="let groupCategory of listGroupCategory" class="brand-section">
+                                  <mat-checkbox (change)="updateGroupCategoryList($event, groupCategory)" [checked]="groupCategory.select">{{ groupCategory.name }}
+                                  </mat-checkbox>
+                              </section>
+                          </div>
+                      </mat-expansion-panel>
+                    </mat-accordion>
+
+                    <hr />
+
+                    <mat-accordion>
+                      <mat-expansion-panel [expanded]="true">
+                          <mat-expansion-panel-header>
+                              <mat-panel-title>
+                                  <p class="main-subtitle">Categoría</p>
+                                  <hr />
+                              </mat-panel-title>
+                              <div class="subtitle-container-expansion">
+                              </div>
+                          </mat-expansion-panel-header>
+                          <section>
+                              <div>
+                                  <mat-form-field>
+                                      <mat-select placeholder="Grupo" name="type" class="form-control" formControlName="group">
+                                          <mat-option *ngFor="let addElement of groupList" [value]="addElement._id">
+                                              {{ addElement.name }}
+                                          </mat-option>
+                                      </mat-select>
+                                  </mat-form-field>
+
+                                  <ng-container *ngIf="f.group.errors">
+                                      <mat-error *ngIf="
+                      f.group.errors.required && (f.group.touched || submitted)
+                    ">
+                                          El campo es obligatorio
+                                      </mat-error>
+                                  </ng-container>
+                              </div>
+
+                              <section>
+                                  <section class="row">
+                                      <section class="col-100">
+                                          <ng-container>
+                                              <mat-error *ngIf="submitted && selectCategory.length == 0 && f.group.value" style='margin:0'>
+                                                  Selecciona una categoria
+                                              </mat-error>
+                                          </ng-container>
+                                          <app-dynamic-tree-view (categorySelected)="displayFilters($event)" #categoryTree>
+                                          </app-dynamic-tree-view>
+                                      </section>
+                                  </section>
+                              </section>
+                          </section>
+                      </mat-expansion-panel>
+                    </mat-accordion> -->
+
+
+          <!-- <mat-accordion>
+                        <mat-expansion-panel [expanded]="true">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    <p class="main-subtitle">Mis Proveedores Delivery</p>
+                                    <hr />
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="scrollable">
+                                <section *ngFor="let supplierDelivery of listSupplierDelivery" class="brand-section">
+                                    <mat-checkbox (change)="updateSupplierList($event, supplierDelivery)" [checked]="supplierDelivery.select">{{ supplierDelivery.name }}
+                                    </mat-checkbox>
+                                </section>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion> -->
+
+        </section>
+      </section>
+      <section class="p-row p-seven cont-right">
+        <section class="container-row" *ngIf='!isSupplier'>
+          <mat-tab-group mat-align-tabs="start" (selectedTabChange)="onTabChanged($event);">
+            <mat-tab *ngFor="let groupCategory of listGroupCategory" label="{{ groupCategory.name }}">
+              <section class="row" [ngStyle]='{"align-items": "center"}'>
+                <h2>Categorías</h2> 
+                <button class='button button-select-all' (click)='activeAll()' *ngIf='!fullCategorySelect'>Seleccionar todo</button>
+                <button class='button button-select-all' (click)='cleanAll()' *ngIf='fullCategorySelect'>Limpiar todo</button>
+              </section>
+            </mat-tab>
+          </mat-tab-group>
+          <section class="col-100">
+            <app-dynamic-tree-view (categorySelected)="displayFilters($event)" #categoryTree>
+            </app-dynamic-tree-view>
+          </section>
+        </section>
+        <section *ngIf="idSupplier" class="container-row send-method" style="height: auto;">
+          <p class="sub-tittle main-subtitle subtitle-buttton subtitle-container">
+            Métodos de Envío
+            <ng-container>
+              <button class="primary-button save-button button-subtitle" (click)="newMethod()">
+                <i class="fas fa-plus"></i> &nbsp;Crear método de envío
+              </button>
+            </ng-container>
+          </p>
+          <!-- <section class="container-row fixed  window-buttton">
+            <section class="buttons-list"></section>
+          </section> -->
+          <section class="container-table" style="height: auto !important;">
+            <table id="table-main">
+              <thead>
+                <tr>
+                  <td><b>Nombre</b></td>
+                  <!-- <td><b>Código</b></td>
+                  <td><b>Código ERP</b></td> -->
+                  <td><b>Activo</b></td>
+                  <!-- <td><b>Acciones</b></td> -->
+                </tr>
+              </thead>
+              <tbody style="height: auto !important; max-height: 210px !important;">
+                <tr *ngFor="let methodSend of listMethodSend"
+                  (click)="openMethod(methodSend); $event.stopPropagation()">
+                  <td>{{ methodSend.name }}</td>
+                  <!--  <td>{{ methodSend.code }}</td>
+                  <td>{{ methodSend.codeERP }}</td> -->
+                  <td> <span *ngIf="methodSend.active" class="active"> Activado</span>
+                    <span *ngIf="!methodSend.active" class="not-active">Desactivado</span>
+                    <!-- {{ methodSend.active }} -->
+                  </td>
+                  <!-- <td (click)="
+                      OpenModalDeleteConfirm(methodSend);
+                      $event.stopPropagation()
+                    ">
+                                        <i class="fas fa-trash-alt delete"></i>
+                                    </td> -->
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </section>
+
+        <section class="container-row users">
+          <p class="sub-tittle main-subtitle subtitle-container">
+            Usuarios
+            <button [ngClass]="{ 'button-disabled': !idSupplier }" class="primary-button save-button button-subtitle"
+              (click)="openModalUser()" [disabled]="!idSupplier">
+              <i class="fas fa-plus"></i> &nbsp;Nuevo Usuario
+            </button>
+          </p>
+          <br />
+          <section class="container-row fixed  window-buttton">
+            <section class="container-row fixed" style="width: 101%;">
+              <app-grid #gridList [expand_table]="false" (actionAnswer)=actionAnswer($event)> </app-grid>
+            </section>
+          </section>
+        </section>
+
+        <section class="container-row " *ngIf="idSupplier">
+          <p class='main-subtitle subtitle-container'>Sedes
+              <button class="primary-button save-button" style="float: right; top: -15px;" 
+              (click)="openLocalsDialog('new', null, idSupplier)">
+              <i class="fas fa-plus"></i> Agregar</button>
+          </p>
+          <br />
+          <br>
+          <section class="container-address">
+              <section *ngFor="let local of listLocals" class="card">
+                  <section>
+                      <header>
+                          {{ local.name }}
+                          <hr />
+                      </header>
+                      <section>
+                          <div class="section-info">
+                              <p class="title-section">Departamento - Provincia - Distrito</p>
+                              <p>{{ local.department.name }} - {{ local.province.name }} - {{ local.district.name }}</p>
+                          </div>
+                          <div class="section-info">
+                              <p class="title-section">Teléfono</p>
+                              <p>{{ local.phone }}</p>
+                          </div>
+                          <div class="section-info">
+                              <p class="title-section">Email</p>
+                              <p>{{ local.email }}</p>
+                          </div>
+                          <div class="section-info">
+                              <p class="title-section">Dirección</p>
+                              <p>{{ local.address }}</p>
+                          </div>
+                      </section>
+                  </section>
+                  <div class="section-info center">
+                      <button type="button" class="primary-button save-button"
+                      (click)="openLocalsDialog('edit', local, idSupplier)">
+                          <i class="fas fa-edit"></i>
+                      </button>
+                      <button type="button" class="primary-button delete-button"
+                      (click)="deleteLocal(local)">
+                          <i class="fas fa-trash-alt"></i>
+                      </button>
+                  </div>
+              </section>
+          </section>
+      </section>
+
+      </section>
+    </section>
+  </form>
+  <!-- </div>
+<article class="container-modal" *ngIf="showAddBrand">
+  <section class="modal-body modal-small">
+    <header>
+      <strong>Elige las marca</strong>
+    </header>
+    <section class="body">
+      <section>
+        <section *ngFor="let brand of listBrand" class="brand-section">
+          <mat-checkbox [(ngModel)]="brand.select">{{
+            brand.name
+          }}</mat-checkbox>
+        </section>
+      </section>
+    </section>
+    <footer>
+      <button class="button-option button-cancel" (click)="closeBrandSelect()">
+        Cancelar
+      </button>
+      <button class="button-option button-confirm" (click)="addBrand()">
+        Aceptar
+      </button>
+    </footer>
+  </section>
+</article>
+
+<article class="container-modal" *ngIf="showAddSupplierDelivery">
+  <section class="modal-body modal-small">
+    <header>
+      <strong>Elige los provedores delivery</strong>
+    </header>
+    <section class="body">
+      <section>
+        <section *ngFor="let supplierDelivery of listSupplierDelivery" class="brand-section">
+          <mat-checkbox [(ngModel)]="supplierDelivery.select">{{
+            supplierDelivery.name
+          }}</mat-checkbox>
+        </section>
+      </section>
+    </section>
+    <footer>
+      <button class="button-option button-cancel" (click)="closeSupplierDeliverySelect()">
+        Cancelar
+      </button>
+      <button class="button-option button-confirm" (click)="addSupplierDelivery()">
+        Aceptar
+      </button>
+    </footer>
+  </section>
+</article> -->
+</div>
+<article class="container-modal" *ngIf="showModalUser">
+  <section class="modal-body modal-small">
+    <header>
+      <strong>Nuevo Usuario</strong>
+      <div id="close-button" (click)="closeUser()">&times;</div>
+    </header>
+    <section class="body">
+      <form [formGroup]="userForm">
+        <section>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Nombre" class="form-control" formControlName="name"
+                autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="u.name.errors">
+              <mat-error *ngIf="
+                    u.name.errors.required &&
+                    (u.name.touched || submittedUser)
+                  ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Apellido Paterno" class="form-control"
+                formControlName="last_name_father" autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="u.last_name_father.errors">
+              <mat-error *ngIf="
+                                u.last_name_father.errors.required &&
+                                (u.last_name_father.touched || submittedUser)
+                            ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Apellido Materno" class="form-control"
+                formControlName="last_name_mother" autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="u.last_name_mother.errors">
+              <mat-error *ngIf="
+                                u.last_name_mother.errors.required &&
+                                (u.last_name_mother.touched || submittedUser)
+                            ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Número de documento" class="form-control"
+                formControlName="number_document" autocomplete="off" maxlength="8" (keypress)="validateInput($event)"
+                (paste)="onPasteDocument($event, 'number_document', 'userForm')" />
+            </mat-form-field>
+            <ng-container *ngIf="u.number_document.errors">
+              <mat-error *ngIf="u.number_document.errors.required && (u.number_document.touched || submitted)">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="u.number_document.errors.maxlength && (u.number_document.touched || submitted)">
+                El número de documento debe de tener 8 dígitos
+              </mat-error>
+              <mat-error *ngIf="u.number_document.errors.minlength">
+                El número de documento debe de tener 8 dígitos
+              </mat-error>
+              <mat-error *ngIf="u.number_document.errors.min && (u.number_document.touched || submitted)">
+                El número de documento debe de ser positivo
+              </mat-error>
+              <mat-error *ngIf="u.number_document.errors.pattern && (u.number_document.touched || submitted)">
+                Debe ser un número
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Teléfono" class="form-control" formControlName="phone"
+                autocomplete="off" (keypress)="validatePhoneInput($event)"
+                (paste)="onPaste($event, 'phone', 'userForm')" />
+            </mat-form-field>
+            <ng-container *ngIf="u.phone.errors">
+              <mat-error *ngIf="
+                                u.phone.errors.required &&
+                                (u.phone.touched || submittedUser)
+                            ">
+                El campo es obligatorio
+              </mat-error>
+            </ng-container>
+          </div>
+          <div>
+            <mat-form-field>
+              <input matInput type="email" placeholder="Correo" class="form-control" formControlName="email"
+                autocomplete="off" />
+            </mat-form-field>
+            <ng-container *ngIf="u.email.errors">
+              <mat-error *ngIf="
+                    u.email.errors.required &&
+                    (u.email.touched || submittedUser)
+                  ">
+                El campo es obligatorio
+              </mat-error>
+              <mat-error *ngIf="
+                              u.email.errors.email && (u.email.touched || submittedUser) || 
+                              u.username.errors.email
+                            ">
+                Ingrese un email válido
+              </mat-error>
+            </ng-container>
+          </div>
+        </section>
+      </form>
+    </section>
+    <footer>
+      <button class="primary-button button-subtitle cancel-button" (click)="closeUser()">
+        Cancelar
+      </button>
+      <button [ngClass]="{ 'button-disabled': !idSupplier }"
+        class="primary-button save-button button-subtitle save-button-style" [disabled]="!idSupplier"
+        (click)="saveUser()">
+        Crear
+      </button>
+      <br>
+      <br>
+      <ng-container *ngIf="!idSupplier">
+        <span class="error-info">No puede crear un usuario sin haber creado un seller.</span>
+      </ng-container>
+    </footer>
+  </section>
+</article>
+<app-multimedia-gallery #multimediaList (imageChoose)="dataPictureSave($event)"></app-multimedia-gallery>
+<app-dialog-confirm #deleteSupplier (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<app-dialog-confirm #deleteMethod (answerModal)="acceptModalMethod($event)" [RightButtonText]="'delete'">
+</app-dialog-confirm>

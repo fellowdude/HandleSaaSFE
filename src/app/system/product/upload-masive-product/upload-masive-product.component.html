@@ -1,0 +1,69 @@
+<article class="container-modal">
+    <section class="modal-body modal-big">
+        <header *ngIf='!finishProcess'>
+            <p>Procesando</p>
+            <p [ngStyle]="{'margin-top':'10px !important'}"><span
+                    class="upload-summary">{{totalUpload}}/{{listUpload.length}}
+                    procesando</span></p>
+        </header>
+        <header *ngIf='finishProcess'>
+            <p>Proceso terminado</p>
+            
+        </header>
+        <section>
+            <div [ngStyle]='{"height": "7px","width": "100%","background": "#f2f2f2"}'>
+                <div [ngStyle]='{"width": percentUpload+ "%","height": "7px","background": "#1d72e8"}'>
+
+                </div>
+            </div>
+        </section>
+        <section class="body row">
+            <section class="table" [ngStyle]='{"width": "100%"}'>
+                <section class="row">
+                    <section [ngStyle]='{"width":"75px"}'>
+
+                    </section>
+
+                    <section [ngStyle]='{"width":"calc(100% - 175px)"}'>
+                        Nombre
+                    </section>
+                    <section [ngStyle]='{"width":"100px"}'>
+                        Estado
+                    </section>
+                </section>
+                <section *ngFor='let product of listUpload' class="row table-row">
+                    <section [ngStyle]='{"width":"75px"}'>
+                        <img src="./assets/img/uploading.gif" width="18px" alt="" *ngIf='product.state == "uploading"'>
+                        <i class="fas fa-check-circle" *ngIf='product.state == "ok"'
+                            [ngStyle]='{"color": "#10d09b"}'></i>
+                        <i class="fas fa-times-circle" *ngIf='product.state == "error"'
+                            [ngStyle]='{"color": "#ff4081"}'></i>
+                        <i class="fas fa-pause-circle" *ngIf='!product.state'></i>
+
+                    </section>
+                    <section [ngStyle]='{"width":"calc(100% - 175px)","text-align": "left"}'>
+                        {{product.name}}
+                    </section>
+                    <section [ngStyle]='{"text-align": "center","width":"100px"}'>
+                        <span *ngIf='!product.finish && !product.errorSave'
+                            class="state state-pendding">Pendiente</span> <span *ngIf='product.finish'
+                            class="state state-ok">Terminado</span>
+                        <span *ngIf='product.errorSave' class="state state-error">Error</span>
+                    </section>
+
+                </section>
+
+            </section>
+        </section>
+        <footer *ngIf='finishProcess'>
+            <button type="button" class="primary-button" (click)="closeProcess()">
+                cerrar
+            </button>
+
+        </footer>
+    </section>
+</article>
+
+<section id='block-window' *ngIf='processing'>
+
+</section>

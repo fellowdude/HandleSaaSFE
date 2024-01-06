@@ -1,0 +1,50 @@
+<article class="container-modal" *ngIf="showModal">
+    <section class="modal-body modal-small">
+        <header>
+            <strong>Detalle razón de descuento</strong>
+            <div id="close-button" (click)="close()">&times;</div>
+        </header>
+        <section class="body">
+            <p>
+                Razón de descuento por <strong>{{ entityName }}: {{ entity && entity.name }}
+                </strong>
+                
+            </p>
+            <br>
+            <p>
+                Regla de descuento: <strong>{{ entity && entity.rules_admin.name}}
+                </strong>
+            </p>
+            <br>
+            <p>
+                Válido para las fechas: 
+            </p>
+            <div *ngFor="let date of dates">
+                <strong>{{ date[0] }} al {{ date[1] }}
+                </strong> 
+                <br>
+            </div>
+            <br>
+            <section>
+                <img
+                [src]="
+                    product.product_id.image_cover !== ''
+                      ? url_attachment + product.product_id.image_cover
+                      : 'assets/img/Logo LUXURY solo.png'
+                  "
+                  alt=""
+                  width= "100px"
+                />
+            </section>
+            <section>
+                <p>{{ product.product_id.name }}</p>
+                <p>SKU: {{ product.product_id.SKU }}</p>
+            </section>
+        </section>
+        <footer>
+            <button class="primary-button button-subtitle cancel-button" (click)="close()">
+                Cerrar
+            </button> 
+        </footer>
+    </section>
+</article>

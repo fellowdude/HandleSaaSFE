@@ -1,0 +1,251 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+    <div class="container">
+        <div class="title"> Perfil de Empresa</div>
+        <div class="buttons-container">
+            <button type="button" class="primary-button" (click)='updateInfo()'><i class="fas fa-plus-circle"></i>
+				Guardar</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="content">
+    <form [formGroup]='companyForm'>
+        <section class='container-partition'>
+            <section class='p-row p-four cont-left'>
+                <section class='container-row'>
+                    <p class='main-subtitle subtitle-container'> Características de la Empresa</p>
+                    <br>
+                    <div class='container-icon'>
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Nombre de la empresa" class="form-control" formControlName="bussiness_name" autocomplete="off">
+                            </mat-form-field>
+                        </div>
+
+                        <ng-container *ngIf='f.bussiness_name.errors'>
+                            <mat-error *ngIf="f.bussiness_name.errors.required && (f.bussiness_name.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </div>
+                    <div>
+                        <button type='button' class='primary-button button-subtitle outline-button' (click)='openMap()'>Geolocaliza tu
+							dirección</button>
+                    </div>
+                    <div class='container-icon'>
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Dirección" class="form-control" formControlName="contact_address" autocomplete="off">
+                            </mat-form-field>
+                            <ng-container *ngIf='f.contact_address.errors'>
+                                <mat-error *ngIf="f.contact_address.errors.required && (f.contact_address.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+
+                    </div>
+
+                    <div class='field-customise'>
+                        <span>Longitud</span>
+                        <label> {{f.position_lng.value}} </label>
+                    </div>
+
+                    <div class='field-customise'>
+                        <span>Latitud</span>
+                        <label> {{f.position_lat.value}} </label>
+                    </div>
+
+                    <div class='container-icon'>
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Email de contacto" class="form-control" formControlName="contact_email" autocomplete="off">
+                            </mat-form-field>
+                            <ng-container *ngIf='f.contact_email.errors'>
+                                <mat-error *ngIf="f.contact_email.errors.required && (f.contact_email.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                    </div>
+
+                    <div class='container-icon'>
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Teléfono" class="form-control" formControlName="contact_phone" autocomplete="off"
+                                (keypress)="validatePhoneInput($event)">
+                            </mat-form-field>
+                            <ng-container *ngIf='f.contact_phone.errors'>
+                                <mat-error *ngIf="f.contact_phone.errors.required && (f.contact_phone.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+
+                    </div>
+
+
+                    <section>
+                        <span>Listado de íconos</span>
+                    </section>
+                    <section class="icon-section">
+
+                        <!-- 	<div>
+							<ng-container *ngIf='!f.bussiness_img.value'>
+								<section class='container-image-icon' (click)='openChangeIcon("bussiness_img")'>
+									<i _ngcontent-c6="" class="fas fa-file-image"></i>
+									<p>Ícono</p>
+								</section>
+							</ng-container>
+							<ng-container *ngIf='f.bussiness_img.value'>
+								<i class="{{f.bussiness_img.value}} icon-font"
+									(click)='openChangeIcon("bussiness_img")'></i>
+							</ng-container>
+						</div> -->
+
+
+
+                        <div>
+                            <div class="section-icon">
+                                <ng-container *ngIf='!f.contact_address_img.value'>
+                                    <section class='container-image-icon' (click)='openChangeIcon("contact_address_img")'>
+                                        <i _ngcontent-c6="" class="fas fa-file-image"></i>
+                                        <p>Ícono</p>
+                                    </section>
+                                </ng-container>
+                                <ng-container *ngIf='f.contact_address_img.value'>
+                                    <i class="{{f.contact_address_img.value}} icon-font" (click)='openChangeIcon("contact_address_img", f.contact_address_img.value)'></i>
+                                </ng-container>
+                            </div>
+                            <div>
+                                Geolocalización
+                            </div>
+
+                        </div>
+                        <div>
+                            <div class="section-icon">
+                                <ng-container *ngIf='!f.contact_email_img.value'>
+                                    <section class='container-image-icon' (click)='openChangeIcon("contact_email_img")'>
+                                        <i _ngcontent-c6="" class="fas fa-file-image"></i>
+                                        <p>Ícono</p>
+                                    </section>
+                                </ng-container>
+                                <ng-container *ngIf='f.contact_email_img.value'>
+                                    <i class="{{f.contact_email_img.value}} icon-font" (click)='openChangeIcon("contact_email_img", f.contact_email_img.value)'></i>
+                                </ng-container>
+                            </div>
+                            <div>
+                                Email
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="section-icon">
+                                <ng-container *ngIf='!f.contact_phone_img.value'>
+                                    <section class='container-image-icon' (click)='openChangeIcon("contact_phone_img")'>
+                                        <i _ngcontent-c6="" class="fas fa-file-image"></i>
+                                        <p>Ícono</p>
+                                    </section>
+                                </ng-container>
+                                <ng-container *ngIf='f.contact_phone_img.value'>
+                                    <i class="{{f.contact_phone_img.value}} icon-font" (click)='openChangeIcon("contact_phone_img", f.contact_phone_img.value)'></i>
+                                </ng-container>
+                            </div>
+                            <div>
+                                Teléfono
+                            </div>
+                        </div>
+                    </section>
+                </section>
+            </section>
+            <section class='p-row p-six cont-right'>
+                <section class='container-row'>
+                    <p class="main-subtitle subtitle-container">Datos Adicionales</p>
+                    <br>
+                    <div>
+                        <span>Marcador de mapa</span>
+                        <section *ngIf='!f.marker_position.value'>
+
+                            <section class='one-image column'>
+
+                                <app-uploader (selectImage)="selectImageMainWeb($event,'marker_position')">
+                                </app-uploader>
+                                <section>
+                                    <button type='button' (click)="showWindowMultimedia('marker_position')" class="primary-button save-button button-subtitle button-width">
+										Selecciona desde la galeria
+									</button>
+                                </section>
+                            </section>
+                        </section>
+
+                        <section class="img-container-one">
+                            <section class="images img-add" *ngIf='f.marker_position.value'>
+                                <section class="icon-open-image">
+                                    <app-option-image-menu [imageSearch]='f.marker_position.value'></app-option-image-menu>
+                                </section>
+                                <img src="{{ urlImgSearch }}{{f.marker_position.value}}" (click)="showWindowMultimedia('marker_position')" width="250" alt="" />
+
+                                <section class="icon-delete icon-delete-add">
+                                    <button type="button" class="primary-button delete-button" (click)="dataPictureDelete()">
+										<i class="fas fa-trash-alt"></i>
+									</button>
+                                </section>
+
+                            </section>
+                        </section>
+
+                        <!-- <div class="img-container-one">
+							<div class='images' *ngIf='f.marker_position.value'
+								 (click)='showWindowMultimedia("marker_position")'>
+								<img src="{{urlImgSearch}}{{f.marker_position.value}}" alt="">
+							</div>
+						</div> -->
+                    </div>
+                    <div class='container-icon'>
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Versión Móvil" class="form-control" formControlName="mobile_version" autocomplete="off">
+                            </mat-form-field>
+
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </section>
+
+    </form>
+</div>
+<section>
+    <article class='container-modal' *ngIf='showAddIcon'>
+        <section class='modal-body modal-small'>
+            <header>
+                <strong>Ícono</strong>
+                <div id="close-button" (click)="closeAddIcon()">&times;</div>
+            </header>
+            <section class='body'>
+                <mat-form-field>
+                    <input matInput [(ngModel)]='infoIcon' type="text" placeholder="Ingrese nombre de ícono" class="form-control" autocomplete="off" />
+                </mat-form-field>
+                <span><b>{{!infoIcon ? 'ejemplo:' : 'visualización:'}}</b> {{infoIcon || 'fas fa-phone'}} <i class="{{infoIcon || 'fas fa-phone'}} icon-font"></i></span>
+                <br>
+                <br>
+                <b>Buscar íconos en &nbsp;</b>
+                <span (click)='goToURL("https://fontawesome.com/icons?d=gallery")' style="cursor: pointer; text-decoration: underline;">Fontawesome
+				</span>
+            </section>
+            <footer>
+                <button class='primary-button button-subtitle cancel-button' (click)='closeAddIcon()'>Cancelar</button>
+                <button class='primary-button save-button button-subtitle save-button-style' (click)='iconChange(infoIcon)'>Aceptar</button>
+            </footer>
+        </section>
+    </article>
+</section>
+
+<app-maps-location #mapsLocation (sendInfo)="getInfoMap($event)"></app-maps-location>
+<app-multimedia-gallery #multimediaList (imageChoose)=setSeleccionado($event)></app-multimedia-gallery>

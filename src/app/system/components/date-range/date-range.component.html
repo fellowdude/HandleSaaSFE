@@ -1,0 +1,103 @@
+<section>
+  <article class='container-modal' *ngIf='showModalTime'>
+    <section class='modal-body modal-small'>
+      <header>
+        <strong>Elige un Horario</strong>
+        <div id="close-button" (click)="closeModalTime()">&times;</div>
+      </header>
+      <section class='body'>
+
+        <section class='timer'>
+          <section class='container-timer'>
+            <div>
+              <i class="fas fa-caret-up" (click)='addTime("hour")'></i>
+            </div>
+            <input type="number" [(ngModel)]='hourTime.hour' (ngModelChange)='validTimer("hour",hourTime.hour)'>
+            <div>
+              <i class="fas fa-caret-down" (click)='downTime("hour")'></i>
+            </div>
+          </section>
+          <section class='container-timer'>
+            <p class='separator'>:</p>
+          </section>
+          <section class='container-timer'>
+            <div>
+              <i class="fas fa-caret-up" (click)='addTime("minute")'></i>
+            </div>
+            <input type="number" [(ngModel)]='hourTime.minute' (ngModelChange)='validTimer("minute",hourTime.minute)'>
+            <div>
+              <i class="fas fa-caret-down" (click)='downTime("minute")'></i>
+            </div>
+          </section>
+        </section>
+      </section>
+      <footer>
+        <p *ngIf='hourTime.errorSave'>{{hourTime.meesageError}}</p>
+        <button class='primary-button button-subtitle cancel-button' (click)='closeModalTime()'>Cancelar</button>
+        <button class='primary-button save-button button-subtitle save-button-style' (click)='saveTime()'>Aceptar</button>
+      </footer>
+    </section>
+  </article>
+</section>
+<form [formGroup]='dateRangeForm'>
+  <section>
+    <section>
+      <section class='date-assign'>
+        <section>
+          <mat-form-field>
+            <input 
+              matInput 
+              [matDatepicker]="picker" 
+              formControlName="date_start" 
+              placeholder="Fecha de inicio"
+              [max]="dateRangeForm.controls.date_end.value"
+              disabled>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker disabled="false"></mat-datepicker>
+          </mat-form-field>
+          <ng-container *ngIf='f.date_start.errors'>
+            <mat-error *ngIf="f.date_start.errors.required && (f.date_start.touched || submitted || 
+            (f.date_start.status == 'INVALID' && submitted))">
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </section>
+        <div class='time-day' *ngIf='f.date_start.value'>
+          <button class="primary-button button-subtitle cancel-button" style="margin-left: 25px !important;" (click)='openModalTime("hour_start")' *ngIf='!f.hour_start.value'>Hora Inicio</button>
+          <button class="primary-button button-subtitle cancel-button" style="margin-left: 25px !important;" 
+          (click)='openModalTime("hour_start")' *ngIf='f.hour_start.value'>
+            <span>{{f.hour_start.value | date:'HH : mm'}}</span>
+          </button>
+        </div>
+      </section>
+      <section class='date-assign'>
+        <section>
+          <mat-form-field>
+            <input 
+              matInput 
+              [matDatepicker]="pickerEndHour" 
+              [min]="dateRangeForm.controls.date_start.value"
+              formControlName="date_end" 
+              placeholder="Fecha de Fin">
+            <mat-datepicker-toggle matSuffix [for]="pickerEndHour"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEndHour disabled="false"></mat-datepicker>
+          </mat-form-field>
+          <!-- <ng-container *ngIf='f.date_end.errors'>
+            <mat-error *ngIf="f.date_end.errors.required && (f.date_end.touched || submitted || 
+            (f.date_end.status == 'INVALID' && submitted))">
+              El campo es obligatorio
+            </mat-error>
+          </ng-container> -->
+        </section>
+        <div class='time-day' *ngIf='f.date_end.value'>
+          <button class="primary-button button-subtitle cancel-button" style="margin-left: 25px !important;" (click)='openModalTime("hour_end")' *ngIf='!f.hour_end.value'>Hora Fin</button>
+          <button class="primary-button button-subtitle cancel-button" style="margin-left: 25px !important;" 
+          (click)='openModalTime("hour_end")' *ngIf='f.hour_end.value'>
+            <span>{{f.hour_end.value | date:'HH : mm'}}</span>
+          </button>
+        </div>
+      </section>
+    </section>
+    <p *ngIf='this.hourTime.errorCalendar'>{{this.hourTime.meesageError}}</p>
+  </section>
+</form>

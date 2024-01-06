@@ -1,0 +1,5 @@
+<button type='button' mat-button [matMenuTriggerFor]="menu"><i class="fas fa-ellipsis-h"></i></button>
+<mat-menu #menu="matMenu">
+    <button mat-menu-item (click)='openImage()'>Abrir en una nueva ventana</button>
+    <button mat-menu-item (click)='copyTextMessage()'>Copiar nombre</button>
+</mat-menu>

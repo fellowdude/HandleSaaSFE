@@ -1,0 +1,49 @@
+<article class="container-modal" *ngIf="showwindowMedia">
+  <section class="modal-card">
+    <div class="modal-card-header">
+      <header>
+        <div class="title"> Galería Multimedia</div>
+        <div id="close-button" (click)="closeWindow()">&times;</div>
+      </header>
+      <div class="options-wrapper">
+        <span class="option-item left" (click)="changeStateFileUpload(true)"
+          [ngClass]="{ 'active-section-option': uploadFile }">Subir Archivos</span>
+        <span class="option-item right" (click)="changeStateFileUpload(false)"
+          [ngClass]="{ 'active-section-option': !uploadFile }">Listado Multimedia</span>
+      </div>
+    </div>
+    <div class="modal-card-body" *ngIf="uploadFile">
+      <form [formGroup]="uploadForm" (ngSubmit)="uploadSubmit()" (click)="openUploadFiles()">
+        <div class="drop-zone">
+          <ng-container *ngIf="uploader">
+            <div ng2FileDrop [uploader]="uploader" (fileOver)="uploadFileChange()" class="drop-zone container-drop">
+              <p><i class="fas fa-cloud-upload-alt"></i></p>
+              <p>Las imágenes deben pesar máximo {{config.maxSize}}kb</p>
+              <p *ngIf='!config.noValidDimension && config.maxDimension.width > 0 && config.maxDimension.height > 0'>Las imágenes deben medir {{config.maxDimension.width}}px
+                X {{config.maxDimension.height}}px</p>
+              <br>
+              <p>Arrastra aquí tu imagen, o haz click</p>
+            </div>
+          </ng-container>
+        </div>
+        <input type="file" #fileUpload id="fileUpload" name="fileUpload" multiple="multiple" accept="image/*"
+          style="display: none;" />
+      </form>
+    </div>
+    <div class="modal-card-body" *ngIf="!uploadFile">
+      <app-grid #gridList (itemSelecReturn)="itemSelecReturn($event)" (itemDeleted)="itemDeleted($event)" [expand_table]='false'>
+      </app-grid>
+    </div>
+    <div class="modal-card-footer">
+      <button type='button' class="primary-button button-subtitle cancel-button" (click)="closeWindow()">
+        Cancelar
+      </button>
+      <button type='button' class="primary-button save-button button-subtitle save-button-style"
+        (click)="selectImage()">
+        Asignar Imagen
+      </button>
+    </div>
+  </section>
+
+
+</article>

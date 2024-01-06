@@ -1,0 +1,25 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed }">
+    <div class="container">
+      <div class="title">Centro de Notificaciones</div>
+    </div>
+</div>
+<div class="content">
+    <section class="container-partition">
+        <section class="p-row p-three cont-left">
+            <section class="container-row">
+                <app-filter-notifications></app-filter-notifications>
+                <br/><br/>
+                <app-label-notifications></app-label-notifications>
+            </section>
+        </section>
+        <section class="p-row p-seven cont-right">
+            <section class="container-row">
+                <ng-container>
+                    <app-list-notifications #listNotifications></app-list-notifications>
+                </ng-container>
+            </section>
+        </section>
+    </section>
+</div>

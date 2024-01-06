@@ -1,0 +1,262 @@
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+    <div class="container">
+        <div class="return-button"><i (click)="returnCustomer()" class="fas fa-chevron-left"></i></div> &nbsp;
+        <div class="title">Detalle de Cliente</div>
+        <div class="buttons-container">
+            <button type="button" class="primary-button " (click)="actionCustomer('block')"
+                *ngIf='f.state.value == "Habilitado" && validBlockUser'><i class="fas fa-lock"></i> &nbsp;
+                Bloquear</button>
+            <button type="button" class="primary-button " (click)="actionCustomer('unlock')"
+                *ngIf='f.state.value == "Bloqueado" && validUnlokUser '><i class="fas fa-unlock-alt"></i> &nbsp;
+                Habilitar</button>
+
+            <button type="button" class="primary-button " (click)="deleteCustomerConfirm()"><i
+                    class="fas fa-trash-alt"></i> &nbsp;
+                Eliminar</button>
+        </div>
+    </div>
+</div>
+<!-- <h1 class="title">DETALLE DEL CLIENTE</h1>
+
+<section class="container  window-buttton">
+  <section class="return" (click)="returnCustomer()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button class="button-option button-confirm" (click)="actionCustomer('block')"
+      *ngIf='f.state.value == "Habilitado"'>
+      <i class="fas fa-lock"></i> <span>Bloquear</span>
+    </button>
+    <button class="button-option button-confirm" (click)="actionCustomer('unlock')"
+      *ngIf='f.state.value == "Bloqueado"'>
+      <i class="fas fa-unlock-alt"></i> <span>Desbloquear</span>
+    </button>
+  </section>
+</section>
+
+
+<section class="container  window-buttton header-fixed" *ngIf='headerFixed'>
+  <section class="return" (click)="returnCustomer()">
+    <i class="fas fa-chevron-left"></i>
+  </section>
+  <section class="buttons-list">
+    <button class="button-option button-confirm" (click)="actionCustomer('block')"
+      *ngIf='f.state.value == "Habilitado"'>
+      <i class="fas fa-lock"></i> <span>Bloquear</span>
+    </button>
+    <button class="button-option button-confirm" (click)="actionCustomer('unlock')"
+      *ngIf='f.state.value == "Bloqueado"'>
+      <i class="fas fa-unlock-alt"></i> <span>Desbloquear</span>
+    </button>
+  </section>
+</section> -->
+
+<div class="content">
+    <form [formGroup]="customerForm">
+        <section class="container-partition">
+            <section class="p-row p-three cont-left">
+                <section class="container-row">
+                    <p class='main-subtitle subtitle-container'>Información General</p>
+                    <br />
+
+                    <section *ngIf='!validUpdateSpecificUser'>
+                        <div class="section-info">
+                            <p class="title-section">Nombre</p>
+                            <p> {{ f.suffix.value }} {{ f.name.value }} {{ f.last_name_father.value }} {{
+                                f.last_name_mother.value }}
+                            </p>
+                        </div>
+
+                        <div class="section-info">
+                            <p class="title-section">Correo</p>
+                            <p> {{ f.email.value }} </p>
+                        </div>
+
+                        <div class="section-info">
+                            <p class="title-section">Teléfono</p>
+                            <p> {{ f.phone.value }} </p>
+                        </div>
+
+                        <!--   <div class="section-info">
+              <p class="title-section">Cumpleaños</p>
+              <p> {{ f.birth_date.value | date: "dd-MM-yyyy" }} </p>
+            </div> -->
+
+                    </section>
+
+
+                    <section *ngIf='validUpdateSpecificUser'>
+
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Nombre" class="form-control"
+                                    formControlName="name" autocomplete="off">
+                            </mat-form-field>
+                            <ng-container *ngIf='f.name.errors'>
+                                <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Apellido Paterno" class="form-control"
+                                    formControlName="last_name_father" autocomplete="off">
+                            </mat-form-field>
+                            <ng-container *ngIf='f.last_name_father.errors'>
+                                <mat-error
+                                    *ngIf="f.last_name_father.errors.required && (f.last_name_father.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Apellido Materno" class="form-control"
+                                    formControlName="last_name_mother" autocomplete="off">
+                            </mat-form-field>
+                            <ng-container *ngIf='f.last_name_mother.errors'>
+                                <mat-error
+                                    *ngIf="f.last_name_mother.errors.required && (f.last_name_mother.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Correo" class="form-control"
+                                    formControlName="email" autocomplete="off">
+                            </mat-form-field>
+                            <ng-container *ngIf='f.email.errors'>
+                                <mat-error *ngIf="f.email.errors.required && (f.email.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                        <div>
+                            <mat-form-field>
+                                <input matInput type="text" placeholder="Teléfono" class="form-control"
+                                    formControlName="phone" autocomplete="off" (keypress)="validateInput($event)">
+                            </mat-form-field>
+                            <ng-container *ngIf='f.phone.errors'>
+                                <mat-error *ngIf="f.phone.errors.required && (f.phone.touched || submitted)">
+                                    El campo es obligatorio
+                                </mat-error>
+                            </ng-container>
+                        </div>
+
+                    </section>
+
+
+
+                    <div class="section-info">
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Número de Documento" class="form-control"
+                                formControlName="number_document" autocomplete="off">
+                        </mat-form-field>
+                        <ng-container *ngIf='f.number_document.errors'>
+                            <mat-error
+                                *ngIf="f.number_document.errors.required && (f.number_document.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+
+                        <!-- <p class="title-section">Número de Documento</p>
+                        <p> {{ f.number_document.value }} </p> -->
+                    </div>
+
+
+                    <div class="section-info">
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="código de socio" class="form-control"
+                                formControlName="number_card" autocomplete="off">
+                        </mat-form-field>
+                    </div>
+                    <div class="section-info">
+
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Fecha de Creación" readonly
+                                [value]="f.create_date.value | date: 'd/M/yyyy H:mm:ss'">
+                        </mat-form-field>
+                    </div>
+                    <div class="section-info" *ngIf="f && f.state">
+                        
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Estado" readonly
+                                [value]="f.state.value">
+                        </mat-form-field>
+                        
+                    </div>
+
+                    <section class="center" *ngIf='validUpdateSpecificUser'>
+                        <button class="primary-button save-button" (click)='updateUserInfo()'>Actualizar</button>
+                    </section>
+                </section>
+            </section>
+            <section class="p-row p-seven cont-right">
+                <section class="container-row">
+                    <p class="main-subtitle subtitle-container">Pedidos</p>
+                    <br />
+                    <app-grid #gridListOrder>
+                    </app-grid>
+                </section>
+
+                <section class="container-row ">
+                    <p class='main-subtitle subtitle-container'>Direcciones
+                        <button class="primary-button save-button" style="float: right; top: -15px;" 
+                        (click)="openAddressDialog('new', null, idCustomer)">
+                        <i class="fas fa-plus"></i> Agregar</button>
+                    </p>
+                    <br />
+                    <br>
+                    <section class="container-address">
+                        <section *ngFor="let address of listAddress" class="card">
+                            <section>
+                                <header>
+                                    {{ address.name }} - {{ address.type_address.value }}
+                                    <hr />
+                                </header>
+                                <section>
+                                    <div class="section-info">
+                                        <p class="title-section">Departamento</p>
+                                        <p>{{ address.department.name }}</p>
+                                    </div>
+                                    <div class="section-info">
+                                        <p class="title-section">Distrito</p>
+                                        <p>{{ address.district.name }}</p>
+                                    </div>
+                                    <div class="section-info">
+                                        <p class="title-section">Provincia</p>
+                                        <p>{{ address.province.name }}</p>
+                                    </div>
+                                    <div class="section-info">
+                                        <p class="title-section">Dirección</p>
+                                        <p>{{ address.address }}</p>
+                                    </div>
+                                </section>
+                            </section>
+                            <div class="section-info center">
+                                <button type="button" class="primary-button save-button"
+                                (click)="openAddressDialog('edit', address, idCustomer)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="primary-button delete-button"
+                                (click)="deleteAddress(address)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+
+        </section>
+    </form>
+</div>

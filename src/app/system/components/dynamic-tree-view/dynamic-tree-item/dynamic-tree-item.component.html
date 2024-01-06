@@ -1,0 +1,26 @@
+<ul>
+
+  <li [ngClass]="{ item: config.parent }">
+    <mat-checkbox
+      [disabled]="(config.children && disableParents || disableAll )"
+      [(ngModel)]="config.checked"
+      (ngModelChange)="listenChagesCheck(config)"
+      >{{ config.name }}
+    </mat-checkbox>
+    <ng-container *ngIf="config.children && config.children && config.expanded">
+      <ng-container
+        *ngFor="let subnodes of config.children; let nodeIndex = index"
+      >
+        <app-dynamic-tree-item
+          #children
+          [config]="subnodes"
+          [disableParents]="disableParents"
+          [disableAll]="disableAll"
+          (selectedCategory)="listenChagesCheck($event)"
+        ></app-dynamic-tree-item>
+      </ng-container>
+    </ng-container>
+  </li>
+</ul>
+
+

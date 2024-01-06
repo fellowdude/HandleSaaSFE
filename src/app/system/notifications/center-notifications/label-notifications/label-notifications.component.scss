@@ -1,0 +1,48 @@
+.circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 100%;
+    border: none;
+    color: transparent;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.circle-item {
+    margin-top: 0px !important;
+}
+
+.label {
+    width: 100%;
+    align-items: center !important;
+    display: flex !important;
+    margin: 8px !important;
+    cursor: pointer !important;
+    font-size: 15px !important;
+    font-weight: 400 !important;
+}
+
+li {
+    transition: background-color .5s;
+}
+
+li:hover, li:focus {
+    background-color: lightgray !important;
+    border-radius: 0 10px 10px 0 !important;
+    text-decoration: none !important;
+}
+
+.options-sidenav {
+    padding: 0;
+    margin: 10px 0;
+    li {
+      max-height: 44px;
+      overflow: hidden;
+      transition: all 0.3s;
+      padding: 0;
+    }
+}
+
+.right {
+    float: right;
+}

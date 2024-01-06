@@ -1,0 +1,32 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="title">Listado de Marcas</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button" (click)='createBrand()' *ngIf='!isSupplier'><i class="fas fa-plus-circle" ></i> Agregar
+        Marca</button>
+    </div>
+  </div>
+</div>
+<!-- <h1 class='title'>MARCAS</h1>
+<section class='container  window-buttton' *ngIf='!isSupplier'>
+  <section class='buttons-list'>
+    <button class='button-option' (click)='createBrand()'>
+      <i class="fas fa-layer-plus"></i> <span>Crear Marca</span>
+    </button>
+  </section>
+</section>
+
+<section class='container buttons-list mobile-buttton' *ngIf='!isSupplier'>
+  <button class='button-option button-confirm' (click)='createBrand()'>
+    <i class="fas fa-layer-plus"></i> <span>Crear Marca</span>
+  </button>
+</section> -->
+<div class="content">
+  <section class='container'>
+    <app-grid #gridList (fieldReturn)=fieldReturn($event)>
+    </app-grid>
+  </section>
+</div>
+<app-dialog-confirm></app-dialog-confirm>

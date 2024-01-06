@@ -1,0 +1,25 @@
+@import '../../../../variables.scss';
+.error-row{
+    background: #ffcbcb;
+    background-color: #ffcbcb !important;
+}
+.upload-summary{
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+}
+.upload-ok{  
+    background: #e8f5e9;  
+    color: #3dd47a;
+    margin-right: 10px;
+}
+.upload-error{  
+    background: #fce4ec;  
+    color: #fd96b9;
+}
+.error-image{
+    background: $color-primary-dark;
+    color: white;
+    cursor:pointer;
+}

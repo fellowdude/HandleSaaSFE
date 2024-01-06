@@ -1,0 +1,24 @@
+ul{
+    padding-inline-start: 0px;
+}
+
+li{
+    list-style: none;
+    position: relative;
+    width: 80%;
+}
+li.item{
+    left: 25px;
+}
+.item{
+    &::before{
+        height: 10px;
+        width: 13px;
+        content: " ";
+        border-left: 1px solid gray;
+        border-bottom: 1px solid gray;
+        position: absolute;
+        left:-20px;
+        top: 0;
+    }
+}

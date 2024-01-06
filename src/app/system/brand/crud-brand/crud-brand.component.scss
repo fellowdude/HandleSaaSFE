@@ -1,0 +1,220 @@
+@import "../../../../variables.scss";
+::ng-deep .uploader-image-container {
+  height: 185px;
+}
+:host {
+  background-color: $bg-color;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /*   height: calc(100vh - 64px);
+overflow-y: auto;
+font-size: 14px; */
+  font-size: 14px;
+  ::ng-deep {
+    .mat-expansion-panel-body {
+      padding: 0 !important;
+    }
+    .mat-expansion-panel-header {
+      height: auto !important;
+      padding: 0 !important;
+    }
+    .mat-expansion-panel-header-description,
+    .mat-expansion-panel-header-title {
+      margin-right: 0;
+    }
+  }
+  .up-expansion {
+    color: #7e7e7e;
+    transition: all 0.3s;
+    transform: rotate(0deg);
+  }
+  .down-expansion {
+    color: #7e7e7e;
+    transition: all 0.3s;
+    transform: rotate(-180deg);
+  }
+  .container-expasion-header {
+    width: 100%;
+    align-items: center;
+    span {
+      flex: 1 1 auto;
+    }
+    button {
+      margin-right: 15px !important;
+    }
+  }
+
+  mat-expansion-panel {
+    box-shadow: none;
+    mat-expansion-panel-header {
+      padding-left: 0px;
+      p {
+        margin: 0;
+      }
+    }
+  }
+  .container {
+    width: 100%;
+    max-width: unset;
+  }
+
+  .container-general {
+    background: transparent;
+    background-color: transparent;
+  }
+
+  .header {
+    //position: absolute;
+    position: fixed;
+    display: inline-block;
+    height: 120px;
+    width: 100%;
+    background: #fa6f48 !important;
+    .container {
+      background-color: transparent;
+      display: flex;
+      align-items: center;
+    }
+    .title {
+      display: inline-block;
+      color: #efefef;
+      text-align: left;
+    }
+  }
+  .fake-header {
+    width: 100%;
+    height: 64px;
+  }
+  .buttons-container {
+    display: inline-block;
+    text-align: right;
+    flex-grow: 2;
+    button {
+      display: inline-block;
+      margin: auto;
+      margin-right: 0;
+      width: fit-content;
+      margin-left: 10px;
+      min-width: 120px;
+    }
+  }
+  .video-container {
+    margin: 0.5em;
+    align-self: stretch;
+    box-sizing: border-box;
+    padding: 20px;
+    margin-top: 15px;
+    border: 1px solid #eaeaea;
+    border-radius: 5px;
+    position: relative;
+    min-width: 250px;
+    iframe {
+      border-radius: 5px;
+    }
+  }
+  .content {
+    /*width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    display: block;*/
+    position: relative;
+    margin-top: 70px;
+    margin-left: 64px;
+    z-index: 10;
+    .container-partition {
+        padding: 0 !important;
+        margin: 0 auto;
+        box-sizing: border-box;
+        width: calc(100% - 80px) !important;
+        max-width: unset;
+        width: 100%;
+    }
+    .container {
+        @include shadow();
+        border-radius: 6px;
+    }
+}
+
+  .imagesSection {
+    border: 1px solid rgb(223, 223, 223);
+    padding: 20px;
+    border-radius: 5px;
+  }
+
+  .button-subtitle {
+    width: auto;
+    max-width: unset !important;
+    align-self: center;
+  }
+  p {
+    display: flex !important;
+    align-content: space-between;
+    justify-content: space-between;
+    display: inline-block;
+    width: 100%;
+  }
+  .img-container-only-one,
+  .img-container-one {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+    align-items: center;
+    justify-content: space-between;
+    .images {
+      align-self: stretch;
+      min-height: 245px;
+
+      // width: calc(50% - 10px);
+      box-sizing: border-box;
+      padding: 20px;
+      margin-top: 15px;
+      border: 1px solid #eaeaea;
+      border-radius: 5px;
+      //@include shadow();
+      position: relative;
+      min-width: 250px;
+      img {
+        border-radius: 5px;
+        background-color: #efefef;
+        object-fit: contain;
+        object-position: center;
+        width: 100%;
+        height: 200px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .img-container-one {
+    .images {
+      width: 100%;
+    }
+  }
+
+  .container-row.fixed {
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    div {
+      display: inline-block;
+      .images {
+        width: calc(100% - 13px);
+      }
+    }
+  }
+}
+
+.toogle{
+    padding: 0px 10px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-end;
+    ::ng-deep {
+      .mat-slide-toggle-bar{
+        background-color:rgba(68, 138, 255, 0.54)
+      }
+    }
+}

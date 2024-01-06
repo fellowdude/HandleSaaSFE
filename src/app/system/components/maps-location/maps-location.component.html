@@ -1,0 +1,99 @@
+<article class="container-modal" [ngClass]="{ 'show-map': showMaps, 'hide-map': !showMaps }">
+  <section class="modal-body modal-complete">
+    <header>
+      <strong>{{ title }}</strong>
+      <div id="close-button" (click)="close()">&times;</div>
+    </header>
+    <section class="body">
+      <mat-form-field>
+        <input #address matInput type="text" placeholder="Dirección:" [(ngModel)]="myLocation.address"
+          [ngModelOptions]="{ standalone: true }" autocomplete="off" />
+      </mat-form-field>
+      <mat-form-field style="width: 49%; margin-right: 1%;">
+        <input #lat matInput type="number" placeholder="Latitud" [(ngModel)]="myLocation.lat"
+          [ngModelOptions]="{ standalone: true }" autocomplete="off" [disabled]="true"/>
+      </mat-form-field>
+      <mat-form-field style="width: 49%; margin-left: 1%;">
+        <input #lng matInput type="number" placeholder="Longitud" [(ngModel)]="myLocation.lng"
+          [ngModelOptions]="{ standalone: true }" autocomplete="off" [disabled]="true"/>
+      </mat-form-field>
+
+      <header>
+        <strong>Búsqueda</strong>
+      </header>
+
+      <mat-form-field style="width: 49%; margin-right: 1%;">
+        <input [(ngModel)]="latlngC" matInput type="text" placeholder="Buscar por latitud y longitud"
+          (ngModelChange)="searchCoordinates(latlngC)" autocomplete="off"/>
+      </mat-form-field>
+<!--       <button class="primary-button save-button button-subtitle save-button-style" style="width: 10%; right: 0;"
+       (click)="searchCoordinates(latlngC)">Buscar</button> -->
+      <mat-form-field style="width: 49%; margin-left: 1%;">
+        <input [(ngModel)]="location" matInput type="text" placeholder="Buscar por lugar o dirección"
+          (ngModelChange)="searchLocation(location)" autocomplete="off"/>
+      </mat-form-field>
+      
+      <ng-container *ngIf="listPlaces.length > 0">
+        <mat-form-field >
+          <mat-label>Se encontraron las siguientes ubicaciones</mat-label>
+          <mat-select #selectOptions (selectionChange)="choosePlace(selectOptions.value)">
+            <option value="" selected></option>
+            <mat-option *ngFor="let place of listPlaces; let i = index" [value]="i">
+              {{ place.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+
+    
+    <ng-container *ngIf="latlng">
+        <app-maps-leaflet [initialCoordinates]="latlng"
+         (coordinates)="assignCoords($event)"
+        ></app-maps-leaflet>
+    </ng-container>
+      <!--  <div class="form-group">
+        <label></label>
+        <input
+          type="text"
+          class="form-control search-input"
+          [(ngModel)]="textSearch"
+          (keydown.enter)="$event.preventDefault()"
+          placeholder="Busca tu dirección"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="off"
+          type="text"
+          #search
+        />
+      </div>
+
+      <agm-map
+        [latitude]="myLocation.lat"
+        [longitude]="myLocation.lng"
+        [zoom]="zoom"
+        [scrollwheel]="false"
+        (mapClick)="mapClicked($event)"
+      >
+        <agm-marker
+          [markerDraggable]="myLocation.draggable"
+          [latitude]="myLocation.lat"
+          [longitude]="myLocation.lng"
+          [label]="myLocation.label"
+          (dragEnd)="markerDragEnd($event)"
+        >
+        </agm-marker>
+      </agm-map> -->
+    </section>
+    <section class="search-address">
+   <!--    {{ address }} -->
+    </section>
+    <footer>
+      <button class="primary-button button-subtitle cancel-button" (click)="close()">
+        Cancelar
+      </button>
+      <button class="primary-button save-button button-subtitle save-button-style" (click)="sentLocalitation()">
+        Aceptar
+      </button>
+    </footer>
+  </section>
+</article>

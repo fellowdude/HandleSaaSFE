@@ -1,0 +1,14 @@
+<section class="uploader-image-container">
+    <form [formGroup]="uploadForm" (ngSubmit)="uploadSubmit()" (click)="openUploadFiles()">
+        <div class="drop-zone">
+            <ng-container *ngIf="uploader">
+                <div ng2FileDrop [uploader]="uploader" (fileOver)="uploadFileChange()" class="drop-zone container-drop">
+                    <p>Verifique el peso y dimensiones de las imágenes antes de subir</p>
+                    <br>
+                    <p>Arrastra aquí una imagen, o haz click</p>
+                </div>
+            </ng-container>
+        </div>
+        <input type="file" #fileUpload id="fileUpload" name="fileUpload" multiple="multiple" accept="image/*" style="display: none;" />
+    </form>
+</section>

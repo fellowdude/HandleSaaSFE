@@ -1,0 +1,60 @@
+<div class="fake-header">
+</div>
+<div class="header" [ngClass]="{'fixed-top': headerFixed}">
+  <div class="container">
+    <div class="return-button"><i (click)="returnListStatic()" class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idPageStatic">Nueva página estática</div>
+    <div class="title" *ngIf="idPageStatic">Edición de página estática</div>
+    <div class="buttons-container">
+      <button type="button" class="primary-button " *ngIf="idPageStatic" (click)="confirmDeleteItem()"><i
+          class="fas fa-trash-alt"></i> &nbsp;
+        Eliminar</button>
+      <button type="button" class="primary-button " (click)='savePageStatic()'><i class="fas fa-save"></i>
+        &nbsp;
+        Guardar</button>
+    </div>
+  </div>
+</div>
+
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+
+<div class="content">
+  <section class='container-partition'>
+    <section class='p-row p-ten cont-left cont-right'>
+      <section class='container-row'>
+        <section class="visibility">
+          <section>Público</section>
+          <section id="slide">
+            <span *ngIf="public">Si</span>
+            <span *ngIf="!public">No</span>
+            <mat-slide-toggle [(ngModel)]="public"></mat-slide-toggle>
+          </section>
+        </section>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Nombre de la página" [(ngModel)]='namePage'
+            (ngModelChange)='changeNameApi()' autocomplete="off">
+        </mat-form-field>
+        <p> End point : static-page/data/<span>{{apiNamePage}}</span> </p>
+      </section>
+      <section class='container-row'>
+        <ng-container *ngFor='let info of listDinamicPage; let position = index'>
+          <app-dinamic-static-page (showContent)="showWindowMultimedia($event)" [config]='info' [objParent]='listDinamicPage' [positionParent]='position'>
+          </app-dinamic-static-page>
+          <br><br>
+        </ng-container>
+
+        <div id='add-button-general'>
+          <!-- Nueva sección -->
+          <!-- <i class="fas fa-plus-square" (click)='addSection()'></i> -->
+          <button type="button" class="primary-button save-button button-subtitle center-button" (click)='addSection()'>
+            <i class="fas fa-plus"></i> &nbsp; Agregar sección
+          </button>
+        </div>
+
+      </section>
+    </section>
+  </section>
+</div>
+<!-- modales -->
+<app-dialog-add-section #addNewSection (getInfo)=createNewSection($event)></app-dialog-add-section>
+<app-multimedia-gallery #multimediaList (imageChoose)=setSeleccionado($event)></app-multimedia-gallery>

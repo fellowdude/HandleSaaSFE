@@ -1,0 +1,62 @@
+<ng-container>
+<div class="modal-title">
+    <p mat-dialog-title>
+        <ng-container *ngIf="data.type === 'edit'"><header><strong> Editar Dirección</strong></header></ng-container>
+        <ng-container *ngIf="data.type === 'new'"><header><strong> Nueva Dirección</strong></header></ng-container>
+    </p>
+</div>
+<div mat-dialog-content>
+    <form [formGroup]="addressForm">
+    <section class="container-partition">
+        <section class="p-row p-ten cont-left">
+            <mat-form-field style="width: 100%;">
+                <mat-select placeholder="Tipo de Dirección" formControlName="type_address">
+                    <mat-option *ngFor="let types of listTypeAddresses" [value]="types._id">
+                      {{types.value}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field style="width: 100%;">
+                <input matInput type="text" autocomplete="off" placeholder="Dirección" formControlName="address"/>
+            </mat-form-field>
+            <mat-form-field style="width: 100%;">
+                <input matInput type="text" autocomplete="off" placeholder="Referencia" formControlName="reference"/>
+            </mat-form-field>
+            <mat-form-field style="width: 30%;">
+                <mat-select placeholder="Departamento" formControlName="department">
+                    <mat-option *ngFor="let dep of listDepartments" [value]="dep._id">
+                      {{dep.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field style="width: 30%; margin-right: 5%; margin-left: 5%;">
+                <mat-select placeholder="Provincia" formControlName="province">
+                    <mat-option *ngFor="let prov of listProvinces" [value]="prov._id">
+                      {{prov.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field style="width: 30%;">
+                <mat-select placeholder="Distrito" formControlName="district">
+                    <mat-option *ngFor="let dist of listDistricts" [value]="dist._id">
+                      {{dist.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field style="width: 100%;">
+                <input matInput type="text" autocomplete="off" placeholder="Teléfono" formControlName="cellphone"/>
+            </mat-form-field>
+            <section class="buttons-modal">
+                <button type="button" class="primary-button button-subtitle cancel-button" (click)="close()">
+                    Cancelar
+                </button>
+                <button type="button" class="primary-button save-button button-subtitle save-button-style" (click)="save()">
+                    <ng-container *ngIf="data.type === 'edit'">Actualizar Dirección</ng-container>
+                    <ng-container *ngIf="data.type === 'new'">Agregar Dirección</ng-container>
+                </button>
+            </section>
+        </section>
+    </section>
+</form>
+</div>
+</ng-container>

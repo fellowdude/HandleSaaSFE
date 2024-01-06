@@ -1,0 +1,64 @@
+.loading {
+  width: 100%;
+  top: 0;
+  position: absolute;
+  height: 100%;
+}
+
+.table-expand {
+  min-width: 512px;
+}
+.overflow-table {
+  overflow-x: auto;
+}
+
+table {
+  tbody {
+    height: auto;
+    tr {
+      .center-row {
+        text-align: left;
+      }
+      td {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  th {
+    text-align: left;
+  }
+  .th-currency {
+    text-align: right;
+  }
+}
+.truncate {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.state-pending {
+  background: #fff6df;
+  color: #f3a71b;
+  padding: 2px 10px;
+  border-radius: 5px;
+}
+.total {
+  color: #6b6f82;
+}
+
+.state-paid,
+.state-enabled {
+  background: #e8f5e9;
+  color: #3dd47a;
+  padding: 2px 10px;
+  border-radius: 5px;
+}
+.state-disabled {
+  background: rgb(252, 228, 236);
+  color: rgb(253, 150, 185);
+  padding: 2px 10px;
+  border-radius: 5px;
+}

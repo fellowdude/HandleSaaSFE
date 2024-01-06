@@ -1,0 +1,99 @@
+@import "../../../../variables.scss";
+:host {
+  background-color: $bg-color;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  font-size: 14px;
+  .content {
+    position: relative;
+    margin-top: 70px;
+    z-index: 10;
+    .container {
+      @include shadow();
+      border-radius: 6px;
+    }
+  }
+  .header {
+    position: absolute;
+    display: inline-block;
+    margin-left: 0;;
+    height: 120px;
+    width: 100%;
+    background: #fa6f48 !important;
+  }
+
+  .example-list {
+    width: 100%;
+    max-width: 100%;
+    border: solid 1px #ccc;
+    min-height: 60px;
+    display: block;
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .example-box {
+    padding: 20px 10px;
+    border-bottom: solid 1px #ccc;
+    color: rgba(0, 0, 0, 0.87);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    background: white;
+    font-size: 14px;
+  }
+
+  .example-box:last-child {
+    border: none;
+  }
+
+  .delete-drop-item {
+    cursor: pointer;
+    color: red;
+  }
+
+  .buttons-container {
+    display: inline-block;
+    text-align: right;
+    flex-grow: 2;
+    width: 480px;
+    button {
+      margin: auto;
+      margin-right: 0;
+      max-width: 200px;
+      i {
+        margin-right: 10px;
+      }
+    }
+  }
+  .container-empty {
+    padding: 0 !important;
+  }
+  .container {
+    width: 100% !important;
+    padding: 20px 0px;
+  }
+  .container-partition {
+    width: 100% !important;
+  }
+}
+.video-container {
+  margin: 0.5em;
+}
+
+.sonr-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+.sonr-radio-button {
+  margin: 5px;
+}

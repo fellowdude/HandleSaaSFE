@@ -1,0 +1,18 @@
+<h1 class="title">REGLAS DE DESCUENTO</h1>
+<section class="container  window-buttton">
+  <section class="buttons-list">
+    <button class="button-option" (click)="createDiscountRule()">
+      <i class="fas fa-layer-plus"></i> <span>Crear regla de descuento</span>
+    </button>
+  </section>
+</section>
+
+<section class="container buttons-list mobile-buttton">
+  <button class="button-option button-confirm" (click)="createDiscountRule()">
+    <i class="fas fa-layer-plus"></i> <span>Crear regla de descuento</span>
+  </button>
+</section>
+
+<section class="container">
+  <app-grid #gridList> </app-grid>
+</section>

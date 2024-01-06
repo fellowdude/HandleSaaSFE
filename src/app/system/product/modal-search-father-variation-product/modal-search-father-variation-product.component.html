@@ -1,0 +1,41 @@
+<article class="container-modal" *ngIf='openModal'>
+  <section class="modal-body">
+    <header class="column">
+      <section class="row info-header">
+        <section class="title">
+          <strong>Lista de productos</strong>
+          <div id="close-button" (click)="close()">&times;</div>
+        </section>
+
+      </section>
+      <section class="total-products">
+        Total Productos seleccionados {{listProducts.length}}
+      </section>
+
+    </header>
+    <section class="">
+      <app-grid #gridList (itemSelecReturn)='itemSelecReturn($event)'>
+      </app-grid>
+
+    </section>
+    <!-- <section class="row buttons">
+      <button class="primary-button" (click)="close()">
+        Cerrar
+      </button>
+      <button class="primary-button" (click)="accept()">
+        Seleccionar Producto
+      </button>
+    </section> -->
+    <div class="modal-card-footer">
+      <button type='button' class="primary-button button-subtitle cancel-button" (click)="close()">
+        Cancelar
+      </button>
+      <button type='button' class="primary-button save-button button-subtitle save-button-style"
+      (click)="accept()">
+        Seleccionar Producto
+      </button>
+    </div>
+
+  </section>
+
+</article>

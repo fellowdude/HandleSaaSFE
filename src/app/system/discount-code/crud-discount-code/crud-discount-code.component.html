@@ -1,0 +1,516 @@
+<div class="fake-header"></div>
+<div class="header" [ngClass]="{ 'fixed-top': headerFixed && !headerRuleFixed }">
+  <div class="container">
+    <div class="return-button"><i (click)='returnDiscountCode()' class="fas fa-chevron-left"></i></div> &nbsp;
+    <div class="title" *ngIf="!idDiscountCode">Nuevo código de descuento</div>
+    <div class="title" *ngIf="idDiscountCode">
+      Edición de código de descuento
+    </div>
+    <div class="buttons-container">
+
+      <ng-container>
+        <button type="button" class="primary-button" (click)="confirmDeleteItem()" *ngIf="idDiscountCode">
+          <i class="fas fa-trash-alt"></i> &nbsp; Eliminar
+        </button>
+        <button type="button" class="primary-button " (click)="saveDiscountCode()">
+          <i class="fas fa-save"></i> &nbsp; Guardar
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<app-dialog-confirm #dialogDelete (answerModal)="acceptModal($event)"></app-dialog-confirm>
+
+<div class="content">
+  <form [formGroup]="discountCodeForm">
+    <section class="container-partition">
+      <section class="p-row p-ten cont-left">
+        <section class="row divisor">
+          <section class="p-row p-three cont-left">
+            <section class="container-row">
+              <p class="subtitle main-subtitle subtitle-container">Propiedades del Código de Descuento</p>
+              <br />
+              <div>
+                <div class="toggle-container">
+                  <label>Activo</label>
+                  <mat-slide-toggle formControlName="active">
+                    <span *ngIf="discountCodeForm.controls.active.value">Si</span>
+                    <span *ngIf="!discountCodeForm.controls.active.value">No</span>
+                  </mat-slide-toggle>
+                </div>
+                <mat-form-field>
+                  <input matInput type="text" maxlength="50" placeholder="Nombre" class="form-control"
+                    formControlName="name" autocomplete="off" />
+                </mat-form-field>
+                <ng-container *ngIf="f.name.errors">
+                  <mat-error *ngIf="
+                      f.name.errors.required && (f.name.touched || submitted)
+                    ">
+                    El campo es obligatorio
+                  </mat-error>
+                  <mat-error *ngIf="
+                      f.name.errors.maxlength && (f.name.touched || submitted)
+                    ">
+                    La cantidad máxima de caracteres es de 50
+                  </mat-error>
+                </ng-container>
+
+                <div class="toggle-container">
+                  <label>Descuento sobre productos</label>
+                  <mat-slide-toggle formControlName="have_discount">
+                    <span *ngIf="discountCodeForm.controls.have_discount.value">Si</span>
+                    <span *ngIf="!discountCodeForm.controls.have_discount.value">No</span>
+                  </mat-slide-toggle>
+                </div>
+
+                <ng-container *ngIf="discountCodeForm.controls.have_discount.value">
+                  <div>
+                    <mat-form-field>
+                      <mat-select placeholder="Tipo" name="coupon_discount_type" class="form-control" formControlName="coupon_discount_type">
+                        <mat-option *ngFor="let type of listTypeDiscount" [value]="type._id">
+                          {{ type.ref1 }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <ng-container *ngIf="f.coupon_discount_type.errors">
+                      <mat-error *ngIf="
+                          f.coupon_discount_type.errors.required && (f.coupon_discount_type.touched || submitted)
+                        ">
+                        El campo es obligatorio
+                      </mat-error>
+                    </ng-container>
+                  </div>
+    
+                  <div>
+                    <mat-form-field *ngIf="couponType == 'Fijo'">
+                      <input matInput type="number" min="0" maxlength="50" placeholder="Monto" class="form-control"
+                        formControlName="coupon_discount_amount" autocomplete="off" />
+                    </mat-form-field>
+                    <mat-form-field *ngIf="couponType == 'Porcentaje'">
+                      <input matInput type="number" maxlength="50" min="0" max="100" placeholder="Monto" class="form-control"
+                        formControlName="coupon_discount_amount" autocomplete="off" />
+                    </mat-form-field>
+                    <ng-container *ngIf="f.coupon_discount_amount.errors">
+                      <mat-error *ngIf="
+                          f.coupon_discount_amount.errors.required &&
+                          (f.coupon_discount_amount.touched || submitted)
+                        ">
+                        El campo es obligatorio
+                      </mat-error>
+                      <mat-error *ngIf="
+                        f.coupon_discount_amount.errors.min &&
+                        (f.coupon_discount_amount.touched || submitted)
+                        ">
+                        El valor mínimo es 1
+                      </mat-error>
+                      <ng-container *ngIf="couponType == 'Porcentaje'">
+                        <mat-error *ngIf="
+                            ( f.coupon_discount_amount.errors.max) &&
+                            (f.coupon_discount_amount.touched || submitted)
+                          ">
+                          Para tipo porcentual el valor debe estar en el rango de 1 a 100
+                        </mat-error>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+
+                  <div>
+                    <mat-form-field>
+                      <input matInput type="number" maxlength="50" placeholder="Tope" class="form-control"
+                        formControlName="max_coupon_discount_amount" autocomplete="off" />
+                    </mat-form-field>
+                    <ng-container *ngIf="f.max_coupon_discount_amount.errors">
+                      <mat-error *ngIf="
+                          f.max_coupon_discount_amount.errors.required &&
+                          (f.max_coupon_discount_amount.touched || submitted)
+                        ">
+                        El campo es obligatorio
+                      </mat-error>
+                      <mat-error *ngIf="
+                          f.max_coupon_discount_amount.errors.maxlength &&
+                          (f.max_coupon_discount_amount.touched || submitted)
+                        ">
+                        La cantidad máxima de caracteres es de 50
+                      </mat-error>
+                    </ng-container>
+                  </div>
+                </ng-container>
+
+                <div class="toggle-container">
+                  <label>Descuento sobre delivery</label>
+                  <mat-slide-toggle formControlName="have_delivery_discount">
+                    <span *ngIf="discountCodeForm.controls.have_delivery_discount.value">Si</span>
+                    <span *ngIf="!discountCodeForm.controls.have_delivery_discount.value">No</span>
+                  </mat-slide-toggle>
+                </div>
+
+                <ng-container *ngIf="discountCodeForm.controls.have_delivery_discount.value">
+                  <div>
+                    <mat-form-field>
+                      <mat-select placeholder="Tipo" name="delivery_discount_type" class="form-control" formControlName="delivery_discount_type">
+                        <mat-option *ngFor="let type of listTypeDiscount" [value]="type._id">
+                          {{ type.ref1 }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <ng-container *ngIf="f.delivery_discount_type.errors">
+                      <mat-error *ngIf="
+                          f.delivery_discount_type.errors.required && (f.delivery_discount_type.touched || submitted)
+                        ">
+                        El campo es obligatorio
+                      </mat-error>
+                    </ng-container>
+                  </div>
+    
+                  <div>
+                    <mat-form-field>
+                      <input matInput type="number" maxlength="50" placeholder="Monto" class="form-control"
+                        formControlName="delivery_discount_amount" autocomplete="off" />
+                    </mat-form-field>
+                    <ng-container *ngIf="f.delivery_discount_amount.errors">
+                      <mat-error *ngIf="
+                          f.delivery_discount_amount.errors.required &&
+                          (f.delivery_discount_amount.touched || submitted)
+                        ">
+                        El campo es obligatorio
+                      </mat-error>
+                      <mat-error *ngIf="
+                        f.delivery_discount_amount.errors.min &&
+                        (f.delivery_discount_amount.touched || submitted)
+                        ">
+                        El valor mínimo es 1
+                      </mat-error>
+                      <ng-container *ngIf="deliveryCouponType == 'Porcentaje'">
+                        <mat-error *ngIf="
+                            ( f.delivery_discount_amount.errors.max) &&
+                            (f.delivery_discount_amount.touched || submitted)
+                          ">
+                          Para tipo porcentual el valor debe estar en el rango de 1 a 100
+                        </mat-error>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+
+                  <div>
+                    <mat-form-field>
+                      <input matInput type="number" maxlength="50" placeholder="Tope" class="form-control"
+                        formControlName="max_delivery_discount_amount" autocomplete="off" />
+                    </mat-form-field>
+                    <ng-container *ngIf="f.max_delivery_discount_amount.errors">
+                      <mat-error *ngIf="
+                          f.max_delivery_discount_amount.errors.required &&
+                          (f.max_delivery_discount_amount.touched || submitted)
+                        ">
+                        El campo es obligatorio
+                      </mat-error>
+                      <mat-error *ngIf="
+                          f.max_delivery_discount_amount.errors.maxlength &&
+                          (f.max_delivery_discount_amount.touched || submitted)
+                        ">
+                        La cantidad máxima de caracteres es de 50
+                      </mat-error>
+                    </ng-container>
+                  </div>
+                </ng-container>
+               
+              </div>
+            </section>
+          </section>
+          <section class="p-row p-seven cont-right">
+            <section class="container-row">
+              <div style="margin-bottom: 14px;">
+                <p class="sub-tittle main-subtitle subtitle-buttton subtitle-container">
+                  Administrador de reglas
+                  <ng-container *ngIf="showOptions">
+                    <div class="buttons-container">
+                      <button type="button" class="primary-button save-button button-rules"
+                        (click)="toggleShowRulesAdminForm()">
+                        <i class="fas fa-plus"></i> &nbsp; Nuevo
+                      </button>
+                      <button type="button" class="primary-button save-button button-rules large-button"
+                        (click)="toggleShowRulesAdminGrid()">
+                        <i class="fas fa-hand-pointer"></i> &nbsp; Seleccionar
+                      </button>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="!showOptions">
+                    <div class="buttons-container">
+                      <button type="button" class="primary-button delete-button" (click)="deleteAdminRule()">
+                        <i class="fas fa-trash"></i> &nbsp; Eliminar
+                      </button>
+                    </div>
+                  </ng-container>
+                </p>
+              </div>
+
+              <app-crud-rules-admin #cra (embeddedSaved)="configureMessage($event)"
+                (deletedRulesAdmin)="unmountRulesAdminAndShowOptions($event)" (switchModal)="switchModal($event)"
+                [isEmbedded]="true" [isEmbeddedUpdate]="editRulesAdmin" *ngIf="showRulesAdminForm">
+              </app-crud-rules-admin>
+              <app-grid #gridListRulesAdmin (actionAnswer)="getRulesAdminId($event)" [hidden]="!showRulesAdminGrid">
+              </app-grid>
+            </section>
+          </section>
+        </section>
+
+      </section>
+    </section>
+  </form>
+  <div style="margin-top: 10px !important;">
+    <section class="container-partition">
+      <section class="p-row p-ten cont-left">
+        <section class="row divisor">
+          <section class="p-row p-three cont-left">
+            <section class="container-row">
+              <p class="subtitle main-subtitle subtitle-container">
+                Cupones de descuento
+              </p>
+              <div>
+                <form [formGroup]="listCodeForm">
+                  <mat-form-field>
+                    <mat-select placeholder="Tipo cupón" name="target_type" class="form-control" formControlName="target_type"
+                      (selectionChange)="resetAddCoupon($event)" [disabled]="editingCoupon">
+                      <mat-option *ngFor="let type of listTypeGroup" [value]="type">
+                        {{ type.ref1 }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <ng-container *ngIf="lcf.target_type.errors">
+                    <mat-error *ngIf="lcf.target_type.errors.required && (lcf.target_type.touched || lfSubmitted)">
+                      El campo es obligatorio
+                    </mat-error>
+                  </ng-container>
+                  <ng-container *ngIf="lcf.target_type.value && lcf.target_type.value.value == 'list' && !editingCoupon">
+                    <div style="width: 100%; display: block; text-align: center;">
+                      <button type="button" class="primary-button save-button button-subtitle save-button-style" (click)="uploadCustomers()">
+                        <i class="fas fa-upload"></i> &nbsp; Carga Usuarios
+                      </button>
+                    </div>
+                  </ng-container>
+                  <mat-form-field *ngIf="lcf.target_type.value && lcf.target_type.value.value != 'list' || editingCoupon ">
+                    <input matInput type="text" placeholder="Código cupón" class="form-control"
+                      formControlName="coupon_code" autocomplete="off" />
+                  </mat-form-field>
+                  <ng-container *ngIf="lcf.coupon_code.errors">
+                    <mat-error *ngIf="lcf.coupon_code.errors.required && (lcf.coupon_code.touched || lfSubmitted)">
+                      El campo es obligatorio
+                    </mat-error>
+                  </ng-container>
+                  <mat-form-field *ngIf="lcf.target_type.value && lcf.target_type.value.value != 'list' || editingCoupon">
+                    <input matInput type="number" placeholder="Máximos usos" class="form-control"
+                      formControlName="capacity" autocomplete="off" />
+                  </mat-form-field>
+                  <ng-container *ngIf="lcf.capacity.errors">
+                    <mat-error *ngIf="lcf.capacity.errors.required && (lcf.capacity.touched || lfSubmitted)">
+                      El campo es obligatorio
+                    </mat-error>
+                  </ng-container>
+                  <ng-container *ngIf="lcf.target_type.value && lcf.target_type.value.value == 'group' ">
+                    <!-- <mat-form-field>
+                      <input matInput type="text" placeholder="Entidad" class="form-control"
+                        formControlName="target_entity" autocomplete="off" />
+                    </mat-form-field> -->
+                    <mat-form-field>
+                      <mat-select placeholder="Entidad" name="target_entity" class="form-control" formControlName="target_entity">
+                        <mat-option *ngFor="let customer of groupCustomer" [value]="customer._id">
+                          {{ customer.name }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <ng-container *ngIf="lcf.target_entity.errors">
+                      <mat-error *ngIf="lcf.target_entity.errors.required && (lcf.target_entity.touched || lfSubmitted)">
+                        El campo es obligatorio
+                      </mat-error>
+                    </ng-container>
+                  </ng-container>
+                  
+                  <ng-container *ngIf="lcf.target_type.value && lcf.target_type.value.value != 'list' || editingCoupon">
+                    <ng-container *ngIf="!editingCoupon" class="buttons-modal">
+                      <div style="width: 100%; display: block; text-align: center;">
+                        <button type="button" class="primary-button save-button button-subtitle save-button-style" (click)="addCoupon()">
+                          <i class="fas fa-plus"></i> &nbsp;Añadir
+                        </button>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngIf="editingCoupon">
+                      <div style="width: 100%; display: block; text-align: center;">
+                        <button type="button" class="primary-button button-subtitle cancel-button" (click)="cancelUpdateCoupon()">
+                          <i class=""></i> &nbsp;Cancelar
+                        </button>
+                        <button type="button" class="primary-button save-button button-subtitle save-button-style" (click)="updateCoupon()">
+                          <i class="fas fa-redo"></i> &nbsp;Actualizar
+                        </button>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                  
+                </form>
+                <!-- <pre>
+                  {{listCodeForm.value | json}}
+                </pre>  -->
+                <!-- <section class="p-five card-product">
+                  <app-grid #gridListProducts (itemSelecReturn)="updateProducts($event)"></app-grid>
+                </section> -->
+                <!-- <section class="p-five card-product">
+                  <table style="margin-top: 52px;">
+                    <thead>
+                      <tr>
+                        <th>
+                          <section>
+                            <p>Nombre</p>
+                          </section>
+                        </th>
+                        <th>
+                          <section>
+                            <p>SKU</p>
+                          </section>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody #scrollMe>
+                      <div formArrayName="products" *ngIf="discountCodeForm">
+                        <ng-container *ngFor="
+                            let product of discountCodeForm['controls'].products
+                              .controls;
+                            let i = index
+                          " [formGroupName]="i">
+                          <tr>
+                            <td>
+                              <label class="label-replace">{{
+                                productList[i].name
+                                }}</label>
+                            </td>
+                            <td>
+                              <label class="label-replace">{{
+                                productList[i].SKU
+                                }}</label>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </div>
+                    </tbody>
+                  </table>
+                </section> -->
+              </div>
+            </section>
+          </section>
+          <section class="p-row p-seven cont-right">
+            <section class="container-row">
+              <p class="sub-tittle main-subtitle subtitle-buttton subtitle-container">
+                Lista de cupones</p>
+              <section class="container-table-code">
+                <table id="table-main">
+                  <thead>
+                    <tr>
+                      <td><b>Código</b></td>
+                      <td><b>Máximos usos</b></td>
+                      <td><b>Veces usado</b></td>
+                      <td><b>Tipo</b></td>
+                      <td><b>Entidad</b></td>
+                      <td><b>Acciones</b></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="codeList.length > 0">
+                      <tr *ngFor="let item of codeList">
+                        <td>{{item.coupon_code}}</td>
+                        <td>{{item.capacity}}</td>
+                        <td>{{item.total_used}}</td>
+                        <td>{{item.target_type.ref1 ? item.target_type.ref1 : item.target_type ? typeToString(item.target_type) : ''}}</td>
+                        <td>{{item.name_entity}}</td>
+                        <td>
+                          <i (click)="removeCoupon(item)" class="fas fa-trash-alt delete"></i>&nbsp;
+                          <i (click)="editCoupon(item)" class="fa fa-cog" style="cursor:pointer"
+                            aria-hidden="true"></i>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </section>
+            </section>
+          </section>
+  
+        </section>
+      </section>
+    </section>
+  </div>
+</div>
+
+
+<article class="container-modal" *ngIf="showSummaryCoupon">
+  <section class="modal-body modal-big">
+    <header class='card-title'>
+      Cupones
+    </header>
+    <section class="body row">
+      <table>
+        <thead>
+          <tr>
+            <th>Código de Cupón</th>
+            <th>Mensaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let coupon of listResultCoupon">
+            <td>{{ coupon.coupon_code }}</td>
+            <td>
+              <label *ngIf="coupon.ok" [ngClass]="{ 'valid-true': coupon.ok }">{{ coupon.message }}</label>
+              <label *ngIf="!coupon.ok" [ngClass]="{ 'valid-false': !coupon.ok }">{{ coupon.message }}</label>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <footer>
+      <button type="button" class="primary-button" (click)="closeSummary()">
+        Continuar
+      </button>
+    </footer>
+  </section>
+</article>
+
+
+<article class="container-modal" *ngIf="showSummary">
+  <section class="modal-body modal-big">
+    <header class='card-title'>
+      Usuarios con cupón
+    </header>
+    <section class="body row">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Código de Socio</th>
+            <th>Documento de Identidad</th>
+            <td>Cupón</td>
+            <td>Máximos usos</td>
+            <th>Mensaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of listResultUserCode">
+            <td>{{ user.user }}</td>
+            <td>{{ user.number_card }}</td>
+            <td>{{ user.number_document }}</td>
+            <td>{{ user.coupon_code }}</td>
+            <td>{{ user.capacity }}</td>
+            <td>
+              <label *ngIf="user.found" [ngClass]="{ 'valid-true': user.found }">{{ user.message }}</label>
+              <label *ngIf="!user.found" [ngClass]="{ 'valid-false': !user.found }">{{ user.message }}</label>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <footer>
+      <button type="button" class="primary-button" (click)="closeSummary()">
+        Continuar
+      </button>
+    </footer>
+  </section>
+</article>
+
+<app-upload-excel #uploadExcelFilter (resultInfo)="resultInfo($event)" [processType]="'massive-product-filter'">
+</app-upload-excel>

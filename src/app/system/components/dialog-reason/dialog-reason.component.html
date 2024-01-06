@@ -1,0 +1,93 @@
+<article class="container-modal" *ngIf="showModal">
+  <section class="modal-body modal-small">
+    <header>
+      <strong>{{ title }}</strong>
+      <div id="close-button" (click)="close()">&times;</div>
+    </header>
+    <section class="body">
+      <p>
+        Hemos detectado cambios en el precio del producto. Por favor, ingrese la
+        razón de dicho cambio
+      </p>
+      <form [formGroup]="reasonForm">
+        <ng-container *ngIf="showPriceReason">
+          <br />
+          <p>Ingrese la razón de cambio de precio regular</p>
+          <mat-form-field>
+            <textarea
+              matInput
+              cols="30"
+              class="form-control"
+              formControlName="priceReason"
+              autocomplete="off"
+            ></textarea>
+          </mat-form-field>
+          <ng-container *ngIf="f.priceReason.errors">
+            <mat-error
+              *ngIf="
+                f.priceReason.errors.required &&
+                (f.priceReason.touched || submitted)
+              "
+            >
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="showSpecialPriceReason">
+          <br />
+          <p>Ingrese la razón de cambio de precio especial</p>
+          <mat-form-field>
+            <textarea
+              matInput
+              cols="30"
+              class="form-control"
+              formControlName="specialPriceReason"
+              autocomplete="off"
+            ></textarea>
+          </mat-form-field>
+          <ng-container *ngIf="f.specialPriceReason.errors">
+            <mat-error
+              *ngIf="
+                f.specialPriceReason.errors.required &&
+                (f.specialPriceReason.touched || submitted)
+              "
+            >
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="showCampaignPriceReason">
+          <br />
+          <p>Ingrese la razón de cambio de precio de campaña</p>
+          <mat-form-field>
+            <textarea
+              matInput
+              cols="30"
+              class="form-control"
+              formControlName="campaignPriceReason"
+              autocomplete="off"
+            ></textarea>
+          </mat-form-field>
+          <ng-container *ngIf="f.campaignPriceReason.errors">
+            <mat-error
+              *ngIf="
+                f.campaignPriceReason.errors.required &&
+                (f.campaignPriceReason.touched || submitted)
+              "
+            >
+              El campo es obligatorio
+            </mat-error>
+          </ng-container>
+        </ng-container>
+      </form>
+    </section>
+    <footer>
+      <button class="primary-button button-subtitle cancel-button" (click)="close()">
+        Cancelar
+      </button>
+      <button class="primary-button save-button button-subtitle save-button-style" (click)="accept()">
+        Aceptar
+      </button>
+    </footer>
+  </section>
+</article>

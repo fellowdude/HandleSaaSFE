@@ -1,0 +1,54 @@
+.modal-body{
+  max-width: 88vw;
+}
+
+header{
+  .info-header{
+      display: flex;
+      align-items: center;
+      .title{
+          flex: auto;
+          position: relative;
+          #close-button {
+            position: absolute;
+            right: 1%;
+            font-size: 25px;
+            color: black;
+            cursor: pointer;
+            top: -8%;
+          }
+      }
+      .buttons{
+          width: 273px;
+          button{
+              &:nth-child(1){
+                  width: 100px;
+              }
+              &:nth-child(2){
+                  width: 170px;
+              }
+          }
+      }
+  }
+ 
+}
+
+.modal-card-footer {
+  margin-top: -20px;
+  width: 100%;
+  flex-basis: 100%;
+  text-align: center;
+  height: fit-content;
+  margin-bottom: 20px;
+  // button {
+  //   display: inline;
+  //   width: 150px;
+  //   max-width: 150px !important;
+  // }
+}
+
+.total-products{
+  font-size: 15px;
+  font-weight: 100;
+  text-align: left;
+}

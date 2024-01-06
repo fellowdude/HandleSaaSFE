@@ -1,0 +1,17 @@
+<article class='container-modal' *ngIf='showModalNewSection'>
+  <section class='modal-body modal-small'>
+    <header>
+      <strong>{{config.title}}</strong>
+    </header>
+    <section class='body'>
+      <mat-form-field>
+        <input matInput type="text" placeholder="{{config.placeholder}}" [(ngModel)]='dataStatic.newSectionName'
+          autocomplete="off">
+      </mat-form-field>
+    </section>
+    <footer>
+      <button class='button-option button-cancel' (click)='closeModal()'>Cancelar</button>
+      <button class='button-option button-confirm' (click)='createNewSection()'>Aceptar</button>
+    </footer>
+  </section>
+</article>

@@ -1,0 +1,89 @@
+<article class="container-modal" *ngIf='showUpLoading'>
+    <section class="modal-body modal-big">
+        <header *ngIf='!finishProcess'>
+            <p>Procesando</p>
+            <p [ngStyle]="{'margin-top':'10px !important'}"><span
+                    class="upload-summary">{{totalUpload}}/{{listUpload.length}}
+                    procesando</span></p>
+        </header>
+        <header *ngIf='finishProcess'>
+            <p>Proceso terminado</p>
+
+        </header>
+        <section *ngIf="finishUpload" class="summary">
+            <p [ngStyle]="{'margin-top':'10px !important'}"><span
+                class="upload-summary upload-ok">{{listUpload.length - errors}}
+                correctos</span> <span class="upload-summary upload-error">{{errors}} con
+                error</span></p>
+        </section>
+        <section>
+            <div [ngStyle]='{"height": "7px","width": "100%","background": "#f2f2f2"}'>
+                <div [ngStyle]='{"width": percentUpload+ "%","height": "7px","background": "#1d72e8"}'>
+
+                </div>
+            </div>
+        </section>
+        <section class="body row">
+            <section class="table" [ngStyle]='{"width": "100%"}'>
+                <section class="row">
+                    <section [ngStyle]='{"width":"75px"}'>
+
+                    </section>
+
+                    <section [ngStyle]='{"width":"calc(100% - 575px)"}'>
+                        Código de socio
+                    </section>
+                    <section [ngStyle]='{"width":"100px"}'>
+                        Estado
+                    </section>
+                    <section [ngStyle]='{"width":"400px"}'>
+                        Mensaje
+                    </section>
+                </section>
+                <br/>
+                <cdk-virtual-scroll-viewport style="height: 300px" itemSize="10">
+                    <section *cdkVirtualFor='let card of listUpload' class="row table-row">
+                        <section [ngStyle]='{"width":"75px"}'>
+                            <img src="./assets/img/uploading.gif" width="18px" alt="" *ngIf='card.state == "uploading"'>
+                            <i class="fas fa-check-circle" *ngIf='card.state == "ok" || card.state == "ok_error" || card.state == "ok_modified"'
+                                [ngStyle]='{"color": "#10d09b"}'></i>
+                            <i class="fas fa-times-circle" *ngIf='card.state == "error"'
+                                [ngStyle]='{"color": "#ff4081"}'></i>
+                            <i class="fas fa-pause-circle" *ngIf='!card.state'></i>
+
+                        </section>
+                        <section [ngStyle]='{"width":"calc(100% - 575px)","text-align": "center"}'>
+                            {{card.number}}
+                        </section>
+                        <section [ngStyle]='{"text-align": "center","width":"100px"}'>
+
+                            <span *ngIf='!card.finish && !card.errorSave' class="state state-pendding">Pendiente</span>
+                            <span *ngIf='card.finish && card.state == "ok"' class="state state-ok">Terminado</span>
+                            <span *ngIf='card.finish && card.state == "ok_error"' class="state state-error">No
+                                subido</span>
+                            <span *ngIf='card.finish && card.state == "ok_modified"' class="state state-modified">Actualizado</span>
+                            <span *ngIf='card.errorSave' class="state state-error">Error</span>
+                        </section>
+
+                        <section [ngStyle]='{"text-align": "center","width":"400px"}'>
+                            {{card.message}}
+                        </section>
+
+                    </section>
+                </cdk-virtual-scroll-viewport>
+
+
+            </section>
+        </section>
+        <footer *ngIf='finishProcess'>
+            <button type="button" class="primary-button" (click)="closeProcess()">
+                cerrar
+            </button>
+
+        </footer>
+    </section>
+</article>
+
+<section id='block-window' *ngIf='processing'>
+
+</section>

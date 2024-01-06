@@ -1,0 +1,116 @@
+@import "../../../../variables.scss";
+
+:host {
+  .modal-card {
+    background-color: white;
+    border-radius: 5px;
+    max-width: 800px;
+   
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    align-items: stretch;
+    flex-grow: 1;
+    margin: 0 auto;
+    height: 93vh;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    padding: 10px;
+    .modal-card-header {
+      width: 100%;
+      flex-basis: 100%;
+      .title {
+        margin-bottom: 10px;
+      }
+      .options-wrapper {
+        text-align: center;
+        margin: 15px auto 0 auto;
+        .option-item {
+          text-align: center;
+          margin: 0 auto;
+          padding: 8px;
+          padding-left: 10px;
+          padding-right: 10px;
+          border-radius: 5px;
+          border: 1px solid #EAEAEA;
+            border-radius: .25rem;
+          cursor: pointer;
+          box-sizing: border-box;
+          &.left {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+          }
+          &.right {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          }
+        }
+      }
+    }
+    .modal-card-body {
+      margin-top: 20px;
+      width: 100%;
+      flex-basis: 100%;
+      height: calc(100% - 95px);
+    }
+    .modal-card-footer {
+      margin-top: -20px;
+      width: 100%;
+      flex-basis: 100%;
+      text-align: center;
+      height: fit-content;
+      // button {
+      //   display: inline;
+      //   width: 150px;
+      //   max-width: 150px !important;
+      // }
+    }
+  }
+}
+
+.selectItem {
+  outline: 3px solid #1e88e5;
+}
+
+.active-section-option {
+  background-color: #383737;
+  color: white;
+  border: 1px solid #383737 !important;;
+}
+
+.mat-card {
+  box-shadow: none;
+}
+.drop-zone {
+  margin: 20px !important;
+  cursor: pointer;
+}
+.container-drop {
+  padding: 3em;
+  border: 1px solid gray;
+  height: 30vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+i {
+  color: $gray-light;
+  font-size: 44px;
+}
+
+.container-modal {
+  z-index: 1200;
+}
+header {
+  position: relative;
+  #close-button {
+    position: absolute;
+    right: 1%;
+    font-size: 25px;
+    color: gray;
+    cursor: pointer;
+    top: -8%;
+  }
+}

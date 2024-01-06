@@ -1,0 +1,32 @@
+<div class="sidebar" [ngClass]="{'sidebar-expanded': open}" (mouseenter)="enterSideBar($event)" (mouseleave)="exitSideBar($event)">
+	<div class="brand-sidenav" *ngIf="!open"><img src="assets/img/Handel_pequeño.png" style="width: 40px;"></div>
+    <div class="brand-sidenav" *ngIf="open"><img src="assets/img/Handel_medio.png" style="width: 120px;"></div>
+    <div class="brand-client" *ngIf="!open"></div>
+	<!--<div class="brand-client" *ngIf="!open"><img src="assets/img/scotia_menu_pequeño.png" style="height: 34px;"></div>-->
+	<div class="brand-client-expanded" *ngIf="open"> <img *ngIf="enterpriseLogo" [src]="enterpriseLogo"> </div>
+	<ul class="options-sidenav" *ngIf="dataUser">
+		<ng-container *ngIf="!open">
+			<li *ngFor="let menuItem of dataUser.listMenu; let idx = index">
+				<div class="menu-header"><i [class]="menuItem.icon"></i></div>
+			</li>
+		</ng-container>
+		<ng-container *ngIf="open">
+			<li *ngFor="let menuItem of dataUser.listMenu; let idx = index" [ngClass]="{'expand': menuItem.open}"
+				(click)='changeNav(idx)'>
+				<ng-container *ngIf="menuItem.functionalities.length == 1">
+					<span class="menu-header-expanded" (click)='goWindow(menuItem.functionalities[0].url)'><span
+							[class]="menuItem.icon"></span>{{menuItem.functionalities[0].name}}</span>
+				</ng-container>
+				<ng-container *ngIf="menuItem.functionalities.length > 1">
+					<span class="menu-header-expanded"><span [class]="menuItem.icon"></span>{{menuItem.module}}<i
+							class="custom-chevron fas fa-chevron-right" [ngClass]="{'fa-rotate-90': menuItem.open}"></i></span>
+					<ul class="submenu-wrapper">
+						<li *ngFor="let subMenuItem of menuItem.functionalities" (click)='goWindow(subMenuItem.url)'>
+							<span class="fal fa-circle sm"></span>
+							{{subMenuItem.name}}</li>
+					</ul>
+				</ng-container>
+			</li>
+		</ng-container>
+	</ul>
+</div>

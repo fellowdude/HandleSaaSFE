@@ -1,0 +1,67 @@
+
+@import "../../../../variables.scss";
+header {
+  position: relative;
+  #close-button {
+    position: absolute;
+    right: 3.5%;
+    font-size: 25px;
+    color: gray;
+    cursor: pointer;
+    top: 11%;
+  }
+}
+.date-assign {
+    display: flex;
+    .time-day {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      span {
+        margin: 0em 1em;
+        padding: 0.2em 0.5em;
+        border: 1px solid $gray-light;
+        border-radius: 5px;
+        width: 75px;
+        text-align: center;
+        cursor: pointer;
+      }
+    }
+  }
+  .button-option {
+    width: 150px !important;
+    text-transform: none;
+  }
+  .timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .container-timer {
+      .separator {
+        font-size: 32px;
+      }
+      div {
+        i {
+          font-size: 40px;
+          cursor: pointer;
+        }
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input {
+        font-size: 32px;
+        width: 50px;
+        text-align: center;
+        border: none;
+        &:focus {
+          border: none;
+          outline: none;
+        }
+      }
+    }
+    
+  }
+  

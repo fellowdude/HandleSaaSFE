@@ -1,0 +1,63 @@
+<div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+  <div *ngFor="let node of childrenCategory" 
+    class='example-box' 
+    [cdkDragFreeDragPosition]="node.position" 
+    (mousedown)="onMouseDown(node)"
+    (mouseup)="onMouseUp()"
+    (cdkDragStarted)="dragStarted()"
+    (cdkDragEnded)="local_moveCard($event)" 
+    cdkDragBoundary=".example-list"
+    cdkDrag
+    [cdkDragDisabled]="!dragAndDropActive"
+  > 
+    <tr class='group-section' [ngClass]="{'active-row': node.secuenceActive, 'subcategory': node.nivel}">
+      <td [ngStyle]='{"padding-left": node.padding}' [ngClass]='{"add-before": node.nivel}' class='category-name'
+      (click)='goDetail(node)'>
+        <p>
+          {{node.name}}
+        </p>
+      </td>
+      <!-- <td>
+        {{node.totalProduct}} {{node.nameType}}
+      </td> -->
+      <ng-container *ngIf="!activeChangeBoolean">
+        <td class="visible-category" (click)='goDetail(node)'>
+          <span *ngIf='node.visibility' class="status-visible">Visible</span>
+          <span *ngIf='!node.visibility' class="status-invisible">No Visible</span>
+        </td>
+      </ng-container>
+      
+      <ng-container *ngIf="activeChangeBoolean">
+        <td class="visible-category checkbox">
+          <mat-checkbox class="form-control" [(ngModel)]="node.visibility"
+            (ngModelChange)="updateVisibilty($event, node)"
+            exclusive>
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <td (click)='goDetail(node)'>
+        <section id='icon-change'>
+          <span>
+            Pos. {{node.position}}
+          </span>
+        </section>
+      </td>
+      <!-- <div (click)='changePosition(); $event.stopPropagation()'>
+            <i class="fa fa-arrows-alt-v upside-down"></i>
+          </div> -->
+      <!--  </section>
+      </td> -->
+      <i *ngIf="node.children" class="fad fa-chevron-down" [ngClass]="{'rotate': node.scroll, 'out-rotate': !node.scroll}"
+      (click)='actionScroll(node)'></i>
+      <!--<div *cdkDragPlaceholder></div> previene Items will automatically rearrange as an element moves.-->
+    </tr>
+    <app-list-category 
+      [scrolled]="scrolled"
+      [childrenCategory]="node.children" 
+      [activeChangeBoolean]="activeChangeBoolean"
+      [dragAndDropActive]="dragAndDropActive"
+      [valueShow]='valueShow' *ngIf="node.scroll">
+    </app-list-category>
+</div>
+</div>

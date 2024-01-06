@@ -1,0 +1,150 @@
+<article class="container-modal" *ngIf='openModal'>
+    <section class="modal-body">
+        <header>
+            <strong>Nuevo Cliente</strong>
+        </header>
+        <section class="body">
+            <form [formGroup]="customerForm">
+                <section class="col-100">
+                    <mat-form-field>
+                        <input matInput type="text" placeholder="Tarjeta" class="form-control"
+                            formControlName="number_card" autocomplete="off">
+                    </mat-form-field>
+                    <ng-container *ngIf='f.number_card.errors'>
+                        <mat-error *ngIf="f.number_card.errors.required && (f.number_card.touched || submitted)">
+                            El campo es obligatorio
+                        </mat-error>
+                    </ng-container>
+                </section>
+
+                <section class="row">
+                    <section class="col-50">
+                        <mat-form-field>
+                            <mat-select placeholder="Sufijo" formControlName="suffix" name="suffix">
+                                <mat-option *ngFor="let suffix of listSufix" [value]="suffix.value">
+                                    {{ suffix.value }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </section>
+                    <section class="col-50">
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Nombre" class="form-control" formControlName="name"
+                                autocomplete="off">
+                        </mat-form-field>
+                        <ng-container *ngIf='f.name.errors'>
+                            <mat-error *ngIf="f.name.errors.required && (f.name.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </section>
+                </section>
+
+                <section class="row">
+                    <section class="col-50">
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Apellido Paterno" class="form-control"
+                                formControlName="last_name_father" autocomplete="off">
+                        </mat-form-field>
+                        <ng-container *ngIf='f.last_name_father.errors'>
+                            <mat-error
+                                *ngIf="f.last_name_father.errors.required && (f.last_name_father.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </section>
+                    <section class="col-50">
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Apellido Materno" class="form-control"
+                                formControlName="last_name_mother" autocomplete="off">
+                        </mat-form-field>
+                        <ng-container *ngIf='f.last_name_mother.errors'>
+                            <mat-error
+                                *ngIf="f.last_name_mother.errors.required && (f.last_name_mother.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </section>
+                </section>
+
+                <section class="col-100">
+                    <mat-form-field>
+                        <input matInput type="text" placeholder="Correo personal" class="form-control"
+                            formControlName="email" autocomplete="off">
+                    </mat-form-field>
+                    <ng-container *ngIf='f.email.errors'>
+                        <mat-error *ngIf="f.email.errors.required && (f.email.touched || submitted)">
+                            El campo es obligatorio
+                        </mat-error>
+                    </ng-container>
+                </section>
+
+                <section class="row">
+                    <section class="col-50">
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Teléfono" class="form-control"
+                                formControlName="phone" autocomplete="off">
+                        </mat-form-field>
+                        <ng-container *ngIf='f.phone.errors'>
+                            <mat-error *ngIf="f.phone.errors.required && (f.phone.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </section>
+                    <section class="col-50">
+                        <mat-form-field>
+                            <input matInput [matDatepicker]="disabletext" placeholder="Fecha de Nacimiento"
+                                class="form-control" [readonly]='true' disabled formControlName="birth_date">
+                            <mat-datepicker-toggle matSuffix [for]="disabletext">
+                            </mat-datepicker-toggle>
+                            <mat-datepicker #disabletext disabled="false">
+                            </mat-datepicker>
+                        </mat-form-field>
+                        <ng-container *ngIf='f.birth_date.errors'>
+                            <mat-error *ngIf="f.birth_date.errors.required && (f.birth_date.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </section>
+                </section>
+
+                <section class="row">
+                    <section class="col-50">
+                        <mat-form-field>
+                            <mat-select placeholder="Tipo de documento" formControlName="type_document"
+                                name="type_document">
+                                <mat-option *ngFor="let documentType of listTypeDocument" [value]="documentType._id">
+                                    {{ documentType.value }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </section>
+                    <section class="col-50">
+                        <mat-form-field>
+                            <input matInput type="text" placeholder="Número de documento" class="form-control"
+                                formControlName="number_document" autocomplete="off">
+                        </mat-form-field>
+                        <ng-container *ngIf='f.number_document.errors'>
+                            <mat-error
+                                *ngIf="f.number_document.errors.required && (f.number_document.touched || submitted)">
+                                El campo es obligatorio
+                            </mat-error>
+                        </ng-container>
+                    </section>
+                </section>
+
+
+
+            </form>
+        </section>
+        <footer class="row">
+            <button class="primary-button" (click)="close()">
+                Cerrar
+            </button>
+            <button class="primary-button" (click)="accept()">
+                Crear cliente
+            </button>
+
+        </footer>
+    </section>
+</article>

@@ -1,0 +1,44 @@
+
+<mat-card>
+      <form [formGroup]="uploadForm" (ngSubmit)="uploadSubmit()">
+        <mat-card-content>        
+          <div class="drop-zone">
+          <ng-container *ngIf='uploader'>
+            <div ng2FileDrop [uploader]="uploader" class="drop-zone container-drop">
+              <p><i class="fas fa-cloud-upload-alt"></i></p>
+              <p> {{config.description}}</p>
+            </div>
+          </ng-container>
+          </div>
+          <table>
+            <thead>
+       
+            </thead>
+            <tbody *ngIf='!config.singleImage'>
+            <tr *ngFor="let item of uploader.queue">
+              <th width="90%">
+                  {{item.file.name}}
+              </th>
+              <th class="text-center cursor-delete" width="10%">
+                <mat-icon (click)="item.remove()" >Eliminar</mat-icon>
+              </th>
+            </tr>
+            </tbody>
+            <tbody *ngIf='config.singleImage && uploader.queue.length > 0'>
+                <tr>
+                  <th width="90%">
+                      {{uploader.queue[0].file.name}}
+                  </th>
+                  <th class="text-center cursor-delete" width="10%">
+                    <mat-icon (click)="uploader.queue[0].remove()" >Eliminar</mat-icon>
+                  </th>
+                </tr>
+                </tbody>
+          </table>
+
+          <div class='footer' *ngIf="uploader.queue.length > 0">
+            <button class='button-option button-confirm'  type="submit">Subir imágenes</button>
+          </div>
+        </mat-card-content>
+      </form>
+</mat-card>

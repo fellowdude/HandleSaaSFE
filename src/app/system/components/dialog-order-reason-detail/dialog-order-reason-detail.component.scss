@@ -1,0 +1,58 @@
+@import "../../../../variables.scss";
+.container-modal {
+  z-index: 10000;
+  position: fixed;
+  background-color: #2222225c;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+
+  .modal-body {
+    background: white;
+    max-width: 430px;
+    margin-top: 15vh;
+    border-radius: 5px;
+    header {
+      text-align: center;
+      padding: 1em;
+      border-bottom: 1px solid $gray-light;
+      position: relative;
+      #close-button {
+        position: absolute;
+        right: 3.5%;
+        font-size: 25px;
+        color: gray;
+        cursor: pointer;
+        top: 14%;
+      }
+    }
+    .body {
+      padding: 1.5em 2em;
+      text-align: center;
+      .sub-message {
+        margin-top: 1em;
+        color: #484848;
+        font-size: 13px;
+        font-weight: bold;
+        background-color: white;
+      }
+    }
+    footer {
+      border-top: 1px solid $gray-light;
+      text-align: center;
+      padding: 1em;
+    }
+  }
+}
+
+@media only screen and (max-width: 439px) {
+  .modal-body {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+}
+@media only screen and (min-width: 440px) {
+  .modal-body {
+    margin: auto;
+  }
+}

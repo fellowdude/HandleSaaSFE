@@ -1,0 +1,49 @@
+.background-load {
+  position: fixed;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.5);
+  .container-loading {
+    position: relative;
+    max-width: 200px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 5px;
+    background-color: white;
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    height: 180px;
+    img {
+      width: 100%;
+      height: auto;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    .handel-logo {
+      position: absolute;
+      box-sizing: border-box;
+      left: 55px;
+      top: 30px;
+      width: 90px;
+      z-index: 10;
+    }
+    span {
+      position: absolute;
+      bottom: 30px;
+      color: purple;
+      font-weight: bold;
+      box-sizing: border-box;
+      left: 0;
+      right: 0;
+    }
+  }
+}

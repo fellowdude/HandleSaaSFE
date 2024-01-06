@@ -1,0 +1,141 @@
+<article class="container-modal">
+    <section class="modal-body modal-big">
+        <header>
+            <p>Resumen final de validación</p>
+            <p [ngStyle]="{'margin-top':'10px !important'}"><span class="upload-summary upload-ok">{{totalOk}}
+                    correctos</span> <span class="upload-summary upload-error">{{totalError}} con
+                    error</span></p>
+        </header>
+        <section [ngStyle]='{"text-align": "center","font-weight": "bold"}'>
+            Solo se procesará la información que no contenga errores
+        </section>
+        <section class="body row">
+            <section class="table">
+                <section class="row">
+                    <section [ngStyle]='{"width":"75px"}'>
+                        Fila
+                    </section>
+                    <section [ngStyle]='{"width":"100px"}'>
+                        SKU
+                    </section>
+                    <section [ngStyle]='{"min-width":"350px","width":"300px"}'>
+                        Nombre
+                    </section>
+                    <section [ngStyle]='{"width":"300px"}'>
+                        Imagen principal
+                    </section>
+                    <section [ngStyle]='{"width":"300px"}'
+                        *ngFor="let number of  [].constructor(4); let positionInfo = index">
+                        Imagen Galeria {{positionInfo + 1}}
+                    </section>
+                    <section [ngStyle]='{"width":"200px"}'
+                        *ngFor="let number of  [].constructor(maxError); let positionInfo = index">
+                        Error {{positionInfo + 1}}
+                    </section>
+                </section>
+                <section *ngFor='let product of listExcel' class="row table-row"
+                    [ngClass]="{'error-row':product.existError}">
+                    <section [ngStyle]='{"width":"75px"}'>
+                        {{product.row_excel}}
+                    </section>
+                    <section [ngStyle]='{"width":"100px","text-align": "left"}'>
+                        {{product.SKU}}
+                    </section>
+                    <section [ngStyle]='{"min-width":"350px", "text-align": "left","width":"300px"}'>
+                        {{product.name}}
+                    </section>
+                    <ng-container *ngIf='product.image_cover'>
+                        <ng-container *ngIf='product.image_cover.error'>
+                            <section *ngIf='product.image_cover.error.length > 0' matTooltip='CLick para ver error'
+                                [ngStyle]='{"width":"300px","text-align": "left","overflow":"auto"}'
+                                [ngClass]='{"error-image":product.image_cover.error.length > 0}'
+                                (click)='openError(product.image_cover.error)'>
+
+                                {{product.image_cover.name}}
+
+                            </section>
+                            <section *ngIf='product.image_cover.error.length == 0'
+                                [ngStyle]='{"width":"300px","text-align": "left","overflow":"auto"}'
+                                [ngClass]='{"error-image":product.image_cover.error.length > 0}'>
+
+                                {{product.image_cover.name}}
+
+                            </section>
+                        </ng-container>
+
+                    </ng-container>
+
+
+                    <section *ngIf='!product.image_cover'
+                        [ngStyle]='{"width":"300px","text-align": "left","overflow":"auto"}'>
+                        &nbsp;
+                    </section>
+                    <ng-container *ngFor="let number of  [].constructor(4); let positionInfo = index">
+
+                        <ng-container *ngIf='product.images_link[positionInfo]'>
+                            <ng-container *ngIf='product.images_link[positionInfo].error'>
+                                <section *ngIf='product.images_link[positionInfo].error.length > 0'
+                                    matTooltip='CLick para ver error'
+                                    [ngStyle]='{"width":"300px","text-align": "left","overflow":"auto"}'
+                                    [ngClass]='{"error-image":product.images_link[positionInfo].error.length > 0}'
+                                    (click)='openError(product.images_link[positionInfo].error)'>
+
+                                    {{product.images_link[positionInfo].name}}
+
+                                </section>
+
+                                <section *ngIf='product.images_link[positionInfo].error.length == 0'
+                                    [ngStyle]='{"width":"300px","text-align": "left","overflow":"auto"}'
+                                    [ngClass]='{"error-image":product.images_link[positionInfo].error.length > 0}'>
+
+                                    {{product.images_link[positionInfo].name}}
+
+                                </section>
+                            </ng-container>
+
+                        </ng-container>
+
+
+                        <section *ngIf='!product.images_link[positionInfo]'
+                            [ngStyle]='{"width":"300px","text-align": "left","overflow":"auto"}'>
+                            &nbsp;
+                        </section>
+                    </ng-container>
+
+
+
+                    <section [ngStyle]='{"width":"200px","text-align": "left"}' *ngFor='let error of product.listError'>
+                        {{error.error}}
+                    </section>
+                </section>
+
+            </section>
+        </section>
+        <footer>
+            <button type="button" class="primary-button" (click)="closeSummary()">
+                Cancelar
+            </button>
+            <button type="button" class="primary-button" (click)="goNext()">
+                Procesar
+            </button>
+        </footer>
+    </section>
+</article>
+
+
+<article class="container-modal" *ngIf='listError.length > 0'>
+    <section class="modal-body">
+        <header>
+            <p>Listado de errores</p>
+        </header>
+        <section class="body column">
+            <p *ngFor='let error of listError, let position = index' [ngStyle]='{"text-align":"left"}'>{{position + 1}}
+                {{error}}</p>
+        </section>
+        <footer>
+            <button type="button" class="primary-button" (click)="closeErrorList()">
+                Cerrar
+            </button>
+        </footer>
+    </section>
+</article>

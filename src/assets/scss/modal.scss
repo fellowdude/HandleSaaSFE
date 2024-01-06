@@ -1,0 +1,79 @@
+@import "../../variables.scss";
+.container-modal {
+  z-index: 1000;
+  position: fixed;
+  background-color: #2222225c;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  display: flex;
+  .modal-small {
+    width: 430px;
+  }
+  .modal-big {
+    width: 1000px;
+  }
+  .modal-complete {
+    width: 90%;
+  }
+  .modal-max-height {
+    max-height: calc(100vh - 30px);
+    overflow: auto;
+  }
+  .modal-fluid-medium {
+    max-width: 850px;
+  }
+  .modal-body {
+    background: white;
+    border-radius: 5px;
+    max-height: 90vh;
+    header {
+      text-align: center;
+      padding: 1em;
+      border-bottom: 1px solid $gray-light;
+      font-family: "Muli";
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .body {
+      padding: 1.5em 2em;
+      text-align: center;
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+    footer {
+      border-top: 1px solid $gray-light;
+      text-align: center;
+      padding: 1em;
+      button {
+        display: inline-block;
+        max-width: 200px;
+        margin: 0px 10px;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 439px) {
+  .modal-body {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+}
+@media only screen and (min-width: 440px) {
+  .modal-body {
+    margin: auto;
+  }
+}
+
+.container-modal {
+  mat-form-field {
+    width: 100%;
+  }
+}
+.center-button {
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+}
